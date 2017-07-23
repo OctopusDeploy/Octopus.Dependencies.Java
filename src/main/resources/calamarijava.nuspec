@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata minClientVersion="3.3.0">
+        <id>Octopus.Dependencies.Java</id>
+        <version>{{Version}}</version>
+        <description>Java library providing the interface to Java application servers for Calamari</description>
+        <authors>Matthew Casperson</authors>
+        <contentFiles>
+            <files include="**/calamari*.jar" buildAction="None" copyToOutput="false" />
+            <files include="**/jboss-cli.xml" buildAction="None" copyToOutput="false" />
+        </contentFiles>
+    </metadata>
+    <files>
+        <file src="target\calamari*.jar" target="contentFiles/any/any" />
+        <file src="target\jboss-cli.xml" target="contentFiles/any/any" />
+    </files>
+</package>

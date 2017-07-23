@@ -1,0 +1,154 @@
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <container qualifier="jboss-eap-7.0">
+        <configuration>
+            <property name="chameleonTarget">JBoss EAP:7.0:managed</property>
+            <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9990</property>
+            <property name="username">admin</property>
+            <property name="password">password1!</property>
+            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/jboss-eap-7.0/standalone/configuration</property>
+        </configuration>
+    </container>
+
+    <container qualifier="domain-jboss-eap-7.0">
+        <configuration>
+            <property name="chameleonTarget">JBoss EAP Domain:7.0:managed</property>
+            <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9990</property>
+            <property name="username">admin</property>
+            <property name="password">password1!</property>
+            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/jboss-eap-7.0/domain/configuration</property>
+        </configuration>
+    </container>
+
+    <container qualifier="jboss-eap-6.4">
+        <configuration>
+            <property name="chameleonTarget">JBoss EAP:6.4:managed</property>
+            <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9999</property>
+            <property name="username">admin</property>
+            <property name="password">password1!</property>
+            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/jboss-eap-6.4/standalone/configuration</property>
+        </configuration>
+    </container>
+
+    <container qualifier="domain-jboss-eap-6.4">
+        <configuration>
+            <property name="chameleonTarget">JBoss EAP Domain:6.4:managed</property>
+            <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9999</property>
+            <property name="username">admin</property>
+            <property name="password">password1!</property>
+            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/jboss-eap-6.4/domain/configuration</property>
+        </configuration>
+    </container>
+
+
+    <container qualifier="wildfly-9.0.2.Final">
+        <configuration>
+            <property name="chameleonTarget">wildfly:9.0.2.Final:managed</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9990</property>
+            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/wildfly-9.0.2.Final/standalone/configuration</property>
+        </configuration>
+    </container>
+
+    <container qualifier="domain-wildfly-9.0.2.Final">
+        <configuration>
+            <property name="chameleonTarget">wildfly domain:9.0.2.Final:managed</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9990</property>
+            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/wildfly-9.0.2.Final/domain/configuration</property>
+        </configuration>
+    </container>
+
+    <container qualifier="wildfly-10.1.0.Final">
+        <configuration>
+            <property name="chameleonTarget">wildfly:10.1.0.Final:managed</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9990</property>
+            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/wildfly-10.1.0.Final/standalone/configuration</property>
+        </configuration>
+    </container>
+
+    <container qualifier="domain-wildfly-10.1.0.Final">
+        <configuration>
+            <property name="chameleonTarget">wildfly domain:10.1.0.Final:managed</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9990</property>
+            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/wildfly-10.1.0.Final/domain/configuration</property>
+        </configuration>
+    </container>
+
+    <container qualifier="wildfly-11.0.0.Alpha1">
+        <configuration>
+            <property name="chameleonTarget">wildfly:11.0.0.Alpha1:managed</property>
+            <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9990</property>
+            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/wildfly-11.0.0.Alpha1/standalone/configuration</property>
+        </configuration>
+    </container>
+
+    <container qualifier="domain-wildfly-11.0.0.Alpha1">
+        <configuration>
+            <property name="chameleonTarget">wildfly domain:11.0.0.Alpha1:managed</property>
+            <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9990</property>
+            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/wildfly-11.0.0.Alpha1/domain/configuration</property>
+        </configuration>
+    </container>
+
+    <container qualifier="tomcat-7.0.79">
+        <configuration>
+            <property name="chameleonTarget">tomcat:7.0.79:managed</property>
+            <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+            <property name="bindAddress">127.0.0.1</property>
+            <property name="bindHttpPort">38080</property>
+            <property name="user">admin</property>
+            <property name="pass">password1!</property>
+        </configuration>
+    </container>
+
+    <container qualifier="tomcat-8.0.45">
+        <configuration>
+            <property name="chameleonTarget">tomcat:8.0.45:managed</property>
+            <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+            <property name="bindAddress">127.0.0.1</property>
+            <property name="bindHttpPort">38080</property>
+            <property name="user">admin</property>
+            <property name="pass">password1!</property>
+        </configuration>
+    </container>
+
+    <container qualifier="tomcat-8.5.16">
+        <configuration>
+            <property name="chameleonTarget">tomcat:8.5.16:managed</property>
+            <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+            <property name="bindAddress">127.0.0.1</property>
+            <property name="bindHttpPort">38080</property>
+            <property name="user">admin</property>
+            <property name="pass">password1!</property>
+        </configuration>
+    </container>
+
+    <container qualifier="tomcat-9.0.0.M22">
+    <configuration>
+        <property name="chameleonTarget">tomcat:9.0.0.M22:managed</property>
+        <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
+        <property name="bindAddress">127.0.0.1</property>
+        <property name="bindHttpPort">38080</property>
+        <property name="user">admin</property>
+        <property name="pass">password1!</property>
+    </configuration>
+</container>
+
+</arquillian>

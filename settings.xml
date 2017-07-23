@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+    Arquillian will often need to source Maven artifacts from outside the central repository.
+    By setting the org.apache.maven.user-settings system property to the location of this file,
+    the Arquillian libraries will be able to access the custom repositories listed here.
+
+    See https://github.com/shrinkwrap/resolver#system-properties for more details
+-->
+<settings>
+    <profiles>
+        <profile>
+            <id>new-repos</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>redhat</id>
+                    <name>redhat</name>
+                    <url>https://maven.repository.redhat.com/ga/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </repository>
+                <repository>
+                    <id>earlyaccess</id>
+                    <name>earlyaccess</name>
+                    <url>https://maven.repository.redhat.com/earlyaccess/all/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+</settings>
