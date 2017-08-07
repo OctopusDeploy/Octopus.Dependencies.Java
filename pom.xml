@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -697,13 +697,16 @@
                             <resources>
                                 <resource>
                                     <directory>${project.build.resources[0].directory}</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
                                     <includes>
                                         <include>
                                             jboss-cli.xml
                                         </include>
                                         <include>
                                             calamarijava.nuspec
+                                        </include>
+                                        <include>
+                                            tools.jar
                                         </include>
                                     </includes>
                                 </resource>

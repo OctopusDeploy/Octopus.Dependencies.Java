@@ -53,7 +53,7 @@ Tests against these profiles can be run with the following command
 For example
 
 ```
-./mvnw clean verify -Peap6
+./mvnw clean verify -Peap6`
 ```
 
 All containers can be tested with the command:
@@ -62,3 +62,11 @@ All containers can be tested with the command:
 ./mvnw verify -Peap6; ./mvnw verify -Peap7; ./mvnw verify -Pwildfly10; ./mvnw verify -Pwildfly11; ./mvnw verify -Ptomcat7; ./mvnw verify -Ptomcat8; ./mvnw verify -Ptomcat85; ./mvnw verify -Ptomcat9
 ./mvnw verify -Pdomain-eap6; ./mvnw verify -Pdomain-eap7; ./mvnw verify -Pdomain-wildfly10; ./mvnw verify -Pdomain-wildfly11
 ```
+
+# Java Tools
+
+The following java packaging and security tools can be run with these commands:
+
+* keytool: ```java sun.security.tools.keytool.Main```
+* jarsigner: ```java sun.security.tools.JarSigner```
+* jar: ```java sun.tools.jar.Main```

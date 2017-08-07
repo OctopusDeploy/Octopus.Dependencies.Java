@@ -7,11 +7,13 @@
         <authors>Matthew Casperson</authors>
         <contentFiles>
             <files include="**/calamari*.jar" buildAction="None" copyToOutput="false" />
+            <files include="**/tools.jar" buildAction="None" copyToOutput="false" />
             <files include="**/jboss-cli.xml" buildAction="None" copyToOutput="false" />
         </contentFiles>
     </metadata>
     <files>
         <file src="target\calamari*.jar" target="contentFiles/any/any" />
+        <file src="target\tools.jar" target="contentFiles/any/any" />
         <file src="target\jboss-cli.xml" target="contentFiles/any/any" />
     </files>
 </package>
