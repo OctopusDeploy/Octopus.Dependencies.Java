@@ -67,6 +67,6 @@ All containers can be tested with the command:
 
 The following java packaging and security tools can be run with these commands:
 
-* keytool: ```java sun.security.tools.keytool.Main```
-* jarsigner: ```java sun.security.tools.JarSigner```
-* jar: ```java sun.tools.jar.Main```
+* keytool: ```java -cp tools.jar sun.security.tools.keytool.Main```
+* jarsigner: ```java -cp tools.jar sun.security.tools.JarSigner```
+* jar: ```java -cp tools.jar sun.tools.jar.Main```
