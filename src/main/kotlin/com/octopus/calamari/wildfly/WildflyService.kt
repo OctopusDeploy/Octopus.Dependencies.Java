@@ -1,16 +1,23 @@
 package com.octopus.calamari.wildfly
 
 import com.google.common.base.Preconditions.checkState
+import com.octopus.calamari.tomcat.TomcatDeploy
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import com.octopus.calamari.utils.impl.StreamUtilsImpl
 import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
 import org.springframework.retry.RetryCallback
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * A service used to interact with WildFly
  */
 class WildflyService {
+    companion object {
+        val logger: Logger = Logger.getLogger(WildflyService.javaClass.simpleName)
+    }
+
     private val retry = RetryServiceImpl.createRetry()
     /*
         The JBoss libraries write a lot of unhelpful text to std err, which
@@ -40,7 +47,7 @@ class WildflyService {
         retry.execute(RetryCallback<Unit, Throwable> { context ->
             checkState(!connected, "You can not connect more than once")
 
-            println("Attempt ${context.retryCount + 1} to connect.")
+            logger.log(Level.INFO, "Attempt ${context.retryCount + 1} to connect.")
 
             jbossCli.connect(
                     options.protocol,
@@ -59,7 +66,7 @@ class WildflyService {
         retry.execute(RetryCallback<Unit, Throwable> { context ->
             checkState(connected, "You must be connected to disconnect")
 
-            println("Attempt ${context.retryCount + 1} to disconnect.")
+            logger.log(Level.INFO, "Attempt ${context.retryCount + 1} to disconnect.")
 
             jbossCli.disconnect()
 
@@ -73,7 +80,7 @@ class WildflyService {
         retry.execute(RetryCallback<Unit, Throwable> { context ->
             checkState(!connected, "You must disconnect before terminating")
 
-            println("Attempt ${context.retryCount + 1} to terminate.")
+            logger.log(Level.INFO, "Attempt ${context.retryCount + 1} to terminate.")
 
             jbossCli.terminate()
 
@@ -91,13 +98,13 @@ class WildflyService {
         return Try.Success(retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
             checkState(connected, "You must be connected before running commands")
 
-            println("Attempt ${context.retryCount + 1} to $description.")
+            logger.log(Level.INFO, "Attempt ${context.retryCount + 1} to $description.")
 
             val result = jbossCli.cmd(command)
 
             if (debug) {
-                println("Command: " + command)
-                println("Result as JSON: " + result?.response?.toJSONString(false))
+                logger.log(Level.INFO, "Command: " + command)
+                logger.log(Level.INFO, "Result as JSON: " + result?.response?.toJSONString(false))
             }
 
             result
@@ -108,13 +115,13 @@ class WildflyService {
         return Try.Success(retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
             checkState(connected, "You must be connected before running commands")
 
-            println("Attempt ${context.retryCount + 1} to $description.")
+            logger.log(Level.INFO, "Attempt ${context.retryCount + 1} to $description.")
 
             val result = jbossCli.cmd(command)
 
             if (debug) {
-                println("Command: " + command)
-                println("Result as JSON: " + result?.response?.toJSONString(false))
+                logger.log(Level.INFO, "Command: " + command)
+                logger.log(Level.INFO, "Result as JSON: " + result?.response?.toJSONString(false))
             }
 
             if (!result.isSuccess) {

@@ -2,12 +2,16 @@ package com.octopus.calamari.wildfly
 
 import com.google.common.base.Splitter
 import org.funktionale.tries.Try
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * Implements the deployment of an artifact to a WildFly server
  */
 class WildflyDeploy {
     companion object {
+        val logger: Logger = Logger.getLogger(WildflyService.javaClass.simpleName)
+
         @JvmStatic
         fun main(args: Array<String>) {
             WildflyDeploy().deployArtifact(WildflyOptions.fromEnvironmentVars())
@@ -94,10 +98,10 @@ class WildflyDeploy {
                     }
                     .map { service.logout() }
                     .map { service.shutdown() }
-                    .onSuccess { println("Deployment finished.")}
+                    .onSuccess { logger.log(Level.INFO, "Deployment finished.")}
                     .onFailure{
-                        System.err.println("Failed to deploy the package to the WildFly/EAP domain")
-                        System.err.println(it.toString())
+                        logger.log(Level.SEVERE, "Failed to deploy the package to the WildFly/EAP domain")
+                        logger.log(Level.SEVERE, it.toString())
                         throw it
                     }
         } else {
@@ -118,10 +122,10 @@ class WildflyDeploy {
                     }
                     .map { service.logout() }
                     .map { service.shutdown() }
-                    .onSuccess { println("Deployment finished.")}
+                    .onSuccess { logger.log(Level.INFO, "Deployment finished.")}
                     .onFailure{
-                        System.err.println("Failed to deploy the package to the WildFly/EAP standalone instance")
-                        System.err.println(it.toString())
+                        logger.log(Level.SEVERE, "Failed to deploy the package to the WildFly/EAP standalone instance")
+                        logger.log(Level.SEVERE, it.toString())
                         throw it
                     }
         }
