@@ -70,3 +70,4 @@ The following java packaging and security tools can be run with these commands:
 * keytool: ```java -cp tools.jar sun.security.tools.keytool.Main```
 * jarsigner: ```java -cp tools.jar sun.security.tools.JarSigner```
 * jar: ```java -cp tools.jar sun.tools.jar.Main```
+* pack200: ```java -cp tools.jar com.sun.java.util.jar.pack.Driver```
