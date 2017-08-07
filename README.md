@@ -71,3 +71,21 @@ The following java packaging and security tools can be run with these commands:
 * jarsigner: ```java -cp tools.jar sun.security.tools.JarSigner```
 * jar: ```java -cp tools.jar sun.tools.jar.Main```
 * pack200: ```java -cp tools.jar com.sun.java.util.jar.pack.Driver```
+
+# Error Codes
+
+* WILDFLY-DEPLOY-ERROR-0001: There was an error taking a snapshot of the current configuration
+* WILDFLY-DEPLOY-ERROR-0002: There was an error deploying the artifact
+* WILDFLY-DEPLOY-ERROR-0003: There was an error reading the exsiting deployments
+* WILDFLY-DEPLOY-ERROR-0004: There was an error adding the package to the server group
+* WILDFLY-DEPLOY-ERROR-0005: There was an error deploying the package to the server group
+* WILDFLY-DEPLOY-ERROR-0005: There was an error undeploying the package to the server group
+* WILDFLY-DEPLOY-ERROR-0007: There was an error deploying the package to the standalone server
+* WILDFLY-DEPLOY-ERROR-0008: There was an error enabling the package in the standalone server 
+* WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API 
+* WILDFLY-DEPLOY-ERROR-0010: There was an error logging out of the management API
+* WILDFLY-DEPLOY-ERROR-0011: There was an error terminating the CLI object
+* TOMCAT-DEPLOY-ERROR-0001: There was an error deploying the package to Tomcat
+* TOMCAT-DEPLOY-ERROR-0002: There was an error deploying a tagged package to Tomcat
+* TOMCAT-DEPLOY-ERROR-0003: There was an error undeploying a package from Tomcat
+* TOMCAT-DEPLOY-ERROR-0004: There was an error enabling or disabling a package in Tomcat

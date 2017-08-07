@@ -30,7 +30,7 @@ class WildflyServiceTest {
     }
 
     fun runCmd(cmd:String): Try<CLI.Result> {
-        return wildflyService.runCommandExpectSuccess(cmd,"test verification")
+        return wildflyService.runCommandExpectSuccess(cmd,"test verification", "test command failed")
     }
 
     @Test

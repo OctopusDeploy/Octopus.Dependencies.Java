@@ -2,7 +2,6 @@ package com.octopus.calamari.tomcat
 
 import com.google.common.base.Preconditions
 import com.octopus.calamari.utils.impl.RetryServiceImpl
-import com.octopus.calamari.wildfly.WildflyService
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.fluent.Request
 import org.apache.http.entity.ContentType
@@ -12,7 +11,6 @@ import org.apache.http.HttpHost
 import org.apache.http.HttpResponse
 import org.apache.http.client.fluent.Executor
 import org.springframework.retry.RetryCallback
-import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
@@ -21,7 +19,7 @@ import java.util.logging.Logger
  */
 class TomcatDeploy {
     companion object {
-        val logger:Logger = Logger.getLogger(TomcatDeploy.javaClass.simpleName)
+        val logger:Logger = Logger.getLogger(TomcatDeploy::class.simpleName)
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -76,7 +74,7 @@ class TomcatDeploy {
         Preconditions.checkArgument(StringUtils.isNotBlank(options.application))
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
-            logger.log(Level.INFO, "Attempt ${context.retryCount + 1} to deploy ${options.application} to ${options.deployUrl.toExternalForm()}")
+            logger.info("Attempt ${context.retryCount + 1} to deploy ${options.application} to ${options.deployUrl.toExternalForm()}")
 
             /*
                 Create an executor that has the credentials saved
@@ -101,8 +99,8 @@ class TomcatDeploy {
                     .map {
                         setDeploymentState(options)
                     }
-                    .onSuccess { logger.log(Level.INFO, "Application deployed successfully") }
-                    .onFailure { throw Exception("Failed to deploy file to Tomcat manager. " +
+                    .onSuccess { logger.info("Application deployed successfully") }
+                    .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0001: Failed to deploy file to Tomcat manager. " +
                             "Make sure the user ${options.user} has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file", it) }
         })
@@ -116,7 +114,7 @@ class TomcatDeploy {
         Preconditions.checkArgument(StringUtils.isNotBlank(options.tag))
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
-            logger.log(Level.INFO, "Attempt ${context.retryCount + 1} to deploy ${options.tag} to ${options.redeployUrl.toExternalForm()}")
+            logger.info("Attempt ${context.retryCount + 1} to deploy ${options.tag} to ${options.redeployUrl.toExternalForm()}")
 
             /*
                 Create an executor that has the credentials saved
@@ -134,8 +132,8 @@ class TomcatDeploy {
                         Was the response a success?
                      */
                     .map { response -> validateResponse(response) }
-                    .onSuccess { logger.log(Level.INFO, "Application deployed successfully") }
-                    .onFailure { throw Exception("Failed to redeploy tagged application to the Tomcat manager. " +
+                    .onSuccess { logger.info("Application deployed successfully") }
+                    .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0002: Failed to redeploy tagged application to the Tomcat manager. " +
                             "Make sure the user ${options.user} has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file", it) }
         })
@@ -145,7 +143,7 @@ class TomcatDeploy {
         Preconditions.checkArgument(StringUtils.isNotBlank(options.name))
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
-            logger.log(Level.INFO, "Attempt ${context.retryCount + 1} to ${if (options.deploy) "deploy ${options.tag}" else "undeploy ${options.application}"} to ${options.undeployUrl.toExternalForm()}")
+            logger.info("Attempt ${context.retryCount + 1} to ${if (options.deploy) "deploy ${options.tag}" else "undeploy ${options.application}"} to ${options.undeployUrl.toExternalForm()}")
 
             /*
                 Create an executor that has the credentials saved
@@ -163,8 +161,8 @@ class TomcatDeploy {
                         Was the response a success?
                      */
                     .map { response -> validateResponse(response) }
-                    .onSuccess { logger.log(Level.INFO, "Application undeployed successfully") }
-                    .onFailure { throw Exception("Failed to undeploy app from Tomcat manager. " +
+                    .onSuccess { logger.info("Application undeployed successfully") }
+                    .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0003: Failed to undeploy app from Tomcat manager. " +
                             "Make sure the user ${options.user} has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file", it) }
         })
@@ -176,7 +174,7 @@ class TomcatDeploy {
         val url = if (options.enabled) options.startUrl else options.stopUrl
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
-            logger.log(Level.INFO, "Attempt ${context.retryCount + 1} to ${if (options.enabled) "start" else "stop"} ${options.application} via ${url.toExternalForm()}")
+            logger.info("Attempt ${context.retryCount + 1} to ${if (options.enabled) "start" else "stop"} ${options.application} via ${url.toExternalForm()}")
 
             /*
                 Create an executor that has the credentials saved
@@ -194,8 +192,8 @@ class TomcatDeploy {
                         Was the response a success?
                      */
                     .map { response -> validateResponse(response) }
-                    .onSuccess { logger.log(Level.INFO, "Application ${if (options.enabled) "started" else "stopped"} successfully") }
-                    .onFailure { throw Exception("Failed to ${if (options.enabled) "start" else "stop"} deployment via Tomcat manager. " +
+                    .onSuccess { logger.info("Application ${if (options.enabled) "started" else "stopped"} successfully") }
+                    .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0004: Failed to ${if (options.enabled) "start" else "stop"} deployment via Tomcat manager. " +
                             "Make sure the user ${options.user} has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file", it) }
         })

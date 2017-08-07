@@ -3,6 +3,7 @@ package com.octopus.calamari.wildfly
 import com.octopus.calamari.utils.Constants
 import org.apache.commons.io.FilenameUtils
 import java.lang.IllegalArgumentException
+import java.util.logging.Logger
 
 /**
  * Options that relate to wildfly deployments
@@ -32,7 +33,14 @@ data class WildflyOptions(
         val disabledServerGroup:String = "",
         val debug:Boolean = true
 ) {
+    val logger: Logger = Logger.getLogger(WildflyOptions::class.simpleName)
     val packageName:String = if (name == null || name.isBlank()) FilenameUtils.getName(application) else name
+
+    init {
+        if (this.debug) {
+            logger.info(this.toSantisisedString())
+        }
+    }
 
     companion object Factory {
         /**
@@ -79,5 +87,12 @@ data class WildflyOptions(
                     debug.toBoolean()
             )
         }
+    }
+
+    /**
+     * Masks the password when dumping the string version of this object
+     */
+    fun toSantisisedString():String {
+        return this.copy(password = "******", debug = false).toString()
     }
 }

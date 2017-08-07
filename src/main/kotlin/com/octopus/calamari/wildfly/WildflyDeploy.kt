@@ -10,7 +10,7 @@ import java.util.logging.Logger
  */
 class WildflyDeploy {
     companion object {
-        val logger: Logger = Logger.getLogger(WildflyService.javaClass.simpleName)
+        val logger: Logger = Logger.getLogger(WildflyService::class.simpleName)
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -42,14 +42,16 @@ class WildflyDeploy {
                     .flatMap{
                         service.runCommandExpectSuccess(
                             "deploy --force --name=${options.packageName} ${options.application}",
-                            "deploy application ${options.application} as ${options.packageName}")}
+                            "deploy application ${options.application} as ${options.packageName}",
+                                "WILDFLY-DEPLOY-ERROR-0002: There was an error deploying the artifact")}
                     /*
                         Query the list of deployments
                      */
                     .flatMap{
                         service.runCommandExpectSuccess(
                                 ":read-children-names(child-type=deployment)",
-                                "query deployments")}
+                                "query deployments",
+                                "WILDFLY-DEPLOY-ERROR-0003: There was an error reading the exsiting deployments")}
                     /*
                         Add the package to the target server groups
                      */
@@ -67,7 +69,9 @@ class WildflyDeploy {
                                     if (!it.isSuccess) {
                                       service.runCommandExpectSuccess(
                                             "/server-group=$serverGroup/deployment=${options.packageName}:add",
-                                            "add package ${options.packageName} to server group $serverGroup")
+                                            "add package ${options.packageName} to server group $serverGroup",
+                                              "WILDFLY-DEPLOY-ERROR-0004: There was an error adding the " +
+                                                      "${options.packageName} to the server group $serverGroup")
                             }}
                             .onFailure { throw it }
                     }}
@@ -81,7 +85,9 @@ class WildflyDeploy {
                             .forEach{ serverGroup ->
                                 service.runCommandExpectSuccess(
                                     "/server-group=$serverGroup/deployment=${options.packageName}:deploy",
-                                    "deploy the package ${options.packageName} to the server group $serverGroup"
+                                    "deploy the package ${options.packageName} to the server group $serverGroup",
+                                        "WILDFLY-DEPLOY-ERROR-0005: There was an error deploying the " +
+                                               "${options.packageName} to the server group $serverGroup"
                         ).onFailure { throw it }}
                     }
                     /*
@@ -93,7 +99,9 @@ class WildflyDeploy {
                             .split(options.disabledServerGroup).forEach{ serverGroup ->
                         service.runCommandExpectSuccess(
                             "/server-group=$serverGroup/deployment=${options.packageName}:undeploy",
-                            "undeploy the package ${options.packageName} from the server group $serverGroup"
+                            "undeploy the package ${options.packageName} from the server group $serverGroup",
+                                "WILDFLY-DEPLOY-ERROR-0006: There was an error undeploying the " +
+                                        "${options.packageName} to the server group $serverGroup"
                         ).onFailure { throw it }}
                     }
                     .map { service.logout() }
@@ -111,13 +119,15 @@ class WildflyDeploy {
             Try.Success(service.takeSnapshot())
                     .flatMap { service.runCommandExpectSuccess(
                             "deploy --force ${if (!options.enabled) "--disabled" else ""} --name=${options.packageName} ${options.application}",
-                            "deploy application to standalone WildFly/EAP instance")
+                            "deploy application to standalone WildFly/EAP instance",
+                            "WILDFLY-DEPLOY-ERROR-0007: There was an error deploying the package ${options.packageName} to the standalone server")
                     }
                     .map {
                         if (options.enabled) {
                             service.runCommandExpectSuccess(
                                 "deploy --name=${options.packageName}",
-                                "enable application in standalone WildFly/EAP instance")
+                                "enable application in standalone WildFly/EAP instance",
+                                    "WILDFLY-DEPLOY-ERROR-0008: There was an error enabling the package ${options.packageName} in the standalone server")
                         }
                     }
                     .map { service.logout() }

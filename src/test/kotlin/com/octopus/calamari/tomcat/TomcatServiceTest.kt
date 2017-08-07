@@ -12,6 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 import java.net.URL
+import java.net.URLDecoder
 
 /**
  * Tests of the tomcat deployment service
@@ -217,7 +218,6 @@ class TomcatServiceTest {
         Assert.assertTrue(deployments2.contains("/sampleapp2:running:0:sampleapp2##2"))
     }
 
-
     @Test
     @RunAsClient
     fun overwriteDeployment() {
@@ -297,5 +297,21 @@ class TomcatServiceTest {
         Assert.assertTrue(deployments1.contains("/app3:running"))
         Assert.assertTrue(deployments1.contains("/app4:running"))
         Assert.assertTrue(deployments1.contains("/app5:running"))
+    }
+
+    @Test
+    @RunAsClient
+    fun deployWarWithUtfPath() {
+        val tomcatDeploy = TomcatDeploy()
+        tomcatDeploy.doDeployment(TomcatOptions(
+                controller = "http://127.0.0.1:38080",
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                application = File(URLDecoder.decode(this.javaClass.getResource("/sampleapp#テスト.war").file, "UTF-8")).absolutePath,
+                debug = true
+        ))
+        val deployments1 = listDeployments(commonOptions)
+        println(deployments1)
+        Assert.assertTrue(deployments1.contains("/sampleapp/テスト:running"))
     }
 }
