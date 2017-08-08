@@ -1,7 +1,9 @@
 package com.octopus.calamari.wildfly
 
+import com.google.common.base.Preconditions
 import com.google.common.base.Splitter
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
+import org.apache.commons.lang3.StringUtils
 import org.funktionale.tries.Try
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -9,21 +11,19 @@ import java.util.logging.Logger
 /**
  * Implements the deployment of an artifact to a WildFly server
  */
-class WildflyDeploy {
-    companion object {
-        val logger: Logger = Logger.getLogger(WildflyService::class.simpleName)
+object WildflyDeploy {
+    val logger: Logger = Logger.getLogger(WildflyService::class.simpleName)
 
-        @JvmStatic
-        fun main(args: Array<String>) {
-            WildflyDeploy().deployArtifact(WildflyOptions.fromEnvironmentVars())
+    @JvmStatic
+    fun main(args: Array<String>) {
+        WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
 
-            /*
-                org.jboss.as.cli.impl.CLIModelControllerClient has some threads
-                that can take a minute to timeout. We really don't want to wait,
-                so exit right away.
-             */
-            System.exit(0)
-        }
+        /*
+            org.jboss.as.cli.impl.CLIModelControllerClient has some threads
+            that can take a minute to timeout. We really don't want to wait,
+            so exit right away.
+         */
+        System.exit(0)
     }
 
     init {
@@ -34,6 +34,8 @@ class WildflyDeploy {
      * @param options The details of the deployment
      */
     fun deployArtifact(options: WildflyOptions) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(options.application))
+
         val service = WildflyService().login(options)
 
         if (service.isDomainMode) {

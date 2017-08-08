@@ -1,7 +1,9 @@
 package com.octopus.calamari.wildfly
 
+import com.google.common.base.Preconditions
 import com.octopus.calamari.utils.Constants
 import org.apache.commons.io.FilenameUtils
+import org.apache.commons.lang3.StringUtils
 import java.lang.IllegalArgumentException
 import java.util.logging.Logger
 
@@ -34,7 +36,11 @@ data class WildflyOptions(
         val debug:Boolean = true
 ) {
     val logger: Logger = Logger.getLogger(WildflyOptions::class.simpleName)
-    val packageName:String = if (name == null || name.isBlank()) FilenameUtils.getName(application) else name
+    val packageName:String =
+            if (StringUtils.isBlank(name))
+                FilenameUtils.getName(application)
+            else
+                name!!
 
     init {
         if (this.debug) {
@@ -52,26 +58,14 @@ data class WildflyOptions(
             val controller = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Controller", "localhost")
             val port = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Port", "9990")
             val protocol = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Protocol", "http-remoting")
-            val user = envVars.get(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_User")
-            val password = envVars.get(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Password")
-            val application = envVars.get(Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath")
+            val user = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_User", "")
+            val password = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Password", "")
+            val application = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath", "")
             val name = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Name", null)
             val enabled = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled", "true")
             val enabledServerGroup = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_EnabledServerGroup", "")
             val disabledServerGroup = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_DisabledServerGroup", "")
             val debug = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Debug", "true")
-
-            if (user == null) {
-                throw IllegalArgumentException("user can not be null")
-            }
-
-            if (password == null) {
-                throw IllegalArgumentException("password can not be null")
-            }
-
-            if (application == null) {
-                throw IllegalArgumentException("application can not be null")
-            }
 
             return WildflyOptions(
                     controller,

@@ -18,14 +18,12 @@ import java.util.logging.Logger
  * The service used to deploy applications to Tomcat via the
  * manager interface
  */
-class TomcatDeploy {
-    companion object {
-        val logger:Logger = Logger.getLogger(TomcatDeploy::class.simpleName)
+object TomcatDeploy {
+    val logger:Logger = Logger.getLogger(TomcatDeploy::class.simpleName)
 
-        @JvmStatic
-        fun main(args: Array<String>) {
-            TomcatDeploy().deployArtifact(TomcatOptions.fromEnvironmentVars())
-        }
+    @JvmStatic
+    fun main(args: Array<String>) {
+        TomcatDeploy.doDeployment(TomcatOptions.fromEnvironmentVars())
     }
 
     init {
@@ -36,18 +34,6 @@ class TomcatDeploy {
         if (response.statusLine.statusCode !in 200..299) {
             throw IllegalStateException("Response code ${response.statusLine.statusCode} indicated failure.")
         }
-    }
-
-    fun generateExecttor(options:TomcatOptions):Executor {
-        return Executor.newInstance()
-                .auth(HttpHost(
-                        options.undeployUrl.host,
-                        options.undeployUrl.port),
-                        options.user,
-                        options.password)
-                .authPreemptive(HttpHost(
-                        options.undeployUrl.host,
-                        options.undeployUrl.port))
     }
 
     fun doDeployment(options: TomcatOptions) {
@@ -84,7 +70,7 @@ class TomcatDeploy {
             /*
                 Create an executor that has the credentials saved
              */
-            Try.Success(generateExecttor(options))
+            Try.Success(TomcatService.generateExecutor(options))
                     /*
                         Use the executor to PUT the package to the
                         manager
@@ -102,7 +88,7 @@ class TomcatDeploy {
                      */
                     .map { response -> validateResponse(response) }
                     .map {
-                        setDeploymentState(options)
+                        TomcatState.setDeploymentState(options)
                     }
                     .onSuccess { logger.info("Application deployed successfully") }
                     .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0001: Failed to deploy file to Tomcat manager. " +
@@ -124,7 +110,7 @@ class TomcatDeploy {
             /*
                 Create an executor that has the credentials saved
              */
-            Try.Success(generateExecttor(options))
+            Try.Success(TomcatService.generateExecutor(options))
                     /*
                         Use the executor to execute a GET that redeploys the app
                      */
@@ -153,7 +139,7 @@ class TomcatDeploy {
             /*
                 Create an executor that has the credentials saved
              */
-            Try.Success(generateExecttor(options))
+            Try.Success(TomcatService.generateExecutor(options))
                     /*
                         Use the executor to execute a GET that undeploys the app
                      */
@@ -168,37 +154,6 @@ class TomcatDeploy {
                     .map { response -> validateResponse(response) }
                     .onSuccess { logger.info("Application undeployed successfully") }
                     .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0003: Failed to undeploy app from Tomcat manager. " +
-                            "Make sure the user ${options.user} has been " +
-                            "assigned to the manager-script role in the tomcat-users.xml file", it) }
-        })
-    }
-
-    fun setDeploymentState(options: TomcatOptions) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(options.application))
-
-        val url = if (options.enabled) options.startUrl else options.stopUrl
-
-        RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
-            logger.info("Attempt ${context.retryCount + 1} to ${if (options.enabled) "start" else "stop"} ${options.application} via ${url.toExternalForm()}")
-
-            /*
-                Create an executor that has the credentials saved
-             */
-            Try.Success(generateExecttor(options))
-                    /*
-                        Use the executor to PUT the package to the
-                        manager
-                     */
-                    .map { executor ->
-                        executor.execute(Request.Get(url.toExternalForm()))
-                                .returnResponse()
-                    }
-                    /*
-                        Was the response a success?
-                     */
-                    .map { response -> validateResponse(response) }
-                    .onSuccess { logger.info("Application ${if (options.enabled) "started" else "stopped"} successfully") }
-                    .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0004: Failed to ${if (options.enabled) "start" else "stop"} deployment via Tomcat manager. " +
                             "Make sure the user ${options.user} has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file", it) }
         })

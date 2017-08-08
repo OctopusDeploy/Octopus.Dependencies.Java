@@ -86,6 +86,7 @@ The following java packaging and security tools can be run with these commands:
 * WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API 
 * WILDFLY-DEPLOY-ERROR-0010: There was an error logging out of the management API
 * WILDFLY-DEPLOY-ERROR-0011: There was an error terminating the CLI object
+* WILDFLY-DEPLOY-ERROR-0012: There was an error changing the deployed state of the application
 * TOMCAT-DEPLOY-ERROR-0001: There was an error deploying the package to Tomcat
 * TOMCAT-DEPLOY-ERROR-0002: There was an error deploying a tagged package to Tomcat
 * TOMCAT-DEPLOY-ERROR-0003: There was an error undeploying a package from Tomcat
