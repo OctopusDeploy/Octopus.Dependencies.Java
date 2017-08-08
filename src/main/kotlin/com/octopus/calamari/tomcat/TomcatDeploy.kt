@@ -1,6 +1,7 @@
 package com.octopus.calamari.tomcat
 
 import com.google.common.base.Preconditions
+import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.fluent.Request
@@ -25,6 +26,10 @@ class TomcatDeploy {
         fun main(args: Array<String>) {
             TomcatDeploy().deployArtifact(TomcatOptions.fromEnvironmentVars())
         }
+    }
+
+    init {
+        LoggingServiceImpl.configureLogging()
     }
 
     fun validateResponse(response: HttpResponse) {

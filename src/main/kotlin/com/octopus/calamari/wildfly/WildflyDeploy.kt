@@ -1,6 +1,7 @@
 package com.octopus.calamari.wildfly
 
 import com.google.common.base.Splitter
+import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import org.funktionale.tries.Try
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -23,6 +24,10 @@ class WildflyDeploy {
              */
             System.exit(0)
         }
+    }
+
+    init {
+        LoggingServiceImpl.configureLogging()
     }
 
     /**

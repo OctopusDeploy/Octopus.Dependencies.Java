@@ -23,7 +23,8 @@ export OctopusEnvironment_Tomcat_Deploy_Password="value"
 export OctopusEnvironment_Tomcat_Deploy_Debug="value"
 export OctopusEnvironment_Tomcat_Deploy_Deploy="value"
 export OctopusEnvironment_Tomcat_Deploy_Tag="value"
-java -cp calamari.jar com.octopus.calamari.tomcat.TomcatDeploy
+export OctopusEnvironment_Octopus_Action_EnabledFeatures="value"
+java -jar calamari.jar
 ```
 
 # Testing

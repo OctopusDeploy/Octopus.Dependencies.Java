@@ -2,7 +2,6 @@ package com.octopus.calamari.wildfly
 
 import com.google.common.base.Preconditions.checkState
 import com.octopus.calamari.utils.impl.RetryServiceImpl
-import com.octopus.calamari.utils.impl.StreamUtilsImpl
 import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
 import org.springframework.retry.RetryCallback
@@ -17,14 +16,7 @@ class WildflyService {
     }
 
     private val retry = RetryServiceImpl.createRetry()
-    /*
-        The JBoss libraries write a lot of unhelpful text to std err, which
-        we really don't want to appear in the Octopus logs. So this text is
-        redirected to an internal buffer.
-     */
-    private val jbossCli = Try.Success(StreamUtilsImpl.redirectStdErr())
-            .map{CLI.newInstance()}
-            .get()
+    private val jbossCli = CLI.newInstance()
     /**
      * True once the login() function completes, and false otherwise
      */
