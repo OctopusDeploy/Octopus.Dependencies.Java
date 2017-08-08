@@ -87,23 +87,23 @@
         </configuration>
     </container>
 
-    <container qualifier="wildfly-11.0.0.Alpha1">
+    <container qualifier="wildfly-11.0.0.Beta1">
         <configuration>
-            <property name="chameleonTarget">wildfly:11.0.0.Alpha1:managed</property>
+            <property name="chameleonTarget">wildfly:11.0.0.Beta1:managed</property>
             <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
             <property name="managementAddress">127.0.0.1</property>
             <property name="managementPort">9990</property>
-            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/wildfly-11.0.0.Alpha1/standalone/configuration</property>
+            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/wildfly-11.0.0.Beta1/standalone/configuration</property>
         </configuration>
     </container>
 
-    <container qualifier="domain-wildfly-11.0.0.Alpha1">
+    <container qualifier="domain-wildfly-11.0.0.Beta1">
         <configuration>
-            <property name="chameleonTarget">wildfly domain:11.0.0.Alpha1:managed</property>
+            <property name="chameleonTarget">wildfly domain:11.0.0.Beta1:managed</property>
             <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
             <property name="managementAddress">127.0.0.1</property>
             <property name="managementPort">9990</property>
-            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/wildfly-11.0.0.Alpha1/domain/configuration</property>
+            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/wildfly-11.0.0.Beta1/domain/configuration</property>
         </configuration>
     </container>
 

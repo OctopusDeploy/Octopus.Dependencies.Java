@@ -62,7 +62,7 @@
         </management-interfaces>
     </management>
     <domain-controller>
-        <remote username="$local" security-realm="ManagementRealm">
+        <remote security-realm="ManagementRealm">
             <discovery-options>
                 <static-discovery name="primary" protocol="${jboss.domain.master.protocol:remote}" host="${jboss.domain.master.address}" port="${jboss.domain.master.port:9999}"/>
             </discovery-options>
@@ -83,6 +83,7 @@
                 <option value="-server"/>
                 <option value="-XX:MetaspaceSize=96m"/>
                 <option value="-XX:MaxMetaspaceSize=256m"/>
+                <option value="--add-exports=java.base/sun.nio.ch=ALL-UNNAMED"/>
             </jvm-options>
         </jvm>
     </jvms>
@@ -103,7 +104,7 @@
             <expose-expression-model/>
             <remoting-connector/>
         </subsystem>
-        <subsystem xmlns="urn:wildfly:elytron:1.0" final-providers="combined-providers">
+        <subsystem xmlns="urn:wildfly:elytron:1.0" final-providers="combined-providers" disallowed-providers="OracleUcrypto">
             <providers>
                 <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
                 <provider-loader name="openssl" module="org.wildfly.openssl"/>
@@ -129,7 +130,13 @@
                 </properties-realm>
             </security-realms>
             <mappers>
-                <constant-permission-mapper name="default-permission-mapper">
+                <logical-permission-mapper name="default-permission-mapper" logical-operation="unless" left="constant-permission-mapper" right="anonymous-permission-mapper"/>
+                <simple-permission-mapper name="anonymous-permission-mapper">
+                    <permission-mapping principals="anonymous">
+                        <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
+                    </permission-mapping>
+                </simple-permission-mapper>
+                <constant-permission-mapper name="constant-permission-mapper">
                     <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
                 </constant-permission-mapper>
                 <constant-realm-mapper name="local" realm-name="local"/>
@@ -164,14 +171,6 @@
                     </filters>
                 </mechanism-provider-filtering-sasl-server-factory>
                 <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
-                    <filters>
-                        <filter>
-                            <pattern-filter value="JBOSS-LOCAL-USER"/>
-                        </filter>
-                        <filter>
-                            <pattern-filter value="DIGEST-MD5"/>
-                        </filter>
-                    </filters>
                     <properties>
                         <property name="wildfly.sasl.local-user.default-user" value="$local"/>
                     </properties>
