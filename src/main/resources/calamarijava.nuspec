@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata minClientVersion="3.3.0">
         <id>Octopus.Dependencies.Java</id>
-        <version>{{Version}}</version>
+        <version>{{Version}}-alpha1</version>
         <description>Java library providing the interface to Java application servers for Calamari</description>
         <authors>Matthew Casperson</authors>
         <contentFiles>
