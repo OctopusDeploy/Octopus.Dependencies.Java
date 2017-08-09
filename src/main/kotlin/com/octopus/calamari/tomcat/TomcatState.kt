@@ -25,6 +25,10 @@ object TomcatState {
         LoggingServiceImpl.configureLogging()
     }
 
+    /**
+     * Starts or stops a deployment in Tomcat
+     * @param options The options passed in from Octopus
+     */
     fun setDeploymentState(options:TomcatOptions) {
         Preconditions.checkArgument(
                 StringUtils.isNotBlank(options.name) ||
@@ -32,8 +36,12 @@ object TomcatState {
 
         val url = if (options.enabled) options.startUrl else options.stopUrl
 
+        if (options.debug) {
+            logger.info("Making request to " + url.toExternalForm())
+        }
+
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
-            TomcatDeploy.logger.info("Attempt ${context.retryCount + 1} to ${if (options.enabled) "start" else "stop"} ${options.application} via ${url.toExternalForm()}")
+            logger.info("Attempt ${context.retryCount + 1} to ${if (options.enabled) "start" else "stop"} ${options.application} via ${url.toExternalForm()}")
 
             /*
                 Create an executor that has the credentials saved

@@ -69,6 +69,10 @@ object TomcatDeploy {
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to deploy ${options.application} to ${options.deployUrl.toExternalForm()}")
 
+            if (options.debug) {
+                logger.info("Making request to " + options.deployUrl.toExternalForm())
+            }
+
             /*
                 Create an executor that has the credentials saved
              */
@@ -113,6 +117,10 @@ object TomcatDeploy {
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to deploy ${options.tag} to ${options.redeployUrl.toExternalForm()}")
 
+            if (options.debug) {
+                logger.info("Making request to " + options.redeployUrl.toExternalForm())
+            }
+
             /*
                 Create an executor that has the credentials saved
              */
@@ -143,6 +151,10 @@ object TomcatDeploy {
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to ${if (options.deploy) "deploy ${options.tag}" else "undeploy ${options.application}"} to ${options.undeployUrl.toExternalForm()}")
+
+            if (options.debug) {
+                logger.info("Making request to " + options.undeployUrl.toExternalForm())
+            }
 
             /*
                 Create an executor that has the credentials saved

@@ -25,12 +25,13 @@ data class TomcatOptions(val controller:String,
                          val tag:String = "",
                          val version:String = "",
                          val enabled:Boolean = true,
-                         val debug:Boolean = true) {
+                         val debug:Boolean = true,
+                         val alreadyDumped:Boolean = false) {
 
     val logger: Logger = Logger.getLogger(WildflyOptions::class.simpleName)
 
     init {
-        if (this.debug) {
+        if (this.debug && !this.alreadyDumped) {
             logger.info(this.toSantisisedString())
         }
     }
@@ -52,39 +53,39 @@ data class TomcatOptions(val controller:String,
                     ""
 
     val deployUrl:URL
-        get() = URL("$controller/manager/text/" +
+        get() = URL("$controller/text/" +
                 "deploy?update=true&" +
                 "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" +
                 "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" +
                 (if (StringUtils.isNotBlank(tag)) "tag=${URLEncoder.encode(tag, "UTF-8")}" else ""))
 
     val redeployUrl:URL
-        get() = URL("$controller/manager/text/" +
+        get() = URL("$controller/text/" +
                 "deploy?" +
                 "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" +
                 "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" +
                 (if (StringUtils.isNotBlank(tag)) "tag=${URLEncoder.encode(tag, "UTF-8")}" else ""))
 
     val undeployUrl:URL
-        get() = URL("$controller/manager/text/" +
+        get() = URL("$controller/text/" +
                 "undeploy?" +
                 "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" +
                 "path=/${URLEncoder.encode(urlPath, "UTF-8")}")
 
     val stopUrl:URL
-        get() = URL("$controller/manager/text/" +
+        get() = URL("$controller/text/" +
                 "stop?" +
                 "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" +
                 "path=/${URLEncoder.encode(urlPath, "UTF-8")}")
 
     val startUrl:URL
-        get() = URL("$controller/manager/text/" +
+        get() = URL("$controller/text/" +
                 "start?" +
                 "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" +
                 "path=/${URLEncoder.encode(urlPath, "UTF-8")}")
 
     val listUrl:URL
-        get() = URL("$controller/manager/text/list")
+        get() = URL("$controller/text/list")
 
     companion object Factory {
         /**
@@ -157,6 +158,6 @@ data class TomcatOptions(val controller:String,
      * Masks the password when dumping the string version of this object
      */
     fun toSantisisedString():String {
-        return this.copy(password = "******", debug = false).toString()
+        return this.copy(password = "******", alreadyDumped = true).toString()
     }
 }

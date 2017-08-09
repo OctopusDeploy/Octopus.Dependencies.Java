@@ -33,7 +33,8 @@ data class WildflyOptions(
         val enabled:Boolean = true,
         val enabledServerGroup:String = "",
         val disabledServerGroup:String = "",
-        val debug:Boolean = true
+        val debug:Boolean = true,
+        val alreadyDumped:Boolean = false
 ) {
     val logger: Logger = Logger.getLogger(WildflyOptions::class.simpleName)
     val packageName:String =
@@ -43,7 +44,7 @@ data class WildflyOptions(
                 name!!
 
     init {
-        if (this.debug) {
+        if (this.debug && !this.alreadyDumped) {
             logger.info(this.toSantisisedString())
         }
     }
@@ -87,6 +88,6 @@ data class WildflyOptions(
      * Masks the password when dumping the string version of this object
      */
     fun toSantisisedString():String {
-        return this.copy(password = "******", debug = false).toString()
+        return this.copy(password = "******", alreadyDumped=true).toString()
     }
 }

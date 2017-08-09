@@ -528,9 +528,80 @@ class WildflyServiceTest {
         }
     }
 
+    /**
+     * Test enabling an already enabled deployment
+     */
     @Test
     @RunAsClient
-    fun testDisableDeployment() {
+    fun testReEnableDeployment() {
+
+        WildflyDeploy.deployArtifact(WildflyOptions(
+                controller = "127.0.0.1",
+                port = System.getProperty("port").toInt(),
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                protocol = System.getProperty("protocol"),
+                application = File(this.javaClass.getResource("/sampleejb.jar").file).absolutePath,
+                disabledServerGroup = "other-server-group",
+                enabled = false,
+                debug = true
+        ))
+
+        val result = runCmd(":read-children-names(child-type=deployment)")
+        Assert.assertTrue(result.isSuccess())
+        Assert.assertTrue(result.get().response.get("result").asList().any { "sampleejb.jar".equals(it.asString()) } )
+
+        if (wildflyService.isDomainMode) {
+            val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
+            Assert.assertTrue(otherServerGroupResult.isSuccess())
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
+        } else {
+            val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
+            Assert.assertTrue(standaloneResult.isSuccess())
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
+        }
+
+        WildflyState.setDeploymentState(WildflyOptions(
+                controller = "127.0.0.1",
+                port = System.getProperty("port").toInt(),
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                protocol = System.getProperty("protocol"),
+                name = "sampleejb.jar",
+                enabledServerGroup = "other-server-group",
+                enabled = true,
+                debug = true
+        ))
+
+        WildflyState.setDeploymentState(WildflyOptions(
+                controller = "127.0.0.1",
+                port = System.getProperty("port").toInt(),
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                protocol = System.getProperty("protocol"),
+                name = "sampleejb.jar",
+                enabledServerGroup = "other-server-group",
+                enabled = true,
+                debug = true
+        ))
+
+        if (wildflyService.isDomainMode) {
+            val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
+            Assert.assertTrue(otherServerGroupResult.isSuccess())
+            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
+        } else {
+            val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
+            Assert.assertTrue(standaloneResult.isSuccess())
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
+        }
+    }
+
+    /**
+     * Test disabling an already disabled deployment
+     */
+    @Test
+    @RunAsClient
+    fun testReDisableDeployment() {
 
         WildflyDeploy.deployArtifact(WildflyOptions(
                 controller = "127.0.0.1",
@@ -557,6 +628,18 @@ class WildflyServiceTest {
             Assert.assertTrue(standaloneResult.isSuccess())
             Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
+
+        WildflyState.setDeploymentState(WildflyOptions(
+                controller = "127.0.0.1",
+                port = System.getProperty("port").toInt(),
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                protocol = System.getProperty("protocol"),
+                name = "sampleejb.jar",
+                disabledServerGroup = "other-server-group",
+                enabled = false,
+                debug = true
+        ))
 
         WildflyState.setDeploymentState(WildflyOptions(
                 controller = "127.0.0.1",
