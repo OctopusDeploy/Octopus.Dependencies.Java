@@ -101,6 +101,7 @@ data class TomcatOptions(val controller:String,
             val password = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Password","")
             val debug = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Debug", "true").toBoolean()
             val deploy = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Deploy", "true").toBoolean()
+            val enabled = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Enabled", "true").toBoolean()
             val tag = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Tag", "")
 
             if (StringUtils.isBlank(user)) {
@@ -129,6 +130,7 @@ data class TomcatOptions(val controller:String,
                             name,
                             tag,
                             version,
+                            enabled,
                             debug)
                     }
                     .getOrElse {TomcatOptions(
@@ -140,6 +142,7 @@ data class TomcatOptions(val controller:String,
                             name,
                             tag,
                             version,
+                            enabled,
                             debug)
                     }
 
