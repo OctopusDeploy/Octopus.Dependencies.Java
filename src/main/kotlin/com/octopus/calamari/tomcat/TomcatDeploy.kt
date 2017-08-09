@@ -62,7 +62,9 @@ object TomcatDeploy {
      * @param options The details of the deployment
      */
     fun deployArtifact(options: TomcatOptions) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(options.application))
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(options.application),
+                "application can not be blank")
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to deploy ${options.application} to ${options.deployUrl.toExternalForm()}")
@@ -101,8 +103,12 @@ object TomcatDeploy {
      * @param options The details of the deployment
      */
     fun redeployArtifact(options: TomcatOptions) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(options.name))
-        Preconditions.checkArgument(StringUtils.isNotBlank(options.tag))
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(options.name),
+                "name can not be blank")
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(options.tag),
+                "tag can not be blank")
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to deploy ${options.tag} to ${options.redeployUrl.toExternalForm()}")
@@ -131,7 +137,9 @@ object TomcatDeploy {
     }
 
     fun undeployArtifact(options: TomcatOptions) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(options.name))
+        Preconditions.checkArgument(
+                StringUtils.isNotBlank(options.name),
+                "name can not be blank")
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to ${if (options.deploy) "deploy ${options.tag}" else "undeploy ${options.application}"} to ${options.undeployUrl.toExternalForm()}")

@@ -298,12 +298,12 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(URLDecoder.decode(this.javaClass.getResource("/sampleapp#テスト.war").file, "UTF-8")).absolutePath,
+                application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
                 debug = true
         ))
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)
-        Assert.assertTrue(deployments1.contains("/sampleapp/テスト:running"))
+        Assert.assertTrue(deployments1.contains("/appwithutf8/テスト:running"))
     }
 
     @Test
@@ -313,7 +313,7 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(URLDecoder.decode(this.javaClass.getResource("/sampleapp#テスト.war").file, "UTF-8")).absolutePath,
+                application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
                 name = "myUndeployedApp",
                 debug = true,
                 enabled = false
@@ -338,7 +338,7 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(URLDecoder.decode(this.javaClass.getResource("/sampleapp#テスト.war").file, "UTF-8")).absolutePath,
+                application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
                 name = "myDeployedApp",
                 debug = true,
                 enabled = true

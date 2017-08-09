@@ -116,7 +116,11 @@ data class TomcatOptions(val controller:String,
                 This is a hack while Octopus only supports zip files. Eventually
                 application will point to a WAR file directly.
              */
-            val applicationOpt = if (StringUtils.isBlank(application)) Option.None else Option.Some(application)
+            val applicationOpt =
+                    if (StringUtils.isBlank(application))
+                        Option.None
+                    else
+                        Option.Some(application)
 
             return applicationOpt
                     .map{FilenameUtils.getFullPath(it) + FilenameUtils.getBaseName(it) + ".war"}
