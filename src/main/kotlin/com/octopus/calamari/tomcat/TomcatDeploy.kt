@@ -96,7 +96,9 @@ object TomcatDeploy {
                     .onSuccess { logger.info("Application deployed successfully") }
                     .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0001: Failed to deploy file to Tomcat manager. " +
                             "Make sure the user ${options.user} has been " +
-                            "assigned to the manager-script role in the tomcat-users.xml file", it) }
+                            "assigned to the manager-script role in the tomcat-users.xml file, and that the manager url " +
+                            "${options.deployUrl.toExternalForm()} references the base path of the Tomcat manager application " +
+                            "e.g. http://localhost:8080/manager", it) }
         })
     }
 
