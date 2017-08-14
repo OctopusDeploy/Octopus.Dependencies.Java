@@ -95,6 +95,7 @@ pack200 --repack --effort=9 --segment-limit=-1 --modification-time=latest --stri
 * WILDFLY-DEPLOY-ERROR-0010: There was an error logging out of the management API
 * WILDFLY-DEPLOY-ERROR-0011: There was an error terminating the CLI object
 * WILDFLY-DEPLOY-ERROR-0012: There was an error changing the deployed state of the application
+* WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time
 * TOMCAT-DEPLOY-ERROR-0001: There was an error deploying the package to Tomcat
 * TOMCAT-DEPLOY-ERROR-0002: There was an error deploying a tagged package to Tomcat
 * TOMCAT-DEPLOY-ERROR-0003: There was an error undeploying a package from Tomcat
