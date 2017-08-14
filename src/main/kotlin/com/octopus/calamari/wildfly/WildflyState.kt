@@ -10,6 +10,7 @@ object WildflyState {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        LoggingServiceImpl.configureLogging()
         WildflyState.setDeploymentState(WildflyOptions.fromEnvironmentVars())
 
         /*
@@ -18,10 +19,6 @@ object WildflyState {
             so exit right away.
          */
         System.exit(0)
-    }
-
-    init {
-        LoggingServiceImpl.configureLogging()
     }
 
     fun setDeploymentState(options:WildflyOptions) {

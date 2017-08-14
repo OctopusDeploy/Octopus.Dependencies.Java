@@ -13,7 +13,7 @@ object LoggingServiceImpl : LoggingService {
      */
     override fun configureLogging() {
         /*
-            Clear all eaxiting handlers
+            Clear all existing handlers
          */
         LogManager.getLogManager().reset()
 

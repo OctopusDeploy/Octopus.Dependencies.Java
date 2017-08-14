@@ -23,11 +23,8 @@ object TomcatDeploy {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        TomcatDeploy.doDeployment(TomcatOptions.fromEnvironmentVars())
-    }
-
-    init {
         LoggingServiceImpl.configureLogging()
+        TomcatDeploy.doDeployment(TomcatOptions.fromEnvironmentVars())
     }
 
     fun validateResponse(response: HttpResponse) {

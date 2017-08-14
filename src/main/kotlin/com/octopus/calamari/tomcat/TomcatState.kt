@@ -18,11 +18,8 @@ object TomcatState {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        TomcatState.setDeploymentState(TomcatOptions.fromEnvironmentVars())
-    }
-
-    init {
         LoggingServiceImpl.configureLogging()
+        TomcatState.setDeploymentState(TomcatOptions.fromEnvironmentVars())
     }
 
     /**

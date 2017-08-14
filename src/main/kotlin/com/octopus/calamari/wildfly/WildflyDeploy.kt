@@ -16,6 +16,7 @@ object WildflyDeploy {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        LoggingServiceImpl.configureLogging()
         WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
 
         /*
@@ -24,10 +25,6 @@ object WildflyDeploy {
             so exit right away.
          */
         System.exit(0)
-    }
-
-    init {
-        LoggingServiceImpl.configureLogging()
     }
 
     /**
