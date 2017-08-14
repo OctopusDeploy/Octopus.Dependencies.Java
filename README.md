@@ -73,6 +73,14 @@ The following java packaging and security tools can be run with these commands:
 * jar: ```java -cp tools.jar sun.tools.jar.Main```
 * pack200: ```java -cp tools.jar com.sun.java.util.jar.pack.Driver```
 
+# Packing
+
+Use Pack200 to reduce the size of the final artifact:
+
+```
+pack200 --repack --effort=9 --segment-limit=-1 --modification-time=latest --strip-debug target/calamari.jar
+```
+
 # Error Codes
 
 * WILDFLY-DEPLOY-ERROR-0001: There was an error taking a snapshot of the current configuration

@@ -10,7 +10,8 @@ import com.octopus.calamari.wildfly.WildflyState
 import java.util.logging.Logger
 
 /**
- * The generic entry point to the app
+ * The generic entry point to the app. Note that the Calamari.Java platform
+ * does not use this entry point. It is here more for testing purposes.
  */
 object Main {
     const val TOMCAT_DEPLOY_MANAGER = "Octopus.Features.TomcatDeployManager"
