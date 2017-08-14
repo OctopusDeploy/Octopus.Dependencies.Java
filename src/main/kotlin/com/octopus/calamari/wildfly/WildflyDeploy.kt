@@ -16,8 +16,12 @@ object WildflyDeploy {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        LoggingServiceImpl.configureLogging()
-        WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
+        try {
+            LoggingServiceImpl.configureLogging()
+            WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
+        } catch (ex:Exception){
+            System.exit(-1)
+        }
 
         /*
             org.jboss.as.cli.impl.CLIModelControllerClient has some threads
