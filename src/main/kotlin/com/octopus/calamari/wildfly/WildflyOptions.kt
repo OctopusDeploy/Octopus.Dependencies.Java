@@ -6,6 +6,7 @@ import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang3.StringUtils
 import java.lang.IllegalArgumentException
 import java.util.logging.Logger
+import java.util.regex.Pattern
 
 /**
  * Options that relate to wildfly deployments
@@ -36,10 +37,14 @@ data class WildflyOptions(
         val debug:Boolean = true,
         val alreadyDumped:Boolean = false
 ) {
+    /**
+     * Octopus will append a guid onto the end of the file, which we need to remove
+     */
+    val guidRegex = Regex("-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$")
     val logger: Logger = Logger.getLogger(WildflyOptions::class.simpleName)
     val packageName:String =
             if (StringUtils.isBlank(name))
-                FilenameUtils.getName(application)
+                FilenameUtils.getName(application.replace(guidRegex, ""))
             else
                 name!!
 
