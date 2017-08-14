@@ -43,8 +43,8 @@ class WildflyService {
                     options.protocol,
                     options.controller,
                     options.port,
-                    options.user,
-                    options.password?.toCharArray())
+                    options.fixedUsername,
+                    options.fixedPassword?.toCharArray())
 
             connected = true
         }))

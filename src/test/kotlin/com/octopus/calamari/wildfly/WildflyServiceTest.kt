@@ -73,6 +73,20 @@ class WildflyServiceTest {
 
     @Test
     @RunAsClient
+    fun testWildflyLoginEmptyCredsLocalhost() {
+        val wildflyService = WildflyService()
+        wildflyService.login(WildflyOptions(
+                controller = "localhost",
+                user = "",
+                password = "",
+                port = System.getProperty("port").toInt(),
+                protocol = System.getProperty("protocol"),
+                debug = true
+        ))
+    }
+
+    @Test
+    @RunAsClient
     fun testWildflyAppDeployemnt() {
         WildflyDeploy.deployArtifact(WildflyOptions(
                 controller = "127.0.0.1",

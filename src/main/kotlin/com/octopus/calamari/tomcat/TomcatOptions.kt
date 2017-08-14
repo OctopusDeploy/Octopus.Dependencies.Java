@@ -158,6 +158,8 @@ data class TomcatOptions(val controller:String,
      * Masks the password when dumping the string version of this object
      */
     fun toSantisisedString():String {
-        return this.copy(password = "******", alreadyDumped = true).toString()
+        return this.copy(
+                password = "******",
+                alreadyDumped = true).toString()
     }
 }

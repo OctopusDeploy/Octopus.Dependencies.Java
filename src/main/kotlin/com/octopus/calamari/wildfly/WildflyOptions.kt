@@ -47,6 +47,14 @@ data class WildflyOptions(
                 FilenameUtils.getName(application.replace(guidRegex, ""))
             else
                 name!!
+    /**
+     * An empty username is treated as null
+     */
+    val fixedUsername = if (StringUtils.isBlank(user)) null else user
+    /**
+     * And empty username means we have no password
+     */
+    val fixedPassword = if (StringUtils.isBlank(user)) null else password
 
     init {
         if (this.debug && !this.alreadyDumped) {
@@ -93,6 +101,8 @@ data class WildflyOptions(
      * Masks the password when dumping the string version of this object
      */
     fun toSantisisedString():String {
-        return this.copy(password = "******", alreadyDumped=true).toString()
+        return this.copy(
+                password = if (this.password == null) null else "******",
+                alreadyDumped=true).toString()
     }
 }
