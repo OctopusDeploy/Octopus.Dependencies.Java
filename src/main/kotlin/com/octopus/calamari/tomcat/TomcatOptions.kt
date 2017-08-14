@@ -55,34 +55,34 @@ data class TomcatOptions(val controller:String,
     val deployUrl:URL
         get() = URL("$controller/text/" +
                 "deploy?update=true&" +
-                (if (StringUtils.isNotBlank(tag)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(tag)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else "") +
+                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
+                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else "") +
                 (if (StringUtils.isNotBlank(tag)) "tag=${URLEncoder.encode(tag, "UTF-8")}" else ""))
 
     val redeployUrl:URL
         get() = URL("$controller/text/" +
                 "deploy?" +
-                (if (StringUtils.isNotBlank(tag)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(tag)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else "") +
+                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
+                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else "") +
                 (if (StringUtils.isNotBlank(tag)) "tag=${URLEncoder.encode(tag, "UTF-8")}" else ""))
 
     val undeployUrl:URL
         get() = URL("$controller/text/" +
                 "undeploy?" +
-                (if (StringUtils.isNotBlank(tag)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(tag)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else ""))
+                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
+                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else ""))
 
     val stopUrl:URL
         get() = URL("$controller/text/" +
                 "stop?" +
-                (if (StringUtils.isNotBlank(tag)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(tag)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else ""))
+                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
+                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else ""))
 
     val startUrl:URL
         get() = URL("$controller/text/" +
                 "start?" +
-                (if (StringUtils.isNotBlank(tag)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(tag)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else ""))
+                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
+                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else ""))
 
     val listUrl:URL
         get() = URL("$controller/text/list")
