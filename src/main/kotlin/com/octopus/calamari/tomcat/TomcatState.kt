@@ -43,7 +43,7 @@ object TomcatState {
             /*
                 Create an executor that has the credentials saved
              */
-            Try.Success(TomcatService.generateExecutor(options))
+            Try {TomcatService.generateExecutor(options)}
                     /*
                         Use the executor to PUT the package to the
                         manager

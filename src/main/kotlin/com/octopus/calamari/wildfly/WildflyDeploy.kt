@@ -20,7 +20,17 @@ object WildflyDeploy {
             LoggingServiceImpl.configureLogging()
             WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
         } catch (ex:Exception){
-            System.exit(-1)
+            logger.severe("WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.\n" + ex.toString())
+            /*
+                We can sometimes get some additional information being logged
+                if we sleep for a short amount of time here.
+             */
+            Try {Thread.sleep(100)}
+            /*
+                Need to do a hard exit here because the CLI can keep things open
+                and prevent a System.exit() from working
+             */
+            Runtime.getRuntime().halt(1)
         }
 
         /*
@@ -28,7 +38,7 @@ object WildflyDeploy {
             that can take a minute to timeout. We really don't want to wait,
             so exit right away.
          */
-        System.exit(0)
+        Runtime.getRuntime().halt(0)
     }
 
     /**
@@ -37,13 +47,15 @@ object WildflyDeploy {
     fun deployArtifact(options: WildflyOptions) {
         Preconditions.checkArgument(StringUtils.isNotBlank(options.application))
 
+        logger.info("Logging in")
+
         val service = WildflyService().login(options)
 
         if (service.isDomainMode) {
             /*
                 Start by taking a snapshot of the current configuration
              */
-            Try.Success(service.takeSnapshot())
+            Try {service.takeSnapshot()}
                     /*
                         Push the new package up to the server, overwriting any exiting packages
                      */
@@ -116,7 +128,7 @@ object WildflyDeploy {
                     .map { service.shutdown() }
                     .onSuccess { logger.log(Level.INFO, "Deployment finished.")}
                     .onFailure{
-                        logger.log(Level.SEVERE, "Failed to deploy the package to the WildFly/EAP domain")
+                        logger.log(Level.SEVERE, "WILDFLY-DEPLOY-ERROR-0016: Failed to deploy the package to the WildFly/EAP domain")
                         logger.log(Level.SEVERE, it.toString())
                         throw it
                     }
@@ -124,7 +136,7 @@ object WildflyDeploy {
             /*
                 Start by taking a snapshot of the current configuration
              */
-            Try.Success(service.takeSnapshot())
+            Try {service.takeSnapshot()}
                     .flatMap { service.runCommandExpectSuccess(
                             "deploy --force ${if (!options.enabled) "--disabled" else ""} --name=${options.packageName} ${options.application}",
                             "deploy application to standalone WildFly/EAP instance",
@@ -142,7 +154,7 @@ object WildflyDeploy {
                     .map { service.shutdown() }
                     .onSuccess { logger.log(Level.INFO, "Deployment finished.")}
                     .onFailure{
-                        logger.log(Level.SEVERE, "Failed to deploy the package to the WildFly/EAP standalone instance")
+                        logger.log(Level.SEVERE, "WILDFLY-DEPLOY-ERROR-0015: Failed to deploy the package to the WildFly/EAP standalone instance")
                         logger.log(Level.SEVERE, it.toString())
                         throw it
                     }

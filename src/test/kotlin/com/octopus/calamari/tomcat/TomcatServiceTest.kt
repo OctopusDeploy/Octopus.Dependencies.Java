@@ -50,7 +50,7 @@ class TomcatServiceTest {
     }
 
     fun openWebPage(url:URL):String {
-        return IOUtils.toString(Try.Success(Executor.newInstance())
+        return IOUtils.toString(Try{Executor.newInstance()}
                 /*
                     Use the executor to execute a GET that undeploys the app
                  */

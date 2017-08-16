@@ -39,15 +39,13 @@ class WildflyService {
             debug = options.debug
 
             /*
-                There are cases in Windows where logins stall. This can happen when
-                 there are no credentials and the management interface is not bound
-                 to localhost.
-
-                 Running in a timeout executor means we don't hold up a deployment because
-                 of a failed login.
+                There are cases where the login will stall. I've seen this in Windows attempting
+                to log into the management interface with no credentials. To avoid this situation
+                freezing deployments, we create a daemon thread and watch it for a while. If the
+                login was not successful in a reasonable period of time, we exit.
              */
             val thread = Thread(Runnable {
-                Try.Success(retry.execute(RetryCallback<Unit, Throwable> { context ->
+                Try {retry.execute(RetryCallback<Unit, Throwable> { context ->
                     checkState(!connected.get(), "You can not connect more than once")
 
                     logger.info("Attempt ${context.retryCount + 1} to connect.")
@@ -60,13 +58,15 @@ class WildflyService {
                             options.fixedPassword?.toCharArray())
 
                     connected.set(true)
-                }))
+                })}
                 .onFailure {
                     logger.severe("WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API")
                     throw it
                 }
             })
-            thread.run()
+
+            thread.setDaemon(true)
+            thread.start()
 
             /*
                 Wait for a while until we are connected
@@ -92,7 +92,7 @@ class WildflyService {
 
     fun logout(): WildflyService {
         synchronized(jbossCli) {
-            Try.Success(retry.execute(RetryCallback<Unit, Throwable> { context ->
+            Try{ retry.execute(RetryCallback<Unit, Throwable> { context ->
                 checkState(connected.get(), "You must be connected to disconnect")
 
                 logger.info("Attempt ${context.retryCount + 1} to disconnect.")
@@ -100,7 +100,7 @@ class WildflyService {
                 jbossCli.disconnect()
 
                 connected.set(false)
-            }))
+            })}
             .onFailure {
                 logger.severe("WILDFLY-DEPLOY-ERROR-0010: There was an error logging out of the management API")
                 throw it
@@ -112,7 +112,7 @@ class WildflyService {
 
     fun shutdown(): WildflyService {
         synchronized(jbossCli) {
-            Try.Success(retry.execute(RetryCallback<Unit, Throwable> { context ->
+            Try{retry.execute(RetryCallback<Unit, Throwable> { context ->
                 checkState(!connected.get(), "You must disconnect before terminating")
 
                 logger.info("Attempt ${context.retryCount + 1} to terminate.")
@@ -120,7 +120,7 @@ class WildflyService {
                 jbossCli.terminate()
 
                 connected.set(false)
-            }))
+            })}
             .onFailure {
                 logger.severe("WILDFLY-DEPLOY-ERROR-0011: There was an error terminating the CLI object")
                 throw it
@@ -139,7 +139,7 @@ class WildflyService {
 
     fun runCommand(command:String, description:String): Try<CLI.Result> {
         synchronized(jbossCli) {
-            return Try.Success(retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
+            return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
                 checkState(connected.get(), "You must be connected before running commands")
 
                 logger.info("Attempt ${context.retryCount + 1} to $description.")
@@ -152,13 +152,13 @@ class WildflyService {
                 }
 
                 result
-            }))
+            })}
         }
     }
 
     fun runCommandExpectSuccess(command:String, description:String, errorMessage:String): Try<CLI.Result> {
         synchronized(jbossCli) {
-            return Try.Success(retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
+            return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
                 checkState(connected.get(), "You must be connected before running commands")
 
                 logger.info("Attempt ${context.retryCount + 1} to $description.")
@@ -175,7 +175,7 @@ class WildflyService {
                 }
 
                 result
-            }))
+            })}
         }
     }
 }

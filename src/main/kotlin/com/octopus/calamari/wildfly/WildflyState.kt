@@ -32,7 +32,7 @@ object WildflyState {
             /*
                 Deploy the package for enabled server groups
              */
-            Try.Success(service.takeSnapshot())
+            Try {service.takeSnapshot()}
                 .map {
                     Splitter.on(',')
                             .trimResults()
@@ -64,7 +64,7 @@ object WildflyState {
                     }
                 }
         } else {
-            Try.Success(service.takeSnapshot())
+            Try {service.takeSnapshot()}
                 .map {
                     service.runCommandExpectSuccess(
                             "${if (options.enabled) "deploy" else "undeploy --keep-content"} --name=${options.packageName}",
