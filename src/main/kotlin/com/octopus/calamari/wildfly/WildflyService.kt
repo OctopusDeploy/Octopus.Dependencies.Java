@@ -39,10 +39,12 @@ class WildflyService {
             debug = options.debug
 
             /*
-                There are cases where the login will stall. I've seen this in Windows attempting
-                to log into the management interface with no credentials. To avoid this situation
-                freezing deployments, we create a daemon thread and watch it for a while. If the
-                login was not successful in a reasonable period of time, we exit.
+                There are cases where the login will stall. If the wildfly-elytron package is not
+                properly registered in META-INF/services, there will be a prompt to log in that
+                can never be satisfied because there is no input.
+
+                ALthough this should not happen, we have a thread here that can be watched and
+                timed out should any inputs like that be requested.
              */
             val thread = Thread(Runnable {
                 Try {retry.execute(RetryCallback<Unit, Throwable> { context ->
