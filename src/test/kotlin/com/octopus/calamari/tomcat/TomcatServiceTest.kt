@@ -359,6 +359,34 @@ class TomcatServiceTest {
     }
 
     /**
+     * Start a stopped deployment
+     */
+    @Test
+    @RunAsClient
+    fun startRootDeployment() {
+        TomcatDeploy.doDeployment(TomcatOptions(
+                controller = "http://127.0.0.1:38080/manager",
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
+                name = "myUndeployedApp",
+                enabled = false,
+                context = TomcatContextOptions.ROOT
+        ))
+        TomcatState.setDeploymentState(TomcatOptions(
+                controller = "http://127.0.0.1:38080/manager",
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                name = "myUndeployedApp",
+                enabled = true,
+                context = TomcatContextOptions.ROOT
+        ))
+        val deployments1 = listDeployments(commonOptions)
+        println(deployments1)
+        Assert.assertTrue(deployments1.contains("/:running:0:ROOT"))
+    }
+
+    /**
      * Start a stopped deployment twice
      */
     @Test
@@ -420,6 +448,34 @@ class TomcatServiceTest {
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)
         Assert.assertTrue(deployments1.contains("/myDeployedApp:stopped"))
+    }
+
+    /**
+     * Stop a started deployment
+     */
+    @Test
+    @RunAsClient
+    fun stopRootDeployment() {
+        TomcatDeploy.doDeployment(TomcatOptions(
+                controller = "http://127.0.0.1:38080/manager",
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
+                name = "myDeployedApp",
+                enabled = true,
+                context = TomcatContextOptions.ROOT
+        ))
+        TomcatState.setDeploymentState(TomcatOptions(
+                controller = "http://127.0.0.1:38080/manager",
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                name = "myDeployedApp",
+                enabled = false,
+                context = TomcatContextOptions.ROOT
+        ))
+        val deployments1 = listDeployments(commonOptions)
+        println(deployments1)
+        Assert.assertTrue(deployments1.contains("/:stopped:0:ROOT"))
     }
 
     /**
