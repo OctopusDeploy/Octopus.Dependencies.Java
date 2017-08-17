@@ -4,7 +4,6 @@ import com.google.common.base.Splitter
 import com.octopus.calamari.tomcat.TomcatDeploy
 import com.octopus.calamari.tomcat.TomcatState
 import com.octopus.calamari.utils.Constants
-import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.wildfly.WildflyDeploy
 import com.octopus.calamari.wildfly.WildflyState
 import java.util.logging.Logger

@@ -5,6 +5,9 @@ import org.funktionale.tries.Try
 import java.util.logging.*
 
 object LoggingServiceImpl : LoggingService {
+    val VerboseMarker = "##octopus[stdout-verbose]"
+    val DefaultMarker = "##octopus[stdout-default]"
+
     /**
      * Octopus will treat messages printed to std err differently,
      * highlighting them and adding a notification to any build that
@@ -13,6 +16,8 @@ object LoggingServiceImpl : LoggingService {
      * there is an actual warning or error.
      */
     override fun configureLogging() {
+        System.out.println(VerboseMarker)
+
         Try {
             /*
                 Clear all existing handlers
@@ -39,5 +44,6 @@ object LoggingServiceImpl : LoggingService {
             warnLogger.level = Level.WARNING
             rootLog.addHandler(warnLogger)
         }
+
     }
 }

@@ -1,12 +1,9 @@
 package com.octopus.calamari.wildfly
 
-import com.google.common.base.Preconditions
 import com.octopus.calamari.utils.Constants
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang3.StringUtils
-import java.lang.IllegalArgumentException
 import java.util.logging.Logger
-import java.util.regex.Pattern
 
 /**
  * Options that relate to wildfly deployments
@@ -34,7 +31,6 @@ data class WildflyOptions(
         val enabled:Boolean = true,
         val enabledServerGroup:String = "",
         val disabledServerGroup:String = "",
-        val debug:Boolean = true,
         val alreadyDumped:Boolean = false
 ) {
     /**
@@ -57,7 +53,7 @@ data class WildflyOptions(
     val fixedPassword = if (StringUtils.isBlank(user)) null else password
 
     init {
-        if (this.debug && !this.alreadyDumped) {
+        if (!this.alreadyDumped) {
             logger.info(this.toSantisisedString())
         }
     }
@@ -79,7 +75,6 @@ data class WildflyOptions(
             val enabled = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled", "true")
             val enabledServerGroup = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_EnabledServerGroup", "")
             val disabledServerGroup = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_DisabledServerGroup", "")
-            val debug = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Debug", "true")
 
             return WildflyOptions(
                     controller,
@@ -91,8 +86,7 @@ data class WildflyOptions(
                     name,
                     enabled.toBoolean(),
                     enabledServerGroup,
-                    disabledServerGroup,
-                    debug.toBoolean()
+                    disabledServerGroup
             )
         }
     }

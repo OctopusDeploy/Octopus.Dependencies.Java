@@ -25,13 +25,12 @@ data class TomcatOptions(val controller:String,
                          val tag:String = "",
                          val version:String = "",
                          val enabled:Boolean = true,
-                         val debug:Boolean = true,
                          val alreadyDumped:Boolean = false) {
 
     val logger: Logger = Logger.getLogger(WildflyOptions::class.simpleName)
 
     init {
-        if (this.debug && !this.alreadyDumped) {
+        if (!this.alreadyDumped) {
             logger.info(this.toSantisisedString())
         }
     }
@@ -100,7 +99,6 @@ data class TomcatOptions(val controller:String,
             val controller = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Controller", "http://localhost:8080")
             val user = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_User", "")
             val password = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Password","")
-            val debug = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Debug", "true").toBoolean()
             val deploy = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Deploy", "true").toBoolean()
             val enabled = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Enabled", "true").toBoolean()
             val tag = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Tag", "")
@@ -135,8 +133,7 @@ data class TomcatOptions(val controller:String,
                             name,
                             tag,
                             version,
-                            enabled,
-                            debug)
+                            enabled)
                     }
                     .getOrElse {TomcatOptions(
                             controller,
@@ -147,8 +144,7 @@ data class TomcatOptions(val controller:String,
                             name,
                             tag,
                             version,
-                            enabled,
-                            debug)
+                            enabled)
                     }
 
         }

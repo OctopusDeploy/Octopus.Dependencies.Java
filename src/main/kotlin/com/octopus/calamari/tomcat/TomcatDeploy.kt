@@ -4,14 +4,12 @@ import com.google.common.base.Preconditions
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.lang3.StringUtils
+import org.apache.http.HttpResponse
 import org.apache.http.client.fluent.Request
 import org.apache.http.entity.ContentType
 import org.funktionale.tries.Try
-import java.io.File
-import org.apache.http.HttpHost
-import org.apache.http.HttpResponse
-import org.apache.http.client.fluent.Executor
 import org.springframework.retry.RetryCallback
+import java.io.File
 import java.util.logging.Logger
 
 /**
@@ -65,10 +63,8 @@ object TomcatDeploy {
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to deploy ${options.application} to ${options.deployUrl.toExternalForm()}")
+            logger.info("Making request to " + options.deployUrl.toExternalForm())
 
-            if (options.debug) {
-                logger.info("Making request to " + options.deployUrl.toExternalForm())
-            }
 
             /*
                 Create an executor that has the credentials saved
@@ -115,10 +111,7 @@ object TomcatDeploy {
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to deploy ${options.tag} to ${options.redeployUrl.toExternalForm()}")
-
-            if (options.debug) {
-                logger.info("Making request to " + options.redeployUrl.toExternalForm())
-            }
+            logger.info("Making request to " + options.redeployUrl.toExternalForm())
 
             /*
                 Create an executor that has the credentials saved
@@ -150,10 +143,7 @@ object TomcatDeploy {
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to ${if (options.deploy) "deploy ${options.tag}" else "undeploy ${options.application}"} to ${options.undeployUrl.toExternalForm()}")
-
-            if (options.debug) {
-                logger.info("Making request to " + options.undeployUrl.toExternalForm())
-            }
+            logger.info("Making request to " + options.undeployUrl.toExternalForm())
 
             /*
                 Create an executor that has the credentials saved

@@ -33,9 +33,8 @@ object TomcatState {
 
         val url = if (options.enabled) options.startUrl else options.stopUrl
 
-        if (options.debug) {
-            logger.info("Making request to " + url.toExternalForm())
-        }
+        logger.info("Making request to " + url.toExternalForm())
+
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
             logger.info("Attempt ${context.retryCount + 1} to ${if (options.enabled) "start" else "stop"} ${options.application} via ${url.toExternalForm()}")

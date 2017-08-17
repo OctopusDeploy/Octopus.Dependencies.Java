@@ -5,8 +5,8 @@ import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
 import org.springframework.retry.RetryCallback
-import java.util.logging.Logger
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.logging.Logger
 
 const val LOGIN_LIMIT = 1000 * 60 * 2L
 
@@ -24,7 +24,6 @@ class WildflyService {
      * True once the login() function completes, and false otherwise
      */
     private var connected = AtomicBoolean(false)
-    private var debug = false
 
     val isDomainMode:Boolean
         /**
@@ -36,8 +35,6 @@ class WildflyService {
 
     fun login(options: WildflyOptions): WildflyService {
         synchronized(jbossCli) {
-            debug = options.debug
-
             /*
                 There are cases where the login will stall. If the wildfly-elytron package is not
                 properly registered in META-INF/services, there will be a prompt to log in that
@@ -148,10 +145,8 @@ class WildflyService {
 
                 val result = jbossCli.cmd(command)
 
-                if (debug) {
-                    logger.info("Command: " + command)
-                    logger.info("Result as JSON: " + result?.response?.toJSONString(false))
-                }
+                logger.info("Command: " + command)
+                logger.info("Result as JSON: " + result?.response?.toJSONString(false))
 
                 result
             })}
@@ -167,10 +162,8 @@ class WildflyService {
 
                 val result = jbossCli.cmd(command)
 
-                if (debug) {
-                    logger.info("Command: " + command)
-                    logger.info("Result as JSON: " + result?.response?.toJSONString(false))
-                }
+                logger.info("Command: " + command)
+                logger.info("Result as JSON: " + result?.response?.toJSONString(false))
 
                 if (!result.isSuccess) {
                     throw Exception(errorMessage)
