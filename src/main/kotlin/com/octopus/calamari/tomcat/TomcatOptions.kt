@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang3.StringUtils
 import org.funktionale.option.Option
 import org.funktionale.option.getOrElse
+import org.funktionale.tries.Try
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.net.URL
@@ -22,6 +23,7 @@ data class TomcatOptions(val controller:String,
                          val deploy:Boolean = true,
                          val application:String = "",
                          val name:String = "",
+                         val context:TomcatContextOptions = TomcatContextOptions.CUSTOM,
                          val tag:String = "",
                          val version:String = "",
                          val enabled:Boolean = true,
@@ -35,53 +37,55 @@ data class TomcatOptions(val controller:String,
         }
     }
 
-    val urlPath:String
-        get() = if (StringUtils.isNotBlank(name))
-                    name
+    val urlPath:Option<String>
+        get() = if (context == TomcatContextOptions.ROOT)
+                    Option.Some("")
+                else if (context == TomcatContextOptions.CUSTOM && StringUtils.isNotBlank(name))
+                    Option.Some(name)
                 else if (StringUtils.isNotBlank(application))
-                    FilenameUtils.getBaseName(application).split("##").get(0).replace("#", "/")
+                    Option.Some(FilenameUtils.getBaseName(application).split("##").get(0).replace("#", "/"))
                 else
-                    ""
+                    Option.None
 
-    val urlVersion:String
+    val urlVersion:Option<String>
         get() = if (StringUtils.isNotBlank(version))
-                    version
+                    Option.Some(version)
                 else if (StringUtils.contains(application, "##"))
-                    FilenameUtils.getBaseName(application).split("##").get(1)
+                    Option.Some(FilenameUtils.getBaseName(application).split("##").get(1))
                 else
-                    ""
+                    Option.None
 
     val deployUrl:URL
         get() = URL("$controller/text/" +
                 "deploy?update=true&" +
-                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else "") +
+                (if (urlVersion.isDefined()) "version=${URLEncoder.encode(urlVersion.get(), "UTF-8")}&" else "") +
+                (if (urlPath.isDefined()) "path=/${URLEncoder.encode(urlPath.get(), "UTF-8")}&" else "") +
                 (if (StringUtils.isNotBlank(tag)) "tag=${URLEncoder.encode(tag, "UTF-8")}" else ""))
 
     val redeployUrl:URL
         get() = URL("$controller/text/" +
                 "deploy?" +
-                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else "") +
+                (if (urlVersion.isDefined()) "version=${URLEncoder.encode(urlVersion.get(), "UTF-8")}&" else "") +
+                (if (urlPath.isDefined()) "path=/${URLEncoder.encode(urlPath.get(), "UTF-8")}&" else "") +
                 (if (StringUtils.isNotBlank(tag)) "tag=${URLEncoder.encode(tag, "UTF-8")}" else ""))
 
     val undeployUrl:URL
         get() = URL("$controller/text/" +
                 "undeploy?" +
-                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else ""))
+                (if (urlVersion.isDefined()) "version=${URLEncoder.encode(urlVersion.get(), "UTF-8")}&" else "") +
+                (if (urlPath.isDefined()) "path=/${URLEncoder.encode(urlPath.get(), "UTF-8")}&" else ""))
 
     val stopUrl:URL
         get() = URL("$controller/text/" +
                 "stop?" +
-                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else ""))
+                (if (urlVersion.isDefined()) "version=${URLEncoder.encode(urlVersion.get(), "UTF-8")}&" else "") +
+                (if (urlPath.isDefined()) "path=/${URLEncoder.encode(urlPath.get(), "UTF-8")}&" else ""))
 
     val startUrl:URL
         get() = URL("$controller/text/" +
                 "start?" +
-                (if (StringUtils.isNotBlank(urlVersion)) "version=${URLEncoder.encode(urlVersion, "UTF-8")}&" else "") +
-                (if (StringUtils.isNotBlank(urlPath)) "path=/${URLEncoder.encode(urlPath, "UTF-8")}&" else ""))
+                (if (urlVersion.isDefined()) "version=${URLEncoder.encode(urlVersion.get(), "UTF-8")}&" else "") +
+                (if (urlPath.isDefined()) "path=/${URLEncoder.encode(urlPath.get(), "UTF-8")}&" else ""))
 
     val listUrl:URL
         get() = URL("$controller/text/list")
@@ -101,6 +105,7 @@ data class TomcatOptions(val controller:String,
             val password = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Password","")
             val deploy = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Deploy", "true").toBoolean()
             val enabled = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Enabled", "true").toBoolean()
+            val context = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Context", TomcatContextOptions.CUSTOM.setting)
             val tag = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Tag", "")
 
             if (StringUtils.isBlank(user)) {
@@ -111,41 +116,19 @@ data class TomcatOptions(val controller:String,
                 throw IllegalArgumentException("password can not be null")
             }
 
-            /*
-                This is a hack while Octopus only supports zip files. Eventually
-                application will point to a WAR file directly.
-             */
-            val applicationOpt =
-                    if (StringUtils.isBlank(application))
-                        Option.None
-                    else
-                        Option.Some(application)
+            return TomcatOptions(
+                            controller,
+                            user,
+                            password,
+                            deploy,
+                            application,
+                            name,
+                            Try {TomcatContextOptions.valueOf(context.toLowerCase())}
+                                    .getOrElse { TomcatContextOptions.NONE },
+                            tag,
+                            version,
+                            enabled)
 
-            return applicationOpt
-                    .map{FilenameUtils.getFullPath(it) + FilenameUtils.getBaseName(it) + ".war"}
-                    .map{FileUtils.copyFile(File(application), File(it)); it}
-                    .map{TomcatOptions(
-                            controller,
-                            user,
-                            password,
-                            deploy,
-                            it,
-                            name,
-                            tag,
-                            version,
-                            enabled)
-                    }
-                    .getOrElse {TomcatOptions(
-                            controller,
-                            user,
-                            password,
-                            deploy,
-                            "",
-                            name,
-                            tag,
-                            version,
-                            enabled)
-                    }
 
         }
     }

@@ -79,6 +79,25 @@ class TomcatServiceTest {
     }
 
     /**
+     * Test of root deployment
+     */
+    @Test
+    @RunAsClient
+    fun testRootDeployment() {
+        TomcatDeploy.doDeployment(TomcatOptions(
+                controller = "http://127.0.0.1:38080/manager",
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
+                context = TomcatContextOptions.ROOT
+        ))
+        val deployments = listDeployments(commonOptions)
+        println("Testing root deployment")
+        println(deployments)
+        Assert.assertTrue(deployments.contains("/:running:0:ROOT"))
+    }
+
+    /**
      * Test of app deployment with a specific context
      */
     @Test

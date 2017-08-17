@@ -65,7 +65,6 @@ object TomcatDeploy {
             logger.info("Attempt ${context.retryCount + 1} to deploy ${options.application} to ${options.deployUrl.toExternalForm()}")
             logger.info("Making request to " + options.deployUrl.toExternalForm())
 
-
             /*
                 Create an executor that has the credentials saved
              */
