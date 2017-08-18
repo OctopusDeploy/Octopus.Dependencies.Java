@@ -123,7 +123,7 @@ data class TomcatOptions(val controller:String,
                             deploy,
                             application,
                             name,
-                            Try {TomcatContextOptions.valueOf(context.toLowerCase())}
+                            Try {TomcatContextOptions.valueOf(context.toUpperCase())}
                                     .getOrElse { TomcatContextOptions.NONE },
                             tag,
                             version,
