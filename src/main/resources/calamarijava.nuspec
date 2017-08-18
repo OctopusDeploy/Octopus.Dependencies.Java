@@ -6,9 +6,9 @@
         <description>Java library providing the interface to Java application servers for Calamari</description>
         <authors>Matthew Casperson</authors>
         <contentFiles>
-            <files include="**/calamari*.jar" buildAction="None" copyToOutput="true" />
-            <files include="**/tools.jar" buildAction="None" copyToOutput="true" />
-            <files include="**/jboss-cli.xml" buildAction="None" copyToOutput="true" />
+            <files include="**/calamari*.jar" buildAction="None" copyToOutput="false" />
+            <files include="**/tools.jar" buildAction="None" copyToOutput="false" />
+            <files include="**/jboss-cli.xml" buildAction="None" copyToOutput="false" />
         </contentFiles>
     </metadata>
     <files>
