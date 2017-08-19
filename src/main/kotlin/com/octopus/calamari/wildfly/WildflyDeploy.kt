@@ -32,8 +32,7 @@ object WildflyDeploy {
             that can take a minute to timeout. We really don't want to wait,
             so exit right away.
          */
-        LoggingServiceImpl.flushStreams()
-        Runtime.getRuntime().halt(0)
+        System.exit(0)
     }
 
     /**
