@@ -74,17 +74,18 @@ object WildflyState {
                         ).onFailure { throw it }
                     }
                 }
-                    .onSuccess { LoggingServiceImpl.printInfo { logger.info("Successfully changed the state of the deployed application") } }
-                    .onFailure { throw it }
+                .onSuccess { LoggingServiceImpl.printInfo { logger.info("Successfully changed the state of the deployed application") } }
+                .onFailure { throw it }
         } else {
             Try {service.takeSnapshot()}
                 .map {
                     service.runCommandExpectSuccess(
                             "${if (options.enabled) "deploy" else "undeploy --keep-content"} --name=${options.packageName}",
                             "enable application in standalone WildFly/EAP instance",
-                            "WILDFLY-DEPLOY-ERROR-0012: There was an error enabling or disabling the package ${options.packageName} in the standalone server")
+                            "WILDFLY-DEPLOY-ERROR-0012: There was an error enabling or disabling the package ${options.packageName} in the standalone server"
+                    ).onFailure { throw it }
                 }
-                    .onFailure { throw it }
+                .onFailure { throw it }
         }
     }
 }
