@@ -5,6 +5,15 @@ import org.funktionale.tries.Try
 import java.util.logging.*
 
 object LoggingServiceImpl : LoggingService {
+    override fun printInfo(func:() -> Unit) {
+        try {
+            System.out.println(VerboseMarker)
+            func()
+        } finally {
+            System.out.println(DefaultMarker)
+        }
+    }
+
     val VerboseMarker = "##octopus[stdout-verbose]"
     val DefaultMarker = "##octopus[stdout-default]"
 

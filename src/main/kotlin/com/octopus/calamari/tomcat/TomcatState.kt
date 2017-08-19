@@ -55,7 +55,7 @@ object TomcatState {
                         Was the response a success?
                      */
                     .map { response -> TomcatDeploy.validateResponse(response) }
-                    .onSuccess { TomcatDeploy.logger.info("Application ${if (options.enabled) "started" else "stopped"} successfully") }
+                    .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application ${if (options.enabled) "started" else "stopped"} successfully") } }
                     .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0004: Failed to ${if (options.enabled) "start" else "stop"} deployment via Tomcat manager. " +
                             "Make sure the user ${options.user} has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file", it) }

@@ -12,7 +12,7 @@ import java.util.logging.Logger
  * Implements the deployment of an artifact to a WildFly server
  */
 object WildflyDeploy {
-    val logger: Logger = Logger.getLogger(WildflyService::class.simpleName)
+    val logger: Logger = Logger.getLogger(WildflyDeploy::class.simpleName)
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -126,7 +126,7 @@ object WildflyDeploy {
                     }
                     .map { service.logout() }
                     .map { service.shutdown() }
-                    .onSuccess { logger.log(Level.INFO, "Deployment finished.")}
+                    .onSuccess { LoggingServiceImpl.printInfo { logger.log(Level.INFO, "Successfully deployed the application.")} }
                     .onFailure{
                         logger.log(Level.SEVERE, "WILDFLY-DEPLOY-ERROR-0016: Failed to deploy the package to the WildFly/EAP domain")
                         logger.log(Level.SEVERE, it.toString())

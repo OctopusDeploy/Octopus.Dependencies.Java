@@ -63,6 +63,8 @@ object WildflyState {
                         ).onFailure { throw it }
                     }
                 }
+                    .onSuccess { LoggingServiceImpl.printInfo { logger.info("Successfully changed the state of the deployed application") } }
+                    .onFailure { throw it }
         } else {
             Try {service.takeSnapshot()}
                 .map {

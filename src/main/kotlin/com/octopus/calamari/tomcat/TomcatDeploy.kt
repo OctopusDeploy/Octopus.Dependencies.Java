@@ -88,7 +88,7 @@ object TomcatDeploy {
                     .map {
                         TomcatState.setDeploymentState(options)
                     }
-                    .onSuccess { logger.info("Application deployed successfully") }
+                    .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application deployed successfully") } }
                     .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0001: Failed to deploy file to Tomcat manager. " +
                             "Make sure the user ${options.user} has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file, and that the manager url " +
