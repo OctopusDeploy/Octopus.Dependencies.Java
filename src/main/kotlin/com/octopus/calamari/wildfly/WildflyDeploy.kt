@@ -73,53 +73,57 @@ object WildflyDeploy {
                         Add the package to the target server groups
                      */
                     .map{Splitter.on(',')
-                            .trimResults()
-                            .omitEmptyStrings()
-                            .split( (options.enabledServerGroup) +
-                                    "," +
-                                    (options.disabledServerGroup))
-                            .forEach { serverGroup ->
-                                service.runCommand(
-                                "/server-group=$serverGroup/deployment=${options.packageName}:read-resource",
-                                "read package details ${options.packageName} for server group $serverGroup")
-                                .onSuccess {
-                                    if (!it.isSuccess) {
-                                      service.runCommandExpectSuccess(
-                                            "/server-group=$serverGroup/deployment=${options.packageName}:add",
-                                            "add package ${options.packageName} to server group $serverGroup",
-                                              "WILDFLY-DEPLOY-ERROR-0004: There was an error adding the " +
-                                                      "${options.packageName} to the server group $serverGroup")
-                            }}
+                        .trimResults()
+                        .omitEmptyStrings()
+                        .split( (options.enabledServerGroup) +
+                                "," +
+                                (options.disabledServerGroup))
+                        .forEach { serverGroup ->
+                            service.runCommand(
+                            "/server-group=$serverGroup/deployment=${options.packageName}:read-resource",
+                            "read package details ${options.packageName} for server group $serverGroup")
+                            .onSuccess {
+                                if (!it.isSuccess) {
+                                  service.runCommandExpectSuccess(
+                                        "/server-group=$serverGroup/deployment=${options.packageName}:add",
+                                        "add package ${options.packageName} to server group $serverGroup",
+                                          "WILDFLY-DEPLOY-ERROR-0004: There was an error adding the " +
+                                                  "${options.packageName} to the server group $serverGroup")
+                                }
+                            }
                             .onFailure { throw it }
-                    }}
+                        }
+                    }
                     /*
                         And deploy the package for enabled server groups
                      */
                     .map{Splitter.on(',')
-                            .trimResults()
-                            .omitEmptyStrings()
-                            .split(options.enabledServerGroup)
-                            .forEach{ serverGroup ->
-                                service.runCommandExpectSuccess(
-                                    "/server-group=$serverGroup/deployment=${options.packageName}:deploy",
-                                    "deploy the package ${options.packageName} to the server group $serverGroup",
-                                        "WILDFLY-DEPLOY-ERROR-0005: There was an error deploying the " +
-                                               "${options.packageName} to the server group $serverGroup"
-                        ).onFailure { throw it }}
+                        .trimResults()
+                        .omitEmptyStrings()
+                        .split(options.enabledServerGroup)
+                        .forEach{ serverGroup ->
+                            service.runCommandExpectSuccess(
+                                "/server-group=$serverGroup/deployment=${options.packageName}:deploy",
+                                "deploy the package ${options.packageName} to the server group $serverGroup",
+                                    "WILDFLY-DEPLOY-ERROR-0005: There was an error deploying the " +
+                                           "${options.packageName} to the server group $serverGroup"
+                            ).onFailure { throw it }
+                        }
                     }
                     /*
                         And undeploy the package for disabled server groups
                      */
                     .map{Splitter.on(',')
-                            .trimResults()
-                            .omitEmptyStrings()
-                            .split(options.disabledServerGroup).forEach{ serverGroup ->
-                        service.runCommandExpectSuccess(
-                            "/server-group=$serverGroup/deployment=${options.packageName}:undeploy",
-                            "undeploy the package ${options.packageName} from the server group $serverGroup",
-                                "WILDFLY-DEPLOY-ERROR-0006: There was an error undeploying the " +
-                                        "${options.packageName} to the server group $serverGroup"
-                        ).onFailure { throw it }}
+                        .trimResults()
+                        .omitEmptyStrings()
+                        .split(options.disabledServerGroup).forEach{ serverGroup ->
+                            service.runCommandExpectSuccess(
+                                "/server-group=$serverGroup/deployment=${options.packageName}:undeploy",
+                                "undeploy the package ${options.packageName} from the server group $serverGroup",
+                                    "WILDFLY-DEPLOY-ERROR-0006: There was an error undeploying the " +
+                                            "${options.packageName} to the server group $serverGroup"
+                            ).onFailure { throw it }
+                        }
                     }
                     .map { service.logout() }
                     .map { service.shutdown() }
@@ -144,7 +148,8 @@ object WildflyDeploy {
                             service.runCommandExpectSuccess(
                                 "deploy --name=${options.packageName}",
                                 "enable application in standalone WildFly/EAP instance",
-                                    "WILDFLY-DEPLOY-ERROR-0008: There was an error enabling the package ${options.packageName} in the standalone server")
+                                    "WILDFLY-DEPLOY-ERROR-0008: There was an error enabling the package ${options.packageName} in the standalone server"
+                            ).onFailure { throw it }
                         }
                     }
                     .map { service.logout() }
