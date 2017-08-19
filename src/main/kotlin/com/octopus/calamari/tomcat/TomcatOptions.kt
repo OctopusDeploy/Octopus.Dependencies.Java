@@ -29,7 +29,7 @@ data class TomcatOptions(val controller:String,
                          val enabled:Boolean = true,
                          private val alreadyDumped:Boolean = false) {
 
-    val logger: Logger = Logger.getLogger(WildflyOptions::class.simpleName)
+    val logger: Logger = Logger.getLogger("")
 
     init {
         if (!this.alreadyDumped) {

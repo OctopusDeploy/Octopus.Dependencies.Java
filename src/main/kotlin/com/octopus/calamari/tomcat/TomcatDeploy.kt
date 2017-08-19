@@ -17,7 +17,7 @@ import java.util.logging.Logger
  * manager interface
  */
 object TomcatDeploy {
-    val logger:Logger = Logger.getLogger(TomcatDeploy::class.simpleName)
+    val logger:Logger = Logger.getLogger("")
 
     @JvmStatic
     fun main(args: Array<String>) {

@@ -14,7 +14,7 @@ const val LOGIN_LIMIT = 1000 * 60 * 2L
  * A service used to interact with WildFly
  */
 class WildflyService {
-    private val logger: Logger = Logger.getLogger(WildflyService::class.simpleName)
+    private val logger: Logger = Logger.getLogger("")
     private val retry = RetryServiceImpl.createRetry()
     private val jbossCli = CLI.newInstance()
     /**

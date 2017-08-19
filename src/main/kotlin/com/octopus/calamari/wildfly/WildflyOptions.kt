@@ -37,7 +37,7 @@ data class WildflyOptions(
      * Octopus will append a guid onto the end of the file, which we need to remove
      */
     private val guidRegex = Regex("-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$")
-    private val logger: Logger = Logger.getLogger(WildflyOptions::class.simpleName)
+    private val logger: Logger = Logger.getLogger("")
     val packageName:String =
             if (StringUtils.isBlank(name))
                 FilenameUtils.getName(application.replace(guidRegex, ""))

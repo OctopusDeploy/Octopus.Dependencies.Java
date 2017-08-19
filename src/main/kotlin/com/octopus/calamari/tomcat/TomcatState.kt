@@ -14,7 +14,7 @@ import java.util.logging.Logger
  */
 object TomcatState {
 
-    val logger: Logger = Logger.getLogger(TomcatState::class.simpleName)
+    val logger: Logger = Logger.getLogger("")
 
     @JvmStatic
     fun main(args: Array<String>) {

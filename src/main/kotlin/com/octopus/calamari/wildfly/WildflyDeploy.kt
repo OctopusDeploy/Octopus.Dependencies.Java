@@ -17,7 +17,7 @@ object WildflyDeploy {
             LoggingServiceImpl.configureLogging()
             WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
         } catch (ex:Exception){
-            Logger.getLogger(WildflyDeploy::class.simpleName)
+            Logger.getLogger("")
                     .severe("WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.\n" + ex.toString())
             /*
                 Need to do a hard exit here because the CLI can keep things open
@@ -40,7 +40,7 @@ object WildflyDeploy {
     fun deployArtifact(options: WildflyOptions) {
         Preconditions.checkArgument(StringUtils.isNotBlank(options.application))
 
-        val logger: Logger = Logger.getLogger(WildflyDeploy::class.simpleName)
+        val logger: Logger = Logger.getLogger("")
 
         logger.info("Logging in")
 
