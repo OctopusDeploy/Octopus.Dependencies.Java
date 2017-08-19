@@ -2,6 +2,8 @@ package com.octopus.calamari.wildfly
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Splitter
+import com.octopus.calamari.exception.LoginTimeoutException
+import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import org.apache.commons.lang3.StringUtils
 import org.funktionale.tries.Try
@@ -11,20 +13,23 @@ import java.util.logging.Logger
  * Implements the deployment of an artifact to a WildFly server
  */
 object WildflyDeploy {
+    val logger:Logger = Logger.getLogger("")
+
     @JvmStatic
     fun main(args: Array<String>) {
         try {
             LoggingServiceImpl.configureLogging()
             WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
-        } catch (ex:Exception){
-            Logger.getLogger("")
-                    .severe("WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.\n" + ex.toString())
+        } catch (ex:LoginTimeoutException){
             /*
                 Need to do a hard exit here because the CLI can keep things open
                 and prevent a System.exit() from working
              */
             LoggingServiceImpl.flushStreams()
-            Runtime.getRuntime().halt(1)
+            Runtime.getRuntime().halt(Constants.FAILED_LOGIN_RETURN)
+        } catch (ex:Exception){
+            logger.severe("WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.\n" + ex.toString())
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         }
 
         /*
@@ -40,8 +45,6 @@ object WildflyDeploy {
      */
     fun deployArtifact(options: WildflyOptions) {
         Preconditions.checkArgument(StringUtils.isNotBlank(options.application))
-
-        val logger: Logger = Logger.getLogger("")
 
         logger.info("Logging in")
 

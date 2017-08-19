@@ -1,6 +1,7 @@
 package com.octopus.calamari.tomcat
 
 import com.google.common.base.Preconditions
+import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.lang3.StringUtils
@@ -18,8 +19,15 @@ object TomcatState {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        LoggingServiceImpl.configureLogging()
-        TomcatState.setDeploymentState(TomcatOptions.fromEnvironmentVars())
+        try {
+            LoggingServiceImpl.configureLogging()
+            TomcatState.setDeploymentState(TomcatOptions.fromEnvironmentVars())
+        } catch (ex: Exception){
+            logger.severe("TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.\n" + ex.toString())
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
+        }
+
+        System.exit(0)
     }
 
     /**

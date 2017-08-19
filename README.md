@@ -103,3 +103,4 @@ pack200 --repack --effort=9 --segment-limit=-1 --modification-time=latest --stri
 * TOMCAT-DEPLOY-ERROR-0002: There was an error deploying a tagged package to Tomcat
 * TOMCAT-DEPLOY-ERROR-0003: There was an error undeploying a package from Tomcat
 * TOMCAT-DEPLOY-ERROR-0004: There was an error enabling or disabling a package in Tomcat
+* TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.

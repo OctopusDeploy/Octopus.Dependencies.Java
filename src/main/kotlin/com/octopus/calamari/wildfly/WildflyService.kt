@@ -1,6 +1,7 @@
 package com.octopus.calamari.wildfly
 
 import com.google.common.base.Preconditions.checkState
+import com.octopus.calamari.exception.LoginTimeoutException
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
@@ -82,7 +83,7 @@ class WildflyService {
             /*
                 We have timed out waiting for a connection
              */
-            throw Exception("WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time")
+            throw LoginTimeoutException("WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time")
         }
     }
 
