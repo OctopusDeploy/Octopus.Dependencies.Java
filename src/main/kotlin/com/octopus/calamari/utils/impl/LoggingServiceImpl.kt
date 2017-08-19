@@ -7,10 +7,10 @@ import java.util.logging.*
 object LoggingServiceImpl : LoggingService {
     override fun printInfo(func:() -> Unit) {
         try {
-            System.out.println(VerboseMarker)
+            System.out.println(DefaultMarker)
             func()
         } finally {
-            System.out.println(DefaultMarker)
+            System.out.println(VerboseMarker)
         }
     }
 
