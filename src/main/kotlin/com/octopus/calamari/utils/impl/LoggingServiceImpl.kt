@@ -5,6 +5,10 @@ import org.funktionale.tries.Try
 import java.util.logging.*
 
 object LoggingServiceImpl : LoggingService {
+    override fun flushStreams() {
+        Try {System.out.flush(); System.err.flush()}
+    }
+
     override fun printInfo(func:() -> Unit) {
         try {
             System.out.println(DefaultMarker)

@@ -10,4 +10,9 @@ interface LoggingService {
      * Print an info message
      */
     fun printInfo(func:() -> Unit)
+
+    /**
+     * Flush the streams
+     */
+    fun flushStreams()
 }
