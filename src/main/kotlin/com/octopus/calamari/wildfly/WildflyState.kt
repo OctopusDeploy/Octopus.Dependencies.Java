@@ -82,6 +82,7 @@ object WildflyState {
                             "enable application in standalone WildFly/EAP instance",
                             "WILDFLY-DEPLOY-ERROR-0012: There was an error enabling or disabling the package ${options.packageName} in the standalone server")
                 }
+                    .onFailure { throw it }
         }
     }
 }
