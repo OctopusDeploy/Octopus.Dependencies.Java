@@ -31,7 +31,7 @@ data class WildflyOptions(
         val enabled:Boolean = true,
         val enabledServerGroup:String = "",
         val disabledServerGroup:String = "",
-        val alreadyDumped:Boolean = false
+        private val alreadyDumped:Boolean = false
 ) {
     /**
      * Octopus will append a guid onto the end of the file, which we need to remove

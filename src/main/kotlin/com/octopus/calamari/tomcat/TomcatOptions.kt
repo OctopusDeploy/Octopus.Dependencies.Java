@@ -27,7 +27,7 @@ data class TomcatOptions(val controller:String,
                          val tag:String = "",
                          val version:String = "",
                          val enabled:Boolean = true,
-                         val alreadyDumped:Boolean = false) {
+                         private val alreadyDumped:Boolean = false) {
 
     val logger: Logger = Logger.getLogger(WildflyOptions::class.simpleName)
 

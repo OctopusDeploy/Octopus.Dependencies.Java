@@ -5,16 +5,23 @@ import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import org.funktionale.tries.Try
 import java.util.logging.Logger
 
+/**
+ * A service used to enable or disable deployments
+ */
 object WildflyState {
-    val logger: Logger = Logger.getLogger(WildflyState::class.simpleName)
-
     @JvmStatic
     fun main(args: Array<String>) {
         try {
             LoggingServiceImpl.configureLogging()
             WildflyState.setDeploymentState(WildflyOptions.fromEnvironmentVars())
         } catch (ex:Exception){
-            System.exit(-1)
+            Logger.getLogger(WildflyState::class.simpleName)
+                    .severe("WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.\n" + ex.toString())
+            /*
+                Need to do a hard exit here because the CLI can keep things open
+                and prevent a System.exit() from working
+             */
+            Runtime.getRuntime().halt(1)
         }
 
         /*
@@ -22,10 +29,12 @@ object WildflyState {
             that can take a minute to timeout. We really don't want to wait,
             so exit right away.
          */
-        System.exit(0)
+        Runtime.getRuntime().halt(0)
     }
 
     fun setDeploymentState(options:WildflyOptions) {
+        val logger: Logger = Logger.getLogger(WildflyState::class.simpleName)
+
         val service = WildflyService().login(options)
 
         if (service.isDomainMode) {
