@@ -156,7 +156,7 @@ object WildflyDeploy {
                     }
                     .map { service.logout() }
                     .map { service.shutdown() }
-                    .onSuccess { logger.info("Deployment finished.")}
+                    .onSuccess { LoggingServiceImpl.printInfo {logger.info("Deployment finished.")} }
                     .onFailure{
                         logger.severe("WILDFLY-DEPLOY-ERROR-0015: Failed to deploy the package to the WildFly/EAP standalone instance")
                         logger.severe(it.toString())

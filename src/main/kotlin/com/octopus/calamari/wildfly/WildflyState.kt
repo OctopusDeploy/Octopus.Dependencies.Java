@@ -87,6 +87,7 @@ object WildflyState {
                             "WILDFLY-DEPLOY-ERROR-0012: There was an error ${if (options.enabled) "enabling" else "disabling"} the package ${options.packageName} in the standalone server"
                     )
                 }
+                .onSuccess { LoggingServiceImpl.printInfo { logger.info("Successfully changed the state of the deployed application") } }
                 .onFailure { throw it }
         }
     }
