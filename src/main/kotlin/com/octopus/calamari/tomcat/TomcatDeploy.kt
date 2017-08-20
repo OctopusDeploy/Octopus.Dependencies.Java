@@ -11,6 +11,7 @@ import org.apache.http.entity.ContentType
 import org.funktionale.tries.Try
 import org.springframework.retry.RetryCallback
 import java.io.File
+import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
@@ -26,7 +27,10 @@ object TomcatDeploy {
             LoggingServiceImpl.configureLogging()
             TomcatDeploy.doDeployment(TomcatOptions.fromEnvironmentVars())
         } catch (ex: Exception){
-            logger.severe("TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.\n" + ex.toString())
+            logger.log(
+                    Level.SEVERE,
+                    "TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.",
+                    ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         }
 

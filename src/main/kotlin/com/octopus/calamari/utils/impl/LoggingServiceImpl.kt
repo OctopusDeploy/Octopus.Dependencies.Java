@@ -6,14 +6,17 @@ import java.util.logging.*
 
 object LoggingServiceImpl : LoggingService {
     override fun flushStreams() {
+        Try {Logger.getLogger("").handlers.forEach { it.flush() }}
         Try {System.out.flush(); System.err.flush()}
     }
 
     override fun printInfo(func:() -> Unit) {
         try {
+            flushStreams()
             System.out.println(DefaultMarker)
             func()
         } finally {
+            flushStreams()
             System.out.println(VerboseMarker)
         }
     }

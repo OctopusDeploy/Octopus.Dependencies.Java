@@ -1,6 +1,7 @@
 package com.octopus.calamari.wildfly
 
 import com.google.common.base.Preconditions.checkState
+import com.octopus.calamari.exception.CommandNotSuccessfulException
 import com.octopus.calamari.exception.LoginTimeoutException
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.funktionale.tries.Try
@@ -156,18 +157,24 @@ class WildflyService {
             return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
                 checkState(connected.get(), "You must be connected before running commands")
 
-                logger.info("Attempt ${context.retryCount + 1} to $description.")
+                try {
+                    logger.info("Attempt ${context.retryCount + 1} to $description.")
 
-                val result = jbossCli.cmd(command)
+                    val result = jbossCli.cmd(command)
 
-                logger.info("Command: " + command)
-                logger.info("Result as JSON: " + result?.response?.toJSONString(false))
+                    logger.info("Command: " + command)
+                    logger.info("Result as JSON: " + result?.response?.toJSONString(false))
 
-                if (!result.isSuccess) {
-                    throw Exception(errorMessage)
+                    if (!result.isSuccess) {
+                        throw CommandNotSuccessfulException(errorMessage)
+                    }
+
+                    result
+                } catch (ex:CommandNotSuccessfulException) {
+                    throw ex
+                } catch (ex:Exception) {
+                    throw Exception(errorMessage, ex)
                 }
-
-                result
             })}
         }
     }

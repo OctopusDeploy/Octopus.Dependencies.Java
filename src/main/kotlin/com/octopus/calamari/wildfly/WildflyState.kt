@@ -5,6 +5,7 @@ import com.octopus.calamari.exception.LoginTimeoutException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import org.funktionale.tries.Try
+import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
@@ -26,7 +27,9 @@ object WildflyState {
             LoggingServiceImpl.flushStreams()
             Runtime.getRuntime().halt(Constants.FAILED_LOGIN_RETURN)
         } catch (ex: Exception){
-            logger.severe("WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.\n" + ex.toString())
+            logger.log(Level.SEVERE,
+                    "WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.",
+                    ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         }
 
