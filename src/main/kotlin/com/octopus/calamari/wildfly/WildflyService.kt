@@ -69,7 +69,9 @@ class WildflyService {
                 Wait for a while until we are connected
              */
             val startTime = System.currentTimeMillis()
-            while (!connected.get() && System.currentTimeMillis() - startTime < LOGIN_LIMIT) {
+            while (!connected.get() &&
+                    !exceptionThrown.get() &&
+                    System.currentTimeMillis() - startTime < LOGIN_LIMIT) {
                 Thread.sleep(100)
             }
 

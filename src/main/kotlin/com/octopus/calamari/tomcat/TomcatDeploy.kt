@@ -121,11 +121,7 @@ object TomcatDeploy {
                         TomcatState.setDeploymentState(options)
                     }
                     .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application deployed successfully") } }
-                    .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0001: Failed to deploy file to Tomcat manager. " +
-                            "Make sure the credentials are valid, that the user \"${options.user}\" has been " +
-                            "assigned to the manager-script role in the tomcat-users.xml file, and that the manager url " +
-                            "${options.deployUrl.toExternalForm()} references the base path of the Tomcat manager application " +
-                            "e.g. http://localhost:8080/manager", it) }
+                    .onFailure { throw it }
         })
     }
 
@@ -161,9 +157,7 @@ object TomcatDeploy {
                      */
                     .map { response -> validateResponse(response) }
                     .onSuccess { logger.info("Application deployed successfully") }
-                    .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0002: Failed to redeploy tagged application to the Tomcat manager. " +
-                            "Make sure the credentials are valid, and that the user \"${options.user}\" has been " +
-                            "assigned to the manager-script role in the tomcat-users.xml file", it) }
+                    .onFailure { throw it }
         })
     }
 
@@ -193,9 +187,7 @@ object TomcatDeploy {
                      */
                     .map { response -> validateResponse(response) }
                     .onSuccess { logger.info("Application undeployed successfully") }
-                    .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0003: Failed to undeploy app from Tomcat manager. " +
-                            "Make sure the credentials are valid, and that the user \"${options.user}\" has been " +
-                            "assigned to the manager-script role in the tomcat-users.xml file", it) }
+                    .onFailure { throw it }
         })
     }
 }
