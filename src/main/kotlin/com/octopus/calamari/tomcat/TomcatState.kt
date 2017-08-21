@@ -52,7 +52,8 @@ object TomcatState {
     fun setDeploymentState(options:TomcatOptions) {
         Preconditions.checkArgument(
                 StringUtils.isNotBlank(options.name) ||
-                options.context == TomcatContextOptions.ROOT)
+                options.context == TomcatContextOptions.ROOT ||
+                options.context == TomcatContextOptions.NONE)
 
         val url = if (options.enabled) options.startUrl else options.stopUrl
 

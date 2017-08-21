@@ -117,9 +117,7 @@ object TomcatDeploy {
                         Was the response a success?
                      */
                     .map { response -> validateResponse(response) }
-                    .map {
-                        TomcatState.setDeploymentState(options)
-                    }
+                    .map { TomcatState.setDeploymentState(options) }
                     .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application deployed successfully") } }
                     .onFailure { throw it }
         })
