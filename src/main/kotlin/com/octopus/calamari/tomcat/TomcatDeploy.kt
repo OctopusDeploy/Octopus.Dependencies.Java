@@ -1,6 +1,8 @@
 package com.octopus.calamari.tomcat
 
 import com.google.common.base.Preconditions
+import com.octopus.calamari.exception.LoginFail401Exception
+import com.octopus.calamari.exception.LoginFail403Exception
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
@@ -26,7 +28,17 @@ object TomcatDeploy {
         try {
             LoggingServiceImpl.configureLogging()
             TomcatDeploy.doDeployment(TomcatOptions.fromEnvironmentVars())
-        } catch (ex: Exception){
+        } catch (ex: LoginFail401Exception) {
+            TomcatState.logger.log(Level.SEVERE,
+                    "TOMCAT-DEPLOY-ERROR-0006: A HTTP return code indicated that the login failed due to bad credentials. " +
+                            "Make sure the username and password are correct.")
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
+        } catch (ex: LoginFail403Exception) {
+            TomcatState.logger.log(Level.SEVERE,
+                    "TOMCAT-DEPLOY-ERROR-0007: A HTTP return code indicated that the login failed due to invalid group membership. " +
+                            "Make sure the user is part of the manager-script group in the tomcat-users.xml file.")
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
+        }catch (ex: Exception){
             logger.log(
                     Level.SEVERE,
                     "TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.",
@@ -38,6 +50,14 @@ object TomcatDeploy {
     }
 
     fun validateResponse(response: HttpResponse) {
+        if (response.statusLine.statusCode == 401) {
+            throw LoginFail401Exception()
+        }
+
+        if (response.statusLine.statusCode == 403) {
+            throw LoginFail403Exception()
+        }
+
         if (response.statusLine.statusCode !in 200..299) {
             throw IllegalStateException("Response code ${response.statusLine.statusCode} indicated failure.")
         }
@@ -102,7 +122,7 @@ object TomcatDeploy {
                     }
                     .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application deployed successfully") } }
                     .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0001: Failed to deploy file to Tomcat manager. " +
-                            "Make sure the user ${options.user} has been " +
+                            "Make sure the credentials are valid, that the user \"${options.user}\" has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file, and that the manager url " +
                             "${options.deployUrl.toExternalForm()} references the base path of the Tomcat manager application " +
                             "e.g. http://localhost:8080/manager", it) }
@@ -142,7 +162,7 @@ object TomcatDeploy {
                     .map { response -> validateResponse(response) }
                     .onSuccess { logger.info("Application deployed successfully") }
                     .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0002: Failed to redeploy tagged application to the Tomcat manager. " +
-                            "Make sure the user ${options.user} has been " +
+                            "Make sure the credentials are valid, and that the user \"${options.user}\" has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file", it) }
         })
     }
@@ -174,7 +194,7 @@ object TomcatDeploy {
                     .map { response -> validateResponse(response) }
                     .onSuccess { logger.info("Application undeployed successfully") }
                     .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0003: Failed to undeploy app from Tomcat manager. " +
-                            "Make sure the user ${options.user} has been " +
+                            "Make sure the credentials are valid, and that the user \"${options.user}\" has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file", it) }
         })
     }

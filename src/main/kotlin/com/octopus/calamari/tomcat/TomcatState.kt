@@ -1,6 +1,8 @@
 package com.octopus.calamari.tomcat
 
 import com.google.common.base.Preconditions
+import com.octopus.calamari.exception.LoginFail401Exception
+import com.octopus.calamari.exception.LoginFail403Exception
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
@@ -23,6 +25,16 @@ object TomcatState {
         try {
             LoggingServiceImpl.configureLogging()
             TomcatState.setDeploymentState(TomcatOptions.fromEnvironmentVars())
+        } catch (ex: LoginFail401Exception) {
+            logger.log(Level.SEVERE,
+                "TOMCAT-DEPLOY-ERROR-0006: A HTTP return code indicated that the login failed due to bad credentials. " +
+                "Make sure the username and password are correct.")
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
+        } catch (ex: LoginFail403Exception) {
+            logger.log(Level.SEVERE,
+            "TOMCAT-DEPLOY-ERROR-0007: A HTTP return code indicated that the login failed due to invalid group membership. " +
+                "Make sure the user is part of the manager-script group in the tomcat-users.xml file.")
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception){
             logger.log(Level.SEVERE,
                     "TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.",
@@ -40,7 +52,7 @@ object TomcatState {
     fun setDeploymentState(options:TomcatOptions) {
         Preconditions.checkArgument(
                 StringUtils.isNotBlank(options.name) ||
-                StringUtils.isNotBlank(options.application))
+                options.context == TomcatContextOptions.ROOT)
 
         val url = if (options.enabled) options.startUrl else options.stopUrl
 
@@ -68,7 +80,7 @@ object TomcatState {
                     .map { response -> TomcatDeploy.validateResponse(response) }
                     .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application ${if (options.enabled) "started" else "stopped"} successfully") } }
                     .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0004: Failed to ${if (options.enabled) "start" else "stop"} deployment via Tomcat manager. " +
-                            "Make sure the user ${options.user} has been " +
+                            "Make sure the credentials are valid, that the user \"${options.user}\" has been " +
                             "assigned to the manager-script role in the tomcat-users.xml file", it) }
         })
     }
