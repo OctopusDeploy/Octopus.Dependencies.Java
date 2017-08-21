@@ -1093,7 +1093,7 @@ class WildflyServiceTest {
      */
     @Test
     @RunAsClient
-    @Ignore("This is known to fail")
+    @Ignore("This is known to fail with: 'steps' may not be null")
     fun testReDisableDeployment() {
 
         WildflyDeploy.deployArtifact(WildflyOptions(
@@ -1159,7 +1159,7 @@ class WildflyServiceTest {
      */
     @Test
     @RunAsClient
-    @Ignore("This is known to fail")
+    @Ignore("This is known to fail with: 'steps' may not be null")
     fun testReDisableDeploymentNoCreds() {
 
         WildflyDeploy.deployArtifact(WildflyOptions(
