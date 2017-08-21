@@ -109,8 +109,7 @@ class WildflyService {
                 connected.set(false)
             })}
             .onFailure {
-                logger.severe("WILDFLY-DEPLOY-ERROR-0010: There was an error logging out of the management API")
-                throw it
+                throw Exception("WILDFLY-DEPLOY-ERROR-0010: There was an error logging out of the management API")
             }
 
             return this
@@ -129,8 +128,7 @@ class WildflyService {
                 connected.set(false)
             })}
             .onFailure {
-                logger.severe("WILDFLY-DEPLOY-ERROR-0011: There was an error terminating the CLI object")
-                throw it
+                throw Exception("WILDFLY-DEPLOY-ERROR-0011: There was an error terminating the CLI object")
             }
 
             return this

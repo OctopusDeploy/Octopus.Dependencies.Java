@@ -2,6 +2,7 @@ package com.octopus.calamari.wildfly
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Splitter
+import com.octopus.calamari.exception.CommandNotSuccessfulException
 import com.octopus.calamari.exception.LoginFailException
 import com.octopus.calamari.exception.LoginTimeoutException
 import com.octopus.calamari.utils.Constants
@@ -22,14 +23,18 @@ object WildflyDeploy {
         try {
             LoggingServiceImpl.configureLogging()
             WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
+        } catch (ex: CommandNotSuccessfulException) {
+            logger.log(Level.SEVERE, "", ex)
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: LoginTimeoutException){
-            logger.severe("WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time")
-            /*
-                Need to do a hard exit here because the CLI can keep things open
-                and prevent a System.exit() from working
-             */
-            LoggingServiceImpl.flushStreams()
-            Runtime.getRuntime().halt(Constants.FAILED_LOGIN_RETURN)
+                logger.severe("WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time")
+                /*
+                    Need to do a hard exit here because the CLI can keep things open
+                    and prevent a System.exit() from working
+                 */
+                LoggingServiceImpl.flushStreams()
+                Runtime.getRuntime().halt(Constants.FAILED_LOGIN_RETURN)
+
         } catch(ex: LoginFailException) {
             logger.severe("WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API. " +
                     "Check that the username and password are correct.")
@@ -140,11 +145,7 @@ object WildflyDeploy {
                     .map { service.logout() }
                     .map { service.shutdown() }
                     .onSuccess { LoggingServiceImpl.printInfo { logger.info("Successfully deployed the application.")} }
-                    .onFailure{
-                        logger.severe("WILDFLY-DEPLOY-ERROR-0016: Failed to deploy the package to the WildFly/EAP domain")
-                        logger.severe(it.toString())
-                        throw it
-                    }
+                    .onFailure{ throw it }
         } else {
             /*
                 Start by taking a snapshot of the current configuration
@@ -167,11 +168,7 @@ object WildflyDeploy {
                     .map { service.logout() }
                     .map { service.shutdown() }
                     .onSuccess { LoggingServiceImpl.printInfo {logger.info("Deployment finished.")} }
-                    .onFailure{
-                        logger.severe("WILDFLY-DEPLOY-ERROR-0015: Failed to deploy the package to the WildFly/EAP standalone instance")
-                        logger.severe(it.toString())
-                        throw it
-                    }
+                    .onFailure{ throw it }
         }
     }
 }
