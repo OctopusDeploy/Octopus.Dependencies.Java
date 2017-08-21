@@ -3,7 +3,7 @@ package com.octopus.calamari.exception
 /**
  * Represents a failed login to WildFly
  */
-class LoginTimeoutException : Exception {
+class LoginFailException : Exception {
     constructor()
     constructor(message: String, ex: Exception?): super(message, ex)
     constructor(message: String): super(message)

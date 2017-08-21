@@ -2,6 +2,7 @@ package com.octopus.calamari.wildfly
 
 import com.google.common.base.Preconditions.checkState
 import com.octopus.calamari.exception.CommandNotSuccessfulException
+import com.octopus.calamari.exception.LoginFailException
 import com.octopus.calamari.exception.LoginTimeoutException
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.funktionale.tries.Try
@@ -23,6 +24,7 @@ class WildflyService {
      * True once the login() function completes, and false otherwise
      */
     private var connected = AtomicBoolean(false)
+    private var exceptionThrown = AtomicBoolean(false)
 
     val isDomainMode:Boolean
         /**
@@ -39,7 +41,7 @@ class WildflyService {
                 properly registered in META-INF/services, there will be a prompt to log in that
                 can never be satisfied because there is no input.
 
-                ALthough this should not happen, we have a thread here that can be watched and
+                Although this should not happen, we have a thread here that can be watched and
                 timed out should any inputs like that be requested.
              */
             val thread = Thread(Runnable {
@@ -57,10 +59,7 @@ class WildflyService {
 
                     connected.set(true)
                 })}
-                .onFailure {
-                    logger.severe("WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API")
-                    throw it
-                }
+                .onFailure { exceptionThrown.set(true) }
             })
 
             thread.setDaemon(true)
@@ -82,9 +81,17 @@ class WildflyService {
             }
 
             /*
+                Did we fail to login? Throw an exception for the main method to
+                pick up.
+             */
+            if (exceptionThrown.get()) {
+                throw LoginFailException()
+            }
+
+            /*
                 We have timed out waiting for a connection
              */
-            throw LoginTimeoutException("WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time")
+            throw LoginTimeoutException()
         }
     }
 
