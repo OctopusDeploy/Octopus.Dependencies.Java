@@ -1,8 +1,11 @@
 package com.octopus.calamari.tomcat
 
 import com.google.common.base.Preconditions
-import com.octopus.calamari.exception.LoginFail401Exception
-import com.octopus.calamari.exception.LoginFail403Exception
+import com.octopus.calamari.exception.ExpectedException
+import com.octopus.calamari.exception.LoginException
+import com.octopus.calamari.exception.tomcat.LoginFail401Exception
+import com.octopus.calamari.exception.tomcat.LoginFail403Exception
+import com.octopus.calamari.exception.tomcat.StateChangeNotSuccessfulException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
@@ -28,19 +31,21 @@ object TomcatDeploy {
         try {
             LoggingServiceImpl.configureLogging()
             TomcatDeploy.doDeployment(TomcatOptions.fromEnvironmentVars())
-        } catch (ex: LoginFail401Exception) {
-            TomcatState.logger.log(Level.SEVERE,
-                    "TOMCAT-DEPLOY-ERROR-0006: A HTTP return code indicated that the login failed due to bad credentials. " +
-                            "Make sure the username and password are correct.")
+        } catch (ex : StateChangeNotSuccessfulException) {
+            /*
+                A deployment that failed to start will generate a warning
+                as the API doesn't return an error in this case.
+             */
+            TomcatState.logger.log(Level.WARNING, "", ex)
+            System.exit(0)
+        } catch (ex: LoginException) {
+            TomcatState.logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_LOGIN_RETURN)
-        } catch (ex: LoginFail403Exception) {
+        } catch (ex: ExpectedException) {
+            TomcatState.logger.log(Level.SEVERE, "", ex)
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
+        } catch (ex: Exception){
             TomcatState.logger.log(Level.SEVERE,
-                    "TOMCAT-DEPLOY-ERROR-0007: A HTTP return code indicated that the login failed due to invalid group membership. " +
-                            "Make sure the user is part of the manager-script group in the tomcat-users.xml file.")
-            System.exit(Constants.FAILED_LOGIN_RETURN)
-        }catch (ex: Exception){
-            logger.log(
-                    Level.SEVERE,
                     "TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.",
                     ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
@@ -49,18 +54,22 @@ object TomcatDeploy {
         System.exit(0)
     }
 
-    fun validateResponse(response: HttpResponse) {
+    fun validateResponse(response: HttpResponse):HttpResponse {
         if (response.statusLine.statusCode == 401) {
-            throw LoginFail401Exception()
+            throw LoginFail401Exception("TOMCAT-DEPLOY-ERROR-0006: A HTTP return code indicated that the login failed due to bad credentials. " +
+                    "Make sure the username and password are correct.")
         }
 
         if (response.statusLine.statusCode == 403) {
-            throw LoginFail403Exception()
+            throw LoginFail403Exception("TOMCAT-DEPLOY-ERROR-0007: A HTTP return code indicated that the login failed due to invalid group membership. " +
+                    "Make sure the user is part of the manager-script group in the tomcat-users.xml file.")
         }
 
         if (response.statusLine.statusCode !in 200..299) {
             throw IllegalStateException("Response code ${response.statusLine.statusCode} indicated failure.")
         }
+
+        return response
     }
 
     fun doDeployment(options: TomcatOptions) {

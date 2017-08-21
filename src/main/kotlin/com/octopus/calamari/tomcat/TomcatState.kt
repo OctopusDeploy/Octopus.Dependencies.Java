@@ -1,15 +1,19 @@
 package com.octopus.calamari.tomcat
 
 import com.google.common.base.Preconditions
-import com.octopus.calamari.exception.LoginFail401Exception
-import com.octopus.calamari.exception.LoginFail403Exception
+import com.octopus.calamari.exception.ExpectedException
+import com.octopus.calamari.exception.LoginException
+import com.octopus.calamari.exception.tomcat.StateChangeNotSuccessfulException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.fluent.Request
+import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
 import org.springframework.retry.RetryCallback
+import java.nio.charset.StandardCharsets
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -25,16 +29,12 @@ object TomcatState {
         try {
             LoggingServiceImpl.configureLogging()
             TomcatState.setDeploymentState(TomcatOptions.fromEnvironmentVars())
-        } catch (ex: LoginFail401Exception) {
-            logger.log(Level.SEVERE,
-                "TOMCAT-DEPLOY-ERROR-0006: A HTTP return code indicated that the login failed due to bad credentials. " +
-                "Make sure the username and password are correct.")
+        } catch (ex: LoginException) {
+            logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_LOGIN_RETURN)
-        } catch (ex: LoginFail403Exception) {
-            logger.log(Level.SEVERE,
-            "TOMCAT-DEPLOY-ERROR-0007: A HTTP return code indicated that the login failed due to invalid group membership. " +
-                "Make sure the user is part of the manager-script group in the tomcat-users.xml file.")
-            System.exit(Constants.FAILED_LOGIN_RETURN)
+        } catch (ex: ExpectedException) {
+            logger.log(Level.SEVERE, "", ex)
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception){
             logger.log(Level.SEVERE,
                     "TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.",
@@ -71,14 +71,26 @@ object TomcatState {
                         Use the executor to PUT the package to the
                         manager
                      */
-                    .map { executor ->
-                        executor.execute(Request.Get(url.toExternalForm()))
-                                .returnResponse()
+                    .flatMap { executor ->
+                        Try {executor.execute(Request.Get(url.toExternalForm())).returnResponse()}
+                                .map {TomcatDeploy.validateResponse(it)}
+                                .map {executor}
                     }
                     /*
-                        Was the response a success?
+                        Use the executor to list the deployments
                      */
-                    .map { response -> TomcatDeploy.validateResponse(response) }
+                    .flatMap { executor ->
+                        Try {executor.execute(Request.Get(options.listUrl.toExternalForm())).returnResponse()}
+                                .map {TomcatDeploy.validateResponse(it)}
+                                .map { IOUtils.toString(it.entity.content, StandardCharsets.UTF_8) }
+                                .map { listContent ->
+                                    if (!listContent.contains("${options.urlPath.getOrElse { "" }}:${if (options.enabled) "running" else "stopped"}")) {
+                                        throw StateChangeNotSuccessfulException("TOMCAT-DEPLOY-ERROR-0008: Application was not successfully ${if (options.enabled) "started" else "stopped"}\"")
+                                    }
+                                }
+
+
+                    }
                     .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application ${if (options.enabled) "started" else "stopped"} successfully") } }
                     .onFailure { throw it }
         })

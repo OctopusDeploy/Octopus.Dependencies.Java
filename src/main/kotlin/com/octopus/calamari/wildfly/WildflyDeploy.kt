@@ -2,9 +2,12 @@ package com.octopus.calamari.wildfly
 
 import com.google.common.base.Preconditions
 import com.google.common.base.Splitter
-import com.octopus.calamari.exception.CommandNotSuccessfulException
-import com.octopus.calamari.exception.LoginFailException
-import com.octopus.calamari.exception.LoginTimeoutException
+import com.octopus.calamari.exception.ExpectedException
+import com.octopus.calamari.exception.LoginException
+import com.octopus.calamari.exception.wildfly.CommandNotSuccessfulException
+import com.octopus.calamari.exception.wildfly.LoginFailException
+import com.octopus.calamari.exception.wildfly.LoginTimeoutException
+import com.octopus.calamari.tomcat.TomcatState
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import org.apache.commons.lang3.StringUtils
@@ -23,25 +26,22 @@ object WildflyDeploy {
         try {
             LoggingServiceImpl.configureLogging()
             WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
-        } catch (ex: CommandNotSuccessfulException) {
-            logger.log(Level.SEVERE, "", ex)
-            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: LoginTimeoutException){
-                logger.severe("WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time")
-                /*
-                    Need to do a hard exit here because the CLI can keep things open
-                    and prevent a System.exit() from working
-                 */
-                LoggingServiceImpl.flushStreams()
-                Runtime.getRuntime().halt(Constants.FAILED_LOGIN_RETURN)
-
-        } catch(ex: LoginFailException) {
-            logger.severe("WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API. " +
-                    "Check that the username and password are correct.")
+            WildflyState.logger.log(Level.SEVERE, "", ex)
+            /*
+                Need to do a hard exit here because the CLI can keep things open
+                and prevent a System.exit() from working
+             */
+            LoggingServiceImpl.flushStreams()
+            Runtime.getRuntime().halt(Constants.FAILED_LOGIN_RETURN)
+        } catch(ex: LoginException) {
+            WildflyState.logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_LOGIN_RETURN)
-        } catch (ex:Exception){
-            logger.log(
-                    Level.SEVERE,
+        } catch (ex: ExpectedException) {
+            TomcatState.logger.log(Level.SEVERE, "", ex)
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
+        } catch (ex: Exception){
+            WildflyState.logger.log(Level.SEVERE,
                     "WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.",
                     ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)

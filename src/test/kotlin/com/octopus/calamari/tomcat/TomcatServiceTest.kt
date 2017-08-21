@@ -72,7 +72,8 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath
+                application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
+                context = TomcatContextOptions.NONE
         ))
         val deployments = listDeployments(commonOptions)
         Assert.assertTrue(deployments.contains("/sampleapp:running"))
@@ -248,7 +249,8 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath
+                application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
+                context = TomcatContextOptions.NONE
         ))
         val deployments1 = listDeployments(commonOptions)
         Assert.assertTrue(deployments1.contains("/sampleapp:running"))
@@ -257,7 +259,8 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(this.javaClass.getResource("/sampleapp2.war").file).absolutePath
+                application = File(this.javaClass.getResource("/sampleapp2.war").file).absolutePath,
+                context = TomcatContextOptions.NONE
         ))
         val deployments2 = listDeployments(commonOptions)
         Assert.assertTrue(deployments2.contains("/sampleapp:running"))
@@ -325,7 +328,8 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath
+                application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
+                context = TomcatContextOptions.NONE
         ))
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)

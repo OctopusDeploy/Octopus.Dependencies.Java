@@ -1,8 +1,11 @@
 package com.octopus.calamari.wildfly
 
 import com.google.common.base.Splitter
-import com.octopus.calamari.exception.LoginFailException
-import com.octopus.calamari.exception.LoginTimeoutException
+import com.octopus.calamari.exception.ExpectedException
+import com.octopus.calamari.exception.LoginException
+import com.octopus.calamari.exception.wildfly.LoginFailException
+import com.octopus.calamari.exception.wildfly.LoginTimeoutException
+import com.octopus.calamari.tomcat.TomcatState
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import org.funktionale.tries.Try
@@ -21,17 +24,19 @@ object WildflyState {
             LoggingServiceImpl.configureLogging()
             WildflyState.setDeploymentState(WildflyOptions.fromEnvironmentVars())
         } catch (ex: LoginTimeoutException){
-            logger.severe("WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time")
+            logger.log(Level.SEVERE, "", ex)
             /*
                 Need to do a hard exit here because the CLI can keep things open
                 and prevent a System.exit() from working
              */
             LoggingServiceImpl.flushStreams()
             Runtime.getRuntime().halt(Constants.FAILED_LOGIN_RETURN)
-        } catch(ex: LoginFailException) {
-            logger.severe("WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API. " +
-                    "Check that the username and password are correct.")
+        } catch(ex: LoginException) {
+            logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_LOGIN_RETURN)
+        } catch (ex: ExpectedException) {
+            TomcatState.logger.log(Level.SEVERE, "", ex)
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception){
             logger.log(Level.SEVERE,
                     "WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.",

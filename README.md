@@ -105,4 +105,5 @@ pack200 --repack --effort=9 --segment-limit=-1 --modification-time=latest --stri
 * TOMCAT-DEPLOY-ERROR-0004: There was an error enabling or disabling a package in Tomcat
 * TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.
 * TOMCAT-DEPLOY-ERROR-0006: A HTTP return code indicated that the login failed due to bad credentials. Make sure the username and password are correct.
-* TOMCAT-DEPLOY-ERROR-0007: A HTTP return code indicated that the login failed due to invalid group membership. Make sure the user is part of the manager-script group in the tomcat-users.xml file.")
+* TOMCAT-DEPLOY-ERROR-0007: A HTTP return code indicated that the login failed due to invalid group membership. Make sure the user is part of the manager-script group in the tomcat-users.xml file.
+* TOMCAT-DEPLOY-ERROR-0008: The application was not successfully started or stopped.

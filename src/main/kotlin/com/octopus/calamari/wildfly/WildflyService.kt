@@ -1,9 +1,9 @@
 package com.octopus.calamari.wildfly
 
 import com.google.common.base.Preconditions.checkState
-import com.octopus.calamari.exception.CommandNotSuccessfulException
-import com.octopus.calamari.exception.LoginFailException
-import com.octopus.calamari.exception.LoginTimeoutException
+import com.octopus.calamari.exception.wildfly.CommandNotSuccessfulException
+import com.octopus.calamari.exception.wildfly.LoginFailException
+import com.octopus.calamari.exception.wildfly.LoginTimeoutException
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
@@ -87,13 +87,14 @@ class WildflyService {
                 pick up.
              */
             if (exceptionThrown.get()) {
-                throw LoginFailException()
+                throw LoginFailException("WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API. " +
+                        "Check that the username and password are correct.")
             }
 
             /*
                 We have timed out waiting for a connection
              */
-            throw LoginTimeoutException()
+            throw LoginTimeoutException("WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time")
         }
     }
 
@@ -177,7 +178,7 @@ class WildflyService {
                     }
 
                     result
-                } catch (ex:CommandNotSuccessfulException) {
+                } catch (ex: CommandNotSuccessfulException) {
                     throw ex
                 } catch (ex:Exception) {
                     throw Exception(errorMessage, ex)
