@@ -36,16 +36,16 @@ object TomcatDeploy {
                 A deployment that failed to start will generate a warning
                 as the API doesn't return an error in this case.
              */
-            TomcatState.logger.log(Level.WARNING, "", ex)
+            logger.log(Level.WARNING, "", ex)
             System.exit(0)
         } catch (ex: LoginException) {
-            TomcatState.logger.log(Level.SEVERE, "", ex)
+            logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_LOGIN_RETURN)
         } catch (ex: ExpectedException) {
-            TomcatState.logger.log(Level.SEVERE, "", ex)
+            logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception){
-            TomcatState.logger.log(Level.SEVERE,
+            logger.log(Level.SEVERE,
                     "TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.",
                     ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)

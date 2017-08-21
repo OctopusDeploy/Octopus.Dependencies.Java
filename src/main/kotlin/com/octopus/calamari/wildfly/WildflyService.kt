@@ -181,7 +181,7 @@ class WildflyService {
                 } catch (ex: CommandNotSuccessfulException) {
                     throw ex
                 } catch (ex:Exception) {
-                    throw Exception(errorMessage, ex)
+                    throw CommandNotSuccessfulException(errorMessage, ex)
                 }
             })}
         }

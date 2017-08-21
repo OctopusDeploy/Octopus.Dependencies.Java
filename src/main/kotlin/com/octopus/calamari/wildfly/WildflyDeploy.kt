@@ -27,7 +27,7 @@ object WildflyDeploy {
             LoggingServiceImpl.configureLogging()
             WildflyDeploy.deployArtifact(WildflyOptions.fromEnvironmentVars())
         } catch (ex: LoginTimeoutException){
-            WildflyState.logger.log(Level.SEVERE, "", ex)
+            logger.log(Level.SEVERE, "", ex)
             /*
                 Need to do a hard exit here because the CLI can keep things open
                 and prevent a System.exit() from working
@@ -35,13 +35,13 @@ object WildflyDeploy {
             LoggingServiceImpl.flushStreams()
             Runtime.getRuntime().halt(Constants.FAILED_LOGIN_RETURN)
         } catch(ex: LoginException) {
-            WildflyState.logger.log(Level.SEVERE, "", ex)
+            logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_LOGIN_RETURN)
         } catch (ex: ExpectedException) {
-            TomcatState.logger.log(Level.SEVERE, "", ex)
+            logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception){
-            WildflyState.logger.log(Level.SEVERE,
+            logger.log(Level.SEVERE,
                     "WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.",
                     ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)

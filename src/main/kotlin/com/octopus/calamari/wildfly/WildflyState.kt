@@ -35,7 +35,7 @@ object WildflyState {
             logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_LOGIN_RETURN)
         } catch (ex: ExpectedException) {
-            TomcatState.logger.log(Level.SEVERE, "", ex)
+            logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception){
             logger.log(Level.SEVERE,
