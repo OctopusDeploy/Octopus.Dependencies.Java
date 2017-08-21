@@ -29,12 +29,12 @@ object TomcatState {
             logger.log(Level.SEVERE,
                 "TOMCAT-DEPLOY-ERROR-0006: A HTTP return code indicated that the login failed due to bad credentials. " +
                 "Make sure the username and password are correct.")
-            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
+            System.exit(Constants.FAILED_LOGIN_RETURN)
         } catch (ex: LoginFail403Exception) {
             logger.log(Level.SEVERE,
             "TOMCAT-DEPLOY-ERROR-0007: A HTTP return code indicated that the login failed due to invalid group membership. " +
                 "Make sure the user is part of the manager-script group in the tomcat-users.xml file.")
-            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
+            System.exit(Constants.FAILED_LOGIN_RETURN)
         } catch (ex: Exception){
             logger.log(Level.SEVERE,
                     "TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.",
@@ -79,9 +79,7 @@ object TomcatState {
                      */
                     .map { response -> TomcatDeploy.validateResponse(response) }
                     .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application ${if (options.enabled) "started" else "stopped"} successfully") } }
-                    .onFailure { throw Exception("TOMCAT-DEPLOY-ERROR-0004: Failed to ${if (options.enabled) "start" else "stop"} deployment via Tomcat manager. " +
-                            "Make sure the credentials are valid, that the user \"${options.user}\" has been " +
-                            "assigned to the manager-script role in the tomcat-users.xml file", it) }
+                    .onFailure { throw it }
         })
     }
 }

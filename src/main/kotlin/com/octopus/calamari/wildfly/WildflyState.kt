@@ -31,6 +31,7 @@ object WildflyState {
         } catch(ex: LoginFailException) {
             logger.severe("WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API. " +
                     "Check that the username and password are correct.")
+            Runtime.getRuntime().halt(Constants.FAILED_LOGIN_RETURN)
         } catch (ex: Exception){
             logger.log(Level.SEVERE,
                     "WILDFLY-DEPLOY-ERROR-0014: An exception was thrown during the deployment.",
