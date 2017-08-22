@@ -81,7 +81,7 @@ object TomcatState {
                     .flatMap { executor ->
                         Try {executor.execute(Request.Get(options.listUrl.toExternalForm())).returnResponse()}
                                 .map {TomcatDeploy.validateResponse(it)}
-                                .map { IOUtils.toString(it.entity.content, "UTF_8") }
+                                .map { IOUtils.toString(it.entity.content, "UTF-8") }
                                 .map { listContent ->
                                     if (!listContent.contains("${options.urlPath.getOrElse { "" }}:${if (options.enabled) "running" else "stopped"}")) {
                                         throw StateChangeNotSuccessfulException(
