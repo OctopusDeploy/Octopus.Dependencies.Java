@@ -10,9 +10,9 @@ object Constants {
      */
     const val ENVIRONEMT_VARS_PREFIX = "OctopusEnvironment_"
     /**
-     * The return code for a timeout during a WildFly Login
+     * The return code for a failed login
      */
-    const val FAILED_LOGIN_RETURN = 100
+    const val FAILED_LOGIN_RETURN = 2
     /**
      * The return code for a failed deployment
      */
