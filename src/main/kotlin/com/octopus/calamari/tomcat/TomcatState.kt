@@ -13,7 +13,6 @@ import org.apache.http.client.fluent.Request
 import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
 import org.springframework.retry.RetryCallback
-import java.nio.charset.StandardCharsets
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -82,11 +81,11 @@ object TomcatState {
                     .flatMap { executor ->
                         Try {executor.execute(Request.Get(options.listUrl.toExternalForm())).returnResponse()}
                                 .map {TomcatDeploy.validateResponse(it)}
-                                .map { IOUtils.toString(it.entity.content, StandardCharsets.UTF_8) }
+                                .map { IOUtils.toString(it.entity.content, "UTF_8") }
                                 .map { listContent ->
                                     if (!listContent.contains("${options.urlPath.getOrElse { "" }}:${if (options.enabled) "running" else "stopped"}")) {
                                         throw StateChangeNotSuccessfulException(
-                                            "TOMCAT-DEPLOY-ERROR-0008: Application was not successfully ${if (options.enabled) "started" else "stopped"}" +
+                                            "TOMCAT-DEPLOY-ERROR-0008: Application was not successfully ${if (options.enabled) "started" else "stopped"}." +
                                             " Check the Tomcat logs for errors.")
                                     }
                                 }

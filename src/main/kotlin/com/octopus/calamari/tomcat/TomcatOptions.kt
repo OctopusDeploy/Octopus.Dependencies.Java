@@ -97,16 +97,16 @@ data class TomcatOptions(val controller:String,
         fun fromEnvironmentVars(): TomcatOptions {
             val envVars = System.getenv()
 
-            val application = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath", "")
-            val name = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Name", "")
-            val version = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Version", "")
-            val controller = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Controller", "http://localhost:8080")
-            val user = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_User", "")
-            val password = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Password","")
-            val deploy = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Deploy", "true").toBoolean()
-            val enabled = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Enabled", "true").toBoolean()
-            val context = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Context", TomcatContextOptions.CUSTOM.setting)
-            val tag = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Tag", "")
+            val application = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath"] ?: ""
+            val name = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Name"] ?: ""
+            val version = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Version"] ?: ""
+            val controller = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Controller"] ?: "http://localhost:8080"
+            val user = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_User"] ?: ""
+            val password = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Password"] ?: ""
+            val deploy = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Deploy"] ?: "true").toBoolean()
+            val enabled = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Enabled"] ?: "true").toBoolean()
+            val context = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Context"] ?:  TomcatContextOptions.CUSTOM.setting
+            val tag = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Tag"] ?: ""
 
             if (StringUtils.isBlank(user)) {
                 throw IllegalArgumentException("user can not be null")

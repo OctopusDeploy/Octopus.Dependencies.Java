@@ -65,16 +65,16 @@ data class WildflyOptions(
         fun fromEnvironmentVars(): WildflyOptions {
             val envVars = System.getenv()
 
-            val controller = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Controller", "localhost")
-            val port = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Port", "9990")
-            val protocol = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Protocol", "http-remoting")
+            val controller = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Controller"] ?: "localhost"
+            val port = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Port"] ?: "9990"
+            val protocol = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Protocol"] ?: "http-remoting"
             val user = envVars.get(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_User")
             val password = envVars.get(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Password")
-            val application = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath", "")
-            val name = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Name", null)
-            val enabled = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled", "true")
-            val enabledServerGroup = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_EnabledServerGroup", "")
-            val disabledServerGroup = envVars.getOrDefault(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_DisabledServerGroup", "")
+            val application = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath"] ?: ""
+            val name = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Name"]
+            val enabled = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled"] ?: "true"
+            val enabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_EnabledServerGroup"] ?: ""
+            val disabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_DisabledServerGroup"] ?: ""
 
             return WildflyOptions(
                     controller,
