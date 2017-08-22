@@ -1,6 +1,5 @@
 package com.octopus.calamari.exception.wildfly
 
-import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.LoginException
 
 /**

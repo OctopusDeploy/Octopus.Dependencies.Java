@@ -1,14 +1,10 @@
 package com.octopus.calamari.tomcat
 
 import com.octopus.calamari.utils.Constants
-import com.octopus.calamari.wildfly.WildflyOptions
-import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang.StringUtils
 import org.funktionale.option.Option
-import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
-import java.io.File
 import java.lang.IllegalArgumentException
 import java.net.URL
 import java.net.URLEncoder

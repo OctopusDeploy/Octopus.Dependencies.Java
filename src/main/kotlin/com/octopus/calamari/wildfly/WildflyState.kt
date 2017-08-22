@@ -3,9 +3,7 @@ package com.octopus.calamari.wildfly
 import com.google.common.base.Splitter
 import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.LoginException
-import com.octopus.calamari.exception.wildfly.LoginFailException
 import com.octopus.calamari.exception.wildfly.LoginTimeoutException
-import com.octopus.calamari.tomcat.TomcatState
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import org.funktionale.tries.Try

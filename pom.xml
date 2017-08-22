@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.55</version>
+    <version>1.0.56</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -63,9 +63,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.6</version>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
 
         <dependency>

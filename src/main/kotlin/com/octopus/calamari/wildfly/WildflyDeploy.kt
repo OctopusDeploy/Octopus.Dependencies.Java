@@ -4,13 +4,10 @@ import com.google.common.base.Preconditions
 import com.google.common.base.Splitter
 import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.LoginException
-import com.octopus.calamari.exception.wildfly.CommandNotSuccessfulException
-import com.octopus.calamari.exception.wildfly.LoginFailException
 import com.octopus.calamari.exception.wildfly.LoginTimeoutException
-import com.octopus.calamari.tomcat.TomcatState
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
 import java.util.logging.Level
 import java.util.logging.Logger

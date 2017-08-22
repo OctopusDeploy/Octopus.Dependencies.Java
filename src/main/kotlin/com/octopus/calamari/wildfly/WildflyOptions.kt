@@ -2,7 +2,7 @@ package com.octopus.calamari.wildfly
 
 import com.octopus.calamari.utils.Constants
 import org.apache.commons.io.FilenameUtils
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang.StringUtils
 import java.util.logging.Logger
 
 /**

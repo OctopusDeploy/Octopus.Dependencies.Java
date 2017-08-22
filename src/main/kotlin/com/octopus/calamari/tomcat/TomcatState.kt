@@ -8,7 +8,7 @@ import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang.StringUtils
 import org.apache.http.client.fluent.Request
 import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
