@@ -15,6 +15,7 @@ import org.funktionale.tries.Try
 import org.springframework.retry.RetryCallback
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.util.regex.Pattern
 
 /**
  * A service for changing the state of applications deployed to Tomcat
@@ -83,7 +84,21 @@ object TomcatState {
                                 .map {TomcatDeploy.validateResponse(it)}
                                 .map { IOUtils.toString(it.entity.content, "UTF-8") }
                                 .map { listContent ->
-                                    if (!listContent.contains("${options.urlPath.getOrElse { "" }}:${if (options.enabled) "running" else "stopped"}")) {
+                                    /*
+                                        The list url returns a response like:
+                                        OK - Listed applications for virtual host localhost
+                                        /webdav:running:0:webdav
+                                        /examples:running:0:examples
+                                        /manager:running:0:manager
+                                        /:running:0:ROOT
+                                        /test:running:0:test##2
+                                        /test:running:0:test##1
+                                     */
+                                    val pattern = Pattern.compile(
+                                            "^/${options.urlPath.getOrElse { "" }}:${if (options.enabled) "running" else "stopped"}",
+                                            Pattern.MULTILINE)
+
+                                    if (!pattern.matcher(listContent).find()) {
                                         throw StateChangeNotSuccessfulException(
                                             "TOMCAT-DEPLOY-ERROR-0008: Application was not successfully ${if (options.enabled) "started" else "stopped"}." +
                                             " Check the Tomcat logs for errors.")
