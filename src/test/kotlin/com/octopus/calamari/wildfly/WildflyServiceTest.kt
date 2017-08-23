@@ -102,15 +102,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -133,15 +133,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -167,15 +167,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -199,15 +199,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -245,15 +245,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -289,15 +289,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -334,15 +334,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertFalse(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -375,15 +375,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertFalse(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -419,15 +419,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -459,15 +459,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -504,27 +504,27 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val mainServerGroupResult2 = runCmd("/server-group=main-server-group/deployment=sampleapp2.war:read-resource")
             Assert.assertTrue(mainServerGroupResult2.isSuccess())
-            Assert.assertTrue(mainServerGroupResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult2.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult2 = runCmd("/server-group=other-server-group/deployment=sampleapp2.war:read-resource")
             Assert.assertTrue(otherServerGroupResult2.isSuccess())
-            Assert.assertFalse(otherServerGroupResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult2.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
 
             val standaloneResult2 = runCmd("/deployment=sampleapp2.war:read-resource")
             Assert.assertTrue(standaloneResult2.isSuccess())
-            Assert.assertTrue(standaloneResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult2.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -557,27 +557,27 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val mainServerGroupResult2 = runCmd("/server-group=main-server-group/deployment=sampleapp2.war:read-resource")
             Assert.assertTrue(mainServerGroupResult2.isSuccess())
-            Assert.assertTrue(mainServerGroupResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult2.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult2 = runCmd("/server-group=other-server-group/deployment=sampleapp2.war:read-resource")
             Assert.assertTrue(otherServerGroupResult2.isSuccess())
-            Assert.assertFalse(otherServerGroupResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult2.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
 
             val standaloneResult2 = runCmd("/deployment=sampleapp2.war:read-resource")
             Assert.assertTrue(standaloneResult2.isSuccess())
-            Assert.assertTrue(standaloneResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult2.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -617,27 +617,27 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=myapp1.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=myapp1.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val mainServerGroupResult2 = runCmd("/server-group=main-server-group/deployment=myapp2.war:read-resource")
             Assert.assertTrue(mainServerGroupResult2.isSuccess())
-            Assert.assertTrue(mainServerGroupResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult2.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult2 = runCmd("/server-group=other-server-group/deployment=myapp2.war:read-resource")
             Assert.assertTrue(otherServerGroupResult2.isSuccess())
-            Assert.assertFalse(otherServerGroupResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult2.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=myapp1.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
 
             val standaloneResult2 = runCmd("/deployment=myapp2.war:read-resource")
             Assert.assertTrue(standaloneResult2.isSuccess())
-            Assert.assertTrue(standaloneResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult2.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -673,27 +673,27 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=myapp1.war:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=myapp1.war:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val mainServerGroupResult2 = runCmd("/server-group=main-server-group/deployment=myapp2.war:read-resource")
             Assert.assertTrue(mainServerGroupResult2.isSuccess())
-            Assert.assertTrue(mainServerGroupResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult2.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult2 = runCmd("/server-group=other-server-group/deployment=myapp2.war:read-resource")
             Assert.assertTrue(otherServerGroupResult2.isSuccess())
-            Assert.assertFalse(otherServerGroupResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult2.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=myapp1.war:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
 
             val standaloneResult2 = runCmd("/deployment=myapp2.war:read-resource")
             Assert.assertTrue(standaloneResult2.isSuccess())
-            Assert.assertTrue(standaloneResult2.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult2.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -719,15 +719,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -751,15 +751,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -784,15 +784,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sample.ear:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sample.ear:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sample.ear:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -817,15 +817,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=activemq-rar-5.15.0.rar:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=activemq-rar-5.15.0.rar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=activemq-rar-5.15.0.rar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -848,15 +848,15 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=activemq-rar-5.15.0.rar:read-resource")
             Assert.assertTrue(mainServerGroupResult.isSuccess())
-            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
 
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=activemq-rar-5.15.0.rar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=activemq-rar-5.15.0.rar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -882,11 +882,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -903,11 +903,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -931,11 +931,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -952,11 +952,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -985,11 +985,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -1017,11 +1017,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -1048,11 +1048,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -1080,11 +1080,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -1114,11 +1114,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -1146,11 +1146,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 
@@ -1178,11 +1178,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertTrue(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -1210,11 +1210,11 @@ class WildflyServiceTest {
         if (wildflyService.isDomainMode) {
             val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(otherServerGroupResult.isSuccess())
-            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleejb.jar:read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
-            Assert.assertFalse(standaloneResult.get().response.get("result").get("state").asBoolean() )
+            Assert.assertFalse(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }
     }
 }
