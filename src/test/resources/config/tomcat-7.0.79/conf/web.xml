@@ -98,7 +98,7 @@
   <!--                                                                      -->
   <!--   showServerInfo      Should server information be presented in the  -->
   <!--                       response sent to clients when directory        -->
-  <!--                       listings is enabled? [true]                    -->
+  <!--                       listings is state? [true]                    -->
 
     <servlet>
         <servlet-name>default</servlet-name>
@@ -123,7 +123,7 @@
   <!--                                                                      -->
   <!--   checkInterval       If development is false and checkInterval is   -->
   <!--                       greater than zero, background compilations are -->
-  <!--                       enabled. checkInterval is the time in seconds  -->
+  <!--                       state. checkInterval is the time in seconds  -->
   <!--                       between checks to see if a JSP page (and its   -->
   <!--                       dependent files) needs to  be recompiled. [0]  -->
   <!--                                                                      -->
@@ -156,7 +156,7 @@
   <!--                       False if suppressSmap is true                  -->
   <!--                                                                      -->
   <!--   enablePooling       Determines whether tag handler pooling is      -->
-  <!--                       enabled. This is a compilation option. It will -->
+  <!--                       state. This is a compilation option. It will -->
   <!--                       not alter the behaviour of JSPs that have      -->
   <!--                       already been compiled. [true]                  -->
   <!--                                                                      -->
@@ -288,7 +288,7 @@
   <!--   outputEncoding      The encoding to use for the page that results  -->
   <!--                       from the SSI processing. [UTF-8]               -->
   <!--                                                                      -->
-  <!--   allowExec           Is use of the exec command enabled? [false]    -->
+  <!--   allowExec           Is use of the exec command state? [false]    -->
 
 <!--
     <servlet>
@@ -505,7 +505,7 @@
   <!--                       relative to the context root, instead of       -->
   <!--                       the server root? [false]                       -->
   <!--                                                                      -->
-  <!--   allowExec           Is use of the exec command enabled? [false]    -->
+  <!--   allowExec           Is use of the exec command state? [false]    -->
 
 <!--
     <filter>

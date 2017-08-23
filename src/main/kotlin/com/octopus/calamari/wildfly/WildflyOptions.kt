@@ -3,6 +3,7 @@ package com.octopus.calamari.wildfly
 import com.octopus.calamari.utils.Constants
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang.StringUtils
+import org.funktionale.tries.Try
 import java.util.logging.Logger
 
 /**
@@ -16,8 +17,8 @@ import java.util.logging.Logger
  * @property password The WildFly admin password
  * @property application The path to the application to be deployed
  * @property name The name of the application once it is deployed
- * @property enabled true if the deployment is to be enabled on a standalone server, and false otherwise
- * @property enabledServerGroup The comma separated names of the server groups that should have the deployment enabled in domain mode
+ * @property state true if the deployment is to be state on a standalone server, and false otherwise
+ * @property enabledServerGroup The comma separated names of the server groups that should have the deployment state in domain mode
  * @property disabledServerGroup The comma separated names of the server groups that should have the deployment disabled in domain mode
  */
 data class WildflyOptions(
@@ -28,7 +29,7 @@ data class WildflyOptions(
         val password:String? = null,
         val application:String = "",
         val name:String? = "",
-        val enabled:Boolean = true,
+        val state:WildflyStateOptions = WildflyStateOptions.ENABLE,
         val enabledServerGroup:String = "",
         val disabledServerGroup:String = "",
         private val alreadyDumped:Boolean = false
@@ -72,21 +73,22 @@ data class WildflyOptions(
             val password = envVars.get(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Password")
             val application = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath"] ?: ""
             val name = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Name"]
-            val enabled = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled"] ?: "true"
+            val enabled = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled"] ?: WildflyStateOptions.ENABLE.toString()
             val enabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_EnabledServerGroup"] ?: ""
             val disabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_DisabledServerGroup"] ?: ""
 
             return WildflyOptions(
-                    controller,
+                    controller.trim(),
                     port.toInt(),
-                    protocol,
+                    protocol.trim(),
                     user,
                     password,
-                    application,
-                    name,
-                    enabled.toBoolean(),
-                    enabledServerGroup,
-                    disabledServerGroup
+                    application.trim(),
+                    StringUtils.trim(name),
+                    Try { WildflyStateOptions.valueOf(enabled.trim().toUpperCase())}
+                            .getOrElse { WildflyStateOptions.ENABLE },
+                    enabledServerGroup.trim(),
+                    disabledServerGroup.trim()
             )
         }
     }

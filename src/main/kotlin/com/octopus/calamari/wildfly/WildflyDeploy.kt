@@ -109,7 +109,7 @@ object WildflyDeploy {
                         }
                     }
                     /*
-                        And deploy the package for enabled server groups
+                        And deploy the package for state server groups
                      */
                     .map{Splitter.on(',')
                         .trimResults()
@@ -149,12 +149,12 @@ object WildflyDeploy {
              */
             Try {service.takeSnapshot()}
                     .flatMap { service.runCommandExpectSuccess(
-                            "deploy --force ${if (!options.enabled) "--disabled" else ""} --name=${options.packageName} ${options.application}",
+                            "deploy --force ${if (options.state == WildflyStateOptions.DISABLE) "--disabled" else ""} --name=${options.packageName} ${options.application}",
                             "deploy application to standalone WildFly/EAP instance",
                             "WILDFLY-DEPLOY-ERROR-0007: There was an error deploying the package ${options.packageName} to the standalone server")
                     }
                     .map {
-                        if (options.enabled) {
+                        if (options.state == WildflyStateOptions.ENABLE) {
                             service.runCommandExpectSuccess(
                                 "deploy --name=${options.packageName}",
                                 "enable application in standalone WildFly/EAP instance",

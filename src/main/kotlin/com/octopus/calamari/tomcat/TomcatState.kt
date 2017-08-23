@@ -50,18 +50,13 @@ object TomcatState {
      * @param options The options passed in from Octopus
      */
     fun setDeploymentState(options:TomcatOptions) {
-        Preconditions.checkArgument(
-                StringUtils.isNotBlank(options.name) ||
-                options.context == TomcatContextOptions.ROOT ||
-                options.context == TomcatContextOptions.NONE)
-
-        val url = if (options.enabled) options.startUrl else options.stopUrl
+        val url = if (options.state == TomcatStateOptions.START) options.startUrl else options.stopUrl
 
         logger.info("Making request to " + url.toExternalForm())
 
 
         RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
-            logger.info("Attempt ${context.retryCount + 1} to ${if (options.enabled) "start" else "stop"} ${options.application} via ${url.toExternalForm()}")
+            logger.info("Attempt ${context.retryCount + 1} to ${if (options.state == TomcatStateOptions.START) "start" else "stop"} ${options.application} via ${url.toExternalForm()}")
 
             /*
                 Create an executor that has the credentials saved
@@ -95,19 +90,19 @@ object TomcatState {
                                         /test:running:0:test##1
                                      */
                                     val pattern = Pattern.compile(
-                                            "^/${options.urlPath.getOrElse { "" }}:${if (options.enabled) "running" else "stopped"}",
+                                            "^/${options.urlPath.getOrElse { "" }}:${if (options.state == TomcatStateOptions.START) "running" else "stopped"}",
                                             Pattern.MULTILINE)
 
                                     if (!pattern.matcher(listContent).find()) {
                                         throw StateChangeNotSuccessfulException(
-                                            "TOMCAT-DEPLOY-ERROR-0008: Application was not successfully ${if (options.enabled) "started" else "stopped"}." +
+                                            "TOMCAT-DEPLOY-ERROR-0008: Application was not successfully ${if (options.state == TomcatStateOptions.START) "started" else "stopped"}." +
                                             " Check the Tomcat logs for errors.")
                                     }
                                 }
 
 
                     }
-                    .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application ${if (options.enabled) "started" else "stopped"} successfully") } }
+                    .onSuccess { LoggingServiceImpl.printInfo {logger.info("Application ${if (options.state == TomcatStateOptions.START) "started" else "stopped"} successfully") } }
                     .onFailure { throw it }
         })
     }

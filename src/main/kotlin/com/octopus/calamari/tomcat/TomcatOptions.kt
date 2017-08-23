@@ -19,10 +19,9 @@ data class TomcatOptions(val controller:String,
                          val deploy:Boolean = true,
                          val application:String = "",
                          val name:String = "",
-                         val context:TomcatContextOptions = TomcatContextOptions.CUSTOM,
                          val tag:String = "",
                          val version:String = "",
-                         val enabled:Boolean = true,
+                         val state:TomcatStateOptions = TomcatStateOptions.START,
                          private val alreadyDumped:Boolean = false) {
 
     val logger: Logger = Logger.getLogger("")
@@ -34,16 +33,16 @@ data class TomcatOptions(val controller:String,
     }
 
     val urlPath:Option<String>
-        get() = if (context == TomcatContextOptions.ROOT)
+        get() = if ("/" == name)
                     Option.Some("")
-                else if (context == TomcatContextOptions.CUSTOM && StringUtils.isNotBlank(name))
+                else if (StringUtils.isNotBlank(name))
                     Option.Some(name)
                 else if (StringUtils.isNotBlank(application))
                     Option.Some(FilenameUtils.getBaseName(application).split("##").get(0).replace("#", "/"))
                 else
                     Option.None
 
-    val urlVersion:Option<String>
+    private val urlVersion:Option<String>
         get() = if (StringUtils.isNotBlank(version))
                     Option.Some(version)
                 else if (StringUtils.contains(application, "##"))
@@ -100,8 +99,7 @@ data class TomcatOptions(val controller:String,
             val user = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_User"] ?: ""
             val password = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Password"] ?: ""
             val deploy = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Deploy"] ?: "true").toBoolean()
-            val enabled = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Enabled"] ?: "true").toBoolean()
-            val context = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Context"] ?:  TomcatContextOptions.CUSTOM.setting
+            val enabled = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Enabled"] ?: TomcatStateOptions.START.toString()
             val tag = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Tag"] ?: ""
 
             if (StringUtils.isBlank(user)) {
@@ -113,17 +111,16 @@ data class TomcatOptions(val controller:String,
             }
 
             return TomcatOptions(
-                            controller,
+                            controller.trim(),
                             user,
                             password,
                             deploy,
-                            application,
-                            name,
-                            Try {TomcatContextOptions.valueOf(context.toUpperCase())}
-                                    .getOrElse { TomcatContextOptions.NONE },
-                            tag,
-                            version,
-                            enabled)
+                            application.trim(),
+                            name.trim(),
+                            tag.trim(),
+                            version.trim(),
+                            Try {TomcatStateOptions.valueOf(enabled.trim().toUpperCase())}
+                                .getOrElse { TomcatStateOptions.START })
 
 
         }

@@ -72,10 +72,11 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
-                context = TomcatContextOptions.NONE
+                application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath
         ))
         val deployments = listDeployments(commonOptions)
+        println("Testing simple deployment")
+        println(deployments)
         Assert.assertTrue(deployments.contains("/sampleapp:running"))
     }
 
@@ -90,11 +91,9 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
-                context = TomcatContextOptions.ROOT
+                name = "/"
         ))
         val deployments = listDeployments(commonOptions)
-        println("Testing root deployment")
-        println(deployments)
         Assert.assertTrue(deployments.contains("/:running:0:ROOT"))
     }
 
@@ -249,8 +248,7 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
-                context = TomcatContextOptions.NONE
+                application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath
         ))
         val deployments1 = listDeployments(commonOptions)
         Assert.assertTrue(deployments1.contains("/sampleapp:running"))
@@ -260,7 +258,7 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 application = File(this.javaClass.getResource("/sampleapp2.war").file).absolutePath,
-                context = TomcatContextOptions.NONE
+                name = "sampleapp"
         ))
         val deployments2 = listDeployments(commonOptions)
         Assert.assertTrue(deployments2.contains("/sampleapp:running"))
@@ -278,7 +276,7 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 name = "app1",
-                enabled = false
+                state = TomcatStateOptions.STOP
         ))
         TomcatDeploy.doDeployment(TomcatOptions(
                 controller = "http://127.0.0.1:38080/manager",
@@ -286,7 +284,7 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 name = "app2",
-                enabled = false
+                state = TomcatStateOptions.STOP
         ))
         TomcatDeploy.doDeployment(TomcatOptions(
                 controller = "http://127.0.0.1:38080/manager",
@@ -328,8 +326,7 @@ class TomcatServiceTest {
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
-                context = TomcatContextOptions.NONE
+                application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath
         ))
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)
@@ -348,14 +345,14 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
                 name = "myUndeployedApp",
-                enabled = false
+                state =TomcatStateOptions.STOP
         ))
         TomcatState.setDeploymentState(TomcatOptions(
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 name = "myUndeployedApp",
-                enabled = true
+                state =TomcatStateOptions.START
         ))
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)
@@ -373,17 +370,15 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
-                name = "myUndeployedApp",
-                enabled = false,
-                context = TomcatContextOptions.ROOT
+                name = "/",
+                state =TomcatStateOptions.STOP
         ))
         TomcatState.setDeploymentState(TomcatOptions(
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                name = "myUndeployedApp",
-                enabled = true,
-                context = TomcatContextOptions.ROOT
+                name = "/",
+                state =TomcatStateOptions.START
         ))
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)
@@ -402,7 +397,7 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
                 name = "myUndeployedApp",
-                enabled = false
+                state =TomcatStateOptions.STOP
         ))
 
         TomcatState.setDeploymentState(TomcatOptions(
@@ -410,7 +405,7 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 name = "myUndeployedApp",
-                enabled = true
+                state =TomcatStateOptions.START
         ))
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)
@@ -421,7 +416,7 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 name = "myUndeployedApp",
-                enabled = true
+                state =TomcatStateOptions.START
         ))
         val deployments2 = listDeployments(commonOptions)
         println(deployments2)
@@ -440,14 +435,14 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
                 name = "myDeployedApp",
-                enabled = true
+                state =TomcatStateOptions.START
         ))
         TomcatState.setDeploymentState(TomcatOptions(
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 name = "myDeployedApp",
-                enabled = false
+                state =TomcatStateOptions.STOP
         ))
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)
@@ -465,17 +460,15 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
-                name = "myDeployedApp",
-                enabled = true,
-                context = TomcatContextOptions.ROOT
+                name = "/",
+                state =TomcatStateOptions.START
         ))
         TomcatState.setDeploymentState(TomcatOptions(
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
-                name = "myDeployedApp",
-                enabled = false,
-                context = TomcatContextOptions.ROOT
+                name = "/",
+                state =TomcatStateOptions.STOP
         ))
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)
@@ -494,7 +487,7 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath,
                 name = "myDeployedApp",
-                enabled = true
+                state =TomcatStateOptions.START
         ))
 
         TomcatState.setDeploymentState(TomcatOptions(
@@ -502,7 +495,7 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 name = "myDeployedApp",
-                enabled = false
+                state =TomcatStateOptions.STOP
         ))
         val deployments1 = listDeployments(commonOptions)
         println(deployments1)
@@ -513,7 +506,7 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 name = "myDeployedApp",
-                enabled = false
+                state =TomcatStateOptions.STOP
         ))
         val deployments2 = listDeployments(commonOptions)
         println(deployments2)
