@@ -36,7 +36,10 @@ data class TomcatOptions(val controller:String,
         get() = if ("/" == name)
                     Option.Some("")
                 else if (StringUtils.isNotBlank(name))
-                    Option.Some(name)
+                    /*
+                        Remove the leading slashed with
+                     */
+                    Option.Some(name.replace(Regex("^/+"), ""))
                 else if (StringUtils.isNotBlank(application))
                     Option.Some(FilenameUtils.getBaseName(application).split("##").get(0).replace("#", "/"))
                 else

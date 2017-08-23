@@ -283,7 +283,7 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
-                name = "app2",
+                name = "/app2",
                 state = TomcatStateOptions.STOP
         ))
         TomcatDeploy.doDeployment(TomcatOptions(
@@ -298,14 +298,14 @@ class TomcatServiceTest {
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
-                name = "app4"
+                name = "/app4"
         ))
         TomcatDeploy.doDeployment(TomcatOptions(
                 controller = "http://127.0.0.1:38080/manager",
                 user = System.getProperty("username"),
                 password = System.getProperty("password"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
-                name = "app5"
+                name = "/app5"
         ))
 
         val deployments1 = listDeployments(commonOptions)
