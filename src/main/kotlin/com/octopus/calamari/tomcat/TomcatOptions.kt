@@ -21,7 +21,7 @@ data class TomcatOptions(val controller:String,
                          val name:String = "",
                          val tag:String = "",
                          val version:String = "",
-                         val state:TomcatStateOptions = TomcatStateOptions.START,
+                         val state:Boolean = true,
                          private val alreadyDumped:Boolean = false) {
 
     val logger: Logger = Logger.getLogger("")
@@ -102,7 +102,7 @@ data class TomcatOptions(val controller:String,
             val user = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_User"] ?: ""
             val password = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Password"] ?: ""
             val deploy = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Deploy"] ?: "true").toBoolean()
-            val enabled = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Enabled"] ?: TomcatStateOptions.START.toString()
+            val enabled = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Enabled"] ?: "true").toBoolean()
             val tag = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Deploy_Tag"] ?: ""
 
             if (StringUtils.isBlank(user)) {
@@ -122,8 +122,7 @@ data class TomcatOptions(val controller:String,
                             name.trim(),
                             tag.trim(),
                             version.trim(),
-                            Try {TomcatStateOptions.valueOf(enabled.trim().toUpperCase())}
-                                .getOrElse { TomcatStateOptions.START })
+                            enabled)
 
 
         }

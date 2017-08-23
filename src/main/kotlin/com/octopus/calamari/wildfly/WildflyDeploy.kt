@@ -149,12 +149,12 @@ object WildflyDeploy {
              */
             Try {service.takeSnapshot()}
                     .flatMap { service.runCommandExpectSuccess(
-                            "deploy --force ${if (options.state == WildflyStateOptions.DISABLE) "--disabled" else ""} --name=${options.packageName} ${options.application}",
+                            "deploy --force ${if (!options.state) "--disabled" else ""} --name=${options.packageName} ${options.application}",
                             "deploy application to standalone WildFly/EAP instance",
                             "WILDFLY-DEPLOY-ERROR-0007: There was an error deploying the package ${options.packageName} to the standalone server")
                     }
                     .map {
-                        if (options.state == WildflyStateOptions.ENABLE) {
+                        if (options.state) {
                             service.runCommandExpectSuccess(
                                 "deploy --name=${options.packageName}",
                                 "enable application in standalone WildFly/EAP instance",

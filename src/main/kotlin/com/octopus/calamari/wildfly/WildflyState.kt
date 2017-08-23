@@ -94,9 +94,9 @@ object WildflyState {
             Try {service.takeSnapshot()}
                 .flatMap {
                     service.runCommandExpectSuccess(
-                            "${if (options.state == WildflyStateOptions.ENABLE) "deploy" else "undeploy --keep-content"} --name=${options.packageName}",
+                            "${if (options.state) "deploy" else "undeploy --keep-content"} --name=${options.packageName}",
                             "enable application in standalone WildFly/EAP instance",
-                            "WILDFLY-DEPLOY-ERROR-0012: There was an error ${if (options.state == WildflyStateOptions.ENABLE) "enabling" else "disabling"} the package ${options.packageName} in the standalone server"
+                            "WILDFLY-DEPLOY-ERROR-0012: There was an error ${if (options.state) "enabling" else "disabling"} the package ${options.packageName} in the standalone server"
                     )
                 }
                 .onSuccess { LoggingServiceImpl.printInfo { logger.info("Successfully changed the state of the deployed application") } }

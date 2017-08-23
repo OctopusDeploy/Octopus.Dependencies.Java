@@ -157,7 +157,7 @@ class WildflyServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "main-server-group",
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -189,7 +189,7 @@ class WildflyServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "main-server-group",
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -223,7 +223,7 @@ class WildflyServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "",
                 disabledServerGroup = "main-server-group, other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         WildflyDeploy.deployArtifact(WildflyOptions(
@@ -235,7 +235,7 @@ class WildflyServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "main-server-group, other-server-group",
                 disabledServerGroup = "",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -267,7 +267,7 @@ class WildflyServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "",
                 disabledServerGroup = "main-server-group, other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         WildflyDeploy.deployArtifact(WildflyOptions(
@@ -279,7 +279,7 @@ class WildflyServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "main-server-group, other-server-group",
                 disabledServerGroup = "",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -312,7 +312,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "main-server-group, other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         WildflyDeploy.deployArtifact(WildflyOptions(
@@ -324,7 +324,7 @@ class WildflyServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "",
                 disabledServerGroup = "other-server-group, main-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -355,7 +355,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "main-server-group, other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         WildflyDeploy.deployArtifact(WildflyOptions(
@@ -365,7 +365,7 @@ class WildflyServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 enabledServerGroup = "",
                 disabledServerGroup = "other-server-group, main-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -872,7 +872,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 application = File(this.javaClass.getResource("/sampleejb.jar").file).absolutePath,
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -897,7 +897,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 enabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         if (wildflyService.isDomainMode) {
@@ -921,7 +921,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 application = File(this.javaClass.getResource("/sampleejb.jar").file).absolutePath,
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -946,7 +946,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 enabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         if (wildflyService.isDomainMode) {
@@ -975,7 +975,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 application = File(this.javaClass.getResource("/sampleejb.jar").file).absolutePath,
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -1000,7 +1000,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 enabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -1011,7 +1011,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 enabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         if (wildflyService.isDomainMode) {
@@ -1038,7 +1038,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 application = File(this.javaClass.getResource("/sampleejb.jar").file).absolutePath,
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -1063,7 +1063,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 enabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -1074,7 +1074,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 enabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         if (wildflyService.isDomainMode) {
@@ -1104,7 +1104,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 application = File(this.javaClass.getResource("/sampleejb.jar").file).absolutePath,
                 enabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -1129,7 +1129,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -1140,7 +1140,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         if (wildflyService.isDomainMode) {
@@ -1168,7 +1168,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 application = File(this.javaClass.getResource("/sampleejb.jar").file).absolutePath,
                 enabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.ENABLE
+                state = true
         ))
 
         val result = runCmd(":read-children-names(child-type=deployment)")
@@ -1193,7 +1193,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         WildflyState.setDeploymentState(WildflyOptions(
@@ -1204,7 +1204,7 @@ class WildflyServiceTest {
                 protocol = System.getProperty("protocol"),
                 name = "sampleejb.jar",
                 disabledServerGroup = "other-server-group",
-                state = WildflyStateOptions.DISABLE
+                state = false
         ))
 
         if (wildflyService.isDomainMode) {

@@ -29,7 +29,7 @@ data class WildflyOptions(
         val password:String? = null,
         val application:String = "",
         val name:String? = "",
-        val state:WildflyStateOptions = WildflyStateOptions.ENABLE,
+        val state:Boolean = true,
         val enabledServerGroup:String = "",
         val disabledServerGroup:String = "",
         private val alreadyDumped:Boolean = false
@@ -73,7 +73,7 @@ data class WildflyOptions(
             val password = envVars.get(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Password")
             val application = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath"] ?: ""
             val name = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Name"]
-            val enabled = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled"] ?: WildflyStateOptions.ENABLE.toString()
+            val enabled = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled"] ?: "true").toBoolean()
             val enabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_EnabledServerGroup"] ?: ""
             val disabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_DisabledServerGroup"] ?: ""
 
@@ -85,8 +85,7 @@ data class WildflyOptions(
                     password,
                     application.trim(),
                     StringUtils.trim(name),
-                    Try { WildflyStateOptions.valueOf(enabled.trim().toUpperCase())}
-                            .getOrElse { WildflyStateOptions.ENABLE },
+                    enabled,
                     enabledServerGroup.trim(),
                     disabledServerGroup.trim()
             )
