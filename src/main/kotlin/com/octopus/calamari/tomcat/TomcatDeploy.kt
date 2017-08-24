@@ -117,6 +117,8 @@ object TomcatDeploy {
                     .map { executor ->
                         executor.execute(
                                 Request.Put(options.deployUrl.toExternalForm())
+                                        .connectTimeout(Constants.CONNECTION_TIMEOUT)
+                                        .socketTimeout(Constants.CONNECTION_TIMEOUT)
                                         .bodyFile(
                                                 File(options.application),
                                                 ContentType.DEFAULT_BINARY))
@@ -156,7 +158,9 @@ object TomcatDeploy {
                      */
                     .map { executor ->
                         executor.execute(
-                                Request.Get(options.redeployUrl.toExternalForm()))
+                                Request.Get(options.redeployUrl.toExternalForm())
+                                        .connectTimeout(Constants.CONNECTION_TIMEOUT)
+                                        .socketTimeout(Constants.CONNECTION_TIMEOUT))
                                 .returnResponse()
                     }
                     /*
@@ -186,7 +190,9 @@ object TomcatDeploy {
                      */
                     .map { executor ->
                         executor.execute(
-                                Request.Get(options.undeployUrl.toExternalForm()))
+                                Request.Get(options.undeployUrl.toExternalForm())
+                                        .connectTimeout(Constants.CONNECTION_TIMEOUT)
+                                        .socketTimeout(Constants.CONNECTION_TIMEOUT))
                                 .returnResponse()
                     }
                     /*

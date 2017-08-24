@@ -17,4 +17,8 @@ object Constants {
      * The return code for a failed deployment
      */
     const val FAILED_DEPLOYMENT_RETURN = 1
+    /**
+     * HTTP Connection timeouts
+     */
+    const val CONNECTION_TIMEOUT = 30000
 }
