@@ -160,7 +160,7 @@
         </configuration>
     </container>
 
-    <container qualifier="tomcat-9.0.0.M2^">
+    <container qualifier="tomcat-9.0.0.M26">
     <configuration>
         <property name="chameleonTarget">tomcat:9.0.0.M26:managed</property>
         <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
