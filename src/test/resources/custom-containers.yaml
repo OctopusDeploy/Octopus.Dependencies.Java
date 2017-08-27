@@ -207,6 +207,6 @@
       adapterClass: org.jboss.arquillian.container.tomcat.managed.Tomcat8ManagedContainer
       configuration: &TOMCAT_MANAGED_CONFIG
         catalinaHome: ${dist}
-        catalinaBase: target/config/tomcat-9.0.0.M22
+        catalinaBase: target/config/tomcat-9.0.0.M2^
   defaultType: managed
   dist: *TOMCAT_DIST

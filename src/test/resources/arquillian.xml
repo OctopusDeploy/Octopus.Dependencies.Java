@@ -87,43 +87,43 @@
         </configuration>
     </container>
 
-    <container qualifier="wildfly-11.0.0.Beta1">
+    <container qualifier="wildfly-11.0.0.CR1">
         <configuration>
-            <property name="chameleonTarget">wildfly:11.0.0.Beta1:managed</property>
+            <property name="chameleonTarget">wildfly:11.0.0.CR1:managed</property>
             <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
             <property name="managementAddress">127.0.0.1</property>
             <property name="managementPort">9990</property>
-            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/wildfly-11.0.0.Beta1/standalone/configuration</property>
+            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/wildfly-11.0.0.CR1/standalone/configuration</property>
         </configuration>
     </container>
 
-    <container qualifier="wildfly-11.0.0.Beta1-anyaddress">
+    <container qualifier="wildfly-11.0.0.CR1-anyaddress">
         <configuration>
-            <property name="chameleonTarget">wildfly:11.0.0.Beta1:managed</property>
+            <property name="chameleonTarget">wildfly:11.0.0.CR1:managed</property>
             <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
             <property name="managementAddress">127.0.0.1</property>
             <property name="managementPort">9990</property>
-            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/wildfly-11.0.0.Beta1-anyaddress/standalone/configuration</property>
+            <property name="javaVmArguments">-Djboss.server.config.dir=${projDir}/target/config/wildfly-11.0.0.CR1-anyaddress/standalone/configuration</property>
         </configuration>
     </container>
 
-    <container qualifier="domain-wildfly-11.0.0.Beta1">
+    <container qualifier="domain-wildfly-11.0.0.CR1">
         <configuration>
-            <property name="chameleonTarget">wildfly domain:11.0.0.Beta1:managed</property>
+            <property name="chameleonTarget">wildfly domain:11.0.0.CR1:managed</property>
             <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
             <property name="managementAddress">127.0.0.1</property>
             <property name="managementPort">9990</property>
-            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/wildfly-11.0.0.Beta1/domain/configuration</property>
+            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/wildfly-11.0.0.CR1/domain/configuration</property>
         </configuration>
     </container>
 
-    <container qualifier="domain-wildfly-11.0.0.Beta1-anyaddress">
+    <container qualifier="domain-wildfly-11.0.0.CR1-anyaddress">
         <configuration>
-            <property name="chameleonTarget">wildfly domain:11.0.0.Beta1:managed</property>
+            <property name="chameleonTarget">wildfly domain:11.0.0.CR1:managed</property>
             <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
             <property name="managementAddress">127.0.0.1</property>
             <property name="managementPort">9990</property>
-            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/wildfly-11.0.0.Beta1-anyaddress/domain/configuration</property>
+            <property name="javaVmArguments">-Djboss.domain.config.dir=${projDir}/target/config/wildfly-11.0.0.CR1-anyaddress/domain/configuration</property>
         </configuration>
     </container>
 
@@ -160,9 +160,9 @@
         </configuration>
     </container>
 
-    <container qualifier="tomcat-9.0.0.M22">
+    <container qualifier="tomcat-9.0.0.M2^">
     <configuration>
-        <property name="chameleonTarget">tomcat:9.0.0.M22:managed</property>
+        <property name="chameleonTarget">tomcat:9.0.0.M26:managed</property>
         <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
         <property name="bindAddress">127.0.0.1</property>
         <property name="bindHttpPort">38080</property>

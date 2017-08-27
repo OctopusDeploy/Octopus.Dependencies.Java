@@ -26,14 +26,14 @@
         <domain.wildfly.9.version>domain-wildfly-9.0.2.Final</domain.wildfly.9.version>
         <wildfly.10.version>wildfly-10.1.0.Final</wildfly.10.version>
         <domain.wildfly.10.version>domain-wildfly-10.1.0.Final</domain.wildfly.10.version>
-        <wildfly.11.version>wildfly-11.0.0.Beta1</wildfly.11.version>
-        <domain.wildfly.11.version>domain-wildfly-11.0.0.Beta1</domain.wildfly.11.version>
-        <wildfly.11.anyaddress.version>wildfly-11.0.0.Beta1-anyaddress</wildfly.11.anyaddress.version>
-        <domain.wildfly.11.anyaddress.version>domain-wildfly-11.0.0.Beta1-anyaddress</domain.wildfly.11.anyaddress.version>
+        <wildfly.11.version>wildfly-11.0.0.CR1</wildfly.11.version>
+        <domain.wildfly.11.version>domain-wildfly-11.0.0.CR1</domain.wildfly.11.version>
+        <wildfly.11.anyaddress.version>wildfly-11.0.0.CR1-anyaddress</wildfly.11.anyaddress.version>
+        <domain.wildfly.11.anyaddress.version>domain-wildfly-11.0.0.CR1-anyaddress</domain.wildfly.11.anyaddress.version>
         <tomcat.7.version>tomcat-7.0.79</tomcat.7.version>
         <tomcat.8.version>tomcat-8.0.45</tomcat.8.version>
         <tomcat.85.version>tomcat-8.5.16</tomcat.85.version>
-        <tomcat.9.version>tomcat-9.0.0.M22</tomcat.9.version>
+        <tomcat.9.version>tomcat-9.0.0.M26</tomcat.9.version>
     </properties>
 
     <repositories>
