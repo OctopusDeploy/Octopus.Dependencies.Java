@@ -4,6 +4,7 @@ import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang.StringUtils
+import org.funktionale.tries.Try
 import java.util.logging.Logger
 
 /**
@@ -77,8 +78,8 @@ data class WildflyOptions(
             val enabled = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled"] ?: "true").toBoolean()
             val enabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_EnabledServerGroup"] ?: ""
             val disabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_DisabledServerGroup"] ?: ""
-            val serverType = ServerType.valueOf((envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_ServerType"] ?:
-                            ServerType.NONE.toString()).toUpperCase())
+            val serverType = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_ServerType"] ?:
+                            ServerType.NONE.toString()).toUpperCase()
 
             return WildflyOptions(
                     controller.trim(),
@@ -88,7 +89,8 @@ data class WildflyOptions(
                     password,
                     application.trim(),
                     StringUtils.trim(name),
-                    serverType,
+                    Try {ServerType.valueOf(serverType)}
+                            .getOrElse { ServerType.NONE },
                     enabled,
                     enabledServerGroup.trim(),
                     disabledServerGroup.trim()
