@@ -5,6 +5,7 @@ import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.LoginException
 import com.octopus.calamari.exception.wildfly.LoginTimeoutException
 import com.octopus.calamari.utils.Constants
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import org.funktionale.tries.Try
 import java.util.logging.Level
@@ -83,8 +84,10 @@ object WildflyState {
                         service.runCommandExpectSuccess(
                                 "/server-group=$serverGroup/deployment=${options.packageName}:undeploy",
                                 "undeploy the package ${options.packageName} from the server group $serverGroup",
-                                "WILDFLY-DEPLOY-ERROR-0006: There was an error undeploying the " +
-                                        "${options.packageName} to the server group $serverGroup"
+                                ErrorMessageBuilderImpl.buildErrorMessage(
+                                        "WILDFLY-DEPLOY-ERROR-0006",
+                                        "There was an error undeploying the " +
+                                        "${options.packageName} to the server group $serverGroup")
                         ).onFailure { throw it }
                     }
                 }
@@ -96,7 +99,9 @@ object WildflyState {
                     service.runCommandExpectSuccess(
                             "${if (options.state) "deploy" else "undeploy --keep-content"} --name=${options.packageName}",
                             "enable application in standalone WildFly/EAP instance",
-                            "WILDFLY-DEPLOY-ERROR-0012: There was an error ${if (options.state) "enabling" else "disabling"} the package ${options.packageName} in the standalone server"
+                            ErrorMessageBuilderImpl.buildErrorMessage(
+                                    "WILDFLY-DEPLOY-ERROR-0012",
+                                    "There was an error ${if (options.state) "enabling" else "disabling"} the package ${options.packageName} in the standalone server")
                     )
                 }
                 .onSuccess { LoggingServiceImpl.printInfo { logger.info("Successfully changed the state of the deployed application") } }

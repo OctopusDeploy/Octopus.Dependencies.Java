@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions.checkState
 import com.octopus.calamari.exception.wildfly.CommandNotSuccessfulException
 import com.octopus.calamari.exception.wildfly.LoginFailException
 import com.octopus.calamari.exception.wildfly.LoginTimeoutException
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
@@ -87,14 +88,18 @@ class WildflyService {
                 pick up.
              */
             if (exceptionThrown.get()) {
-                throw LoginFailException("WILDFLY-DEPLOY-ERROR-0009: There was an error logging into the management API. " +
-                        "Check that the username and password are correct.")
+                throw LoginFailException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-DEPLOY-ERROR-0009",
+                        "There was an error logging into the management API. " +
+                        "Check that the username and password are correct."))
             }
 
             /*
                 We have timed out waiting for a connection
              */
-            throw LoginTimeoutException("WILDFLY-DEPLOY-ERROR-0013: The login was not completed in a reasonable amount of time")
+            throw LoginTimeoutException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-DEPLOY-ERROR-0013",
+                    "The login was not completed in a reasonable amount of time"))
         }
     }
 
@@ -110,7 +115,9 @@ class WildflyService {
                 connected.set(false)
             })}
             .onFailure {
-                throw Exception("WILDFLY-DEPLOY-ERROR-0010: There was an error logging out of the management API")
+                throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-DEPLOY-ERROR-0010",
+                        "There was an error logging out of the management API"))
             }
 
             return this
@@ -129,7 +136,9 @@ class WildflyService {
                 connected.set(false)
             })}
             .onFailure {
-                throw Exception("WILDFLY-DEPLOY-ERROR-0011: There was an error terminating the CLI object")
+                throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-DEPLOY-ERROR-0011",
+                        "There was an error terminating the CLI object"))
             }
 
             return this
@@ -140,7 +149,9 @@ class WildflyService {
         return runCommandExpectSuccess(
                 "/:take-snapshot",
                 "take configuration snapshot",
-                "WILDFLY-DEPLOY-ERROR-0001: There was an error taking a snapshot of the current configuration")
+                ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-DEPLOY-ERROR-0001",
+                    "There was an error taking a snapshot of the current configuration"))
     }
 
     fun runCommand(command:String, description:String): Try<CLI.Result> {

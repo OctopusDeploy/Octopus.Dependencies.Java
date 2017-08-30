@@ -5,6 +5,7 @@ import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.LoginException
 import com.octopus.calamari.exception.tomcat.StateChangeNotSuccessfulException
 import com.octopus.calamari.utils.Constants
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.io.IOUtils
@@ -37,7 +38,9 @@ object TomcatState {
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception){
             logger.log(Level.SEVERE,
-                    "TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.",
+                    ErrorMessageBuilderImpl.buildErrorMessage(
+                    "TOMCAT-DEPLOY-ERROR-0005",
+                    "An exception was thrown during the deployment."),
                     ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         }
@@ -95,8 +98,10 @@ object TomcatState {
 
                                     if (!pattern.matcher(listContent).find()) {
                                         throw StateChangeNotSuccessfulException(
-                                            "TOMCAT-DEPLOY-ERROR-0008: Application was not successfully ${if (options.state) "started" else "stopped"}." +
-                                            " Check the Tomcat logs for errors.")
+                                                ErrorMessageBuilderImpl.buildErrorMessage(
+                                            "TOMCAT-DEPLOY-ERROR-0008",
+                                            "Application was not successfully ${if (options.state) "started" else "stopped"}." +
+                                                    " Check the Tomcat logs for errors."))
                                     }
                                 }
 

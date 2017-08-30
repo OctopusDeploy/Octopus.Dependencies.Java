@@ -7,6 +7,7 @@ import com.octopus.calamari.exception.tomcat.LoginFail401Exception
 import com.octopus.calamari.exception.tomcat.LoginFail403Exception
 import com.octopus.calamari.exception.tomcat.StateChangeNotSuccessfulException
 import com.octopus.calamari.utils.Constants
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.lang.StringUtils
@@ -45,8 +46,9 @@ object TomcatDeploy {
             logger.log(Level.SEVERE, "", ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception){
-            logger.log(Level.SEVERE,
-                    "TOMCAT-DEPLOY-ERROR-0005: An exception was thrown during the deployment.",
+            logger.log(Level.SEVERE, ErrorMessageBuilderImpl.buildErrorMessage(
+                    "TOMCAT-DEPLOY-ERROR-0005",
+                    "An exception was thrown during the deployment."),
                     ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         }
@@ -56,13 +58,17 @@ object TomcatDeploy {
 
     fun validateResponse(response: HttpResponse):HttpResponse {
         if (response.statusLine.statusCode == 401) {
-            throw LoginFail401Exception("TOMCAT-DEPLOY-ERROR-0006: A HTTP return code indicated that the login failed due to bad credentials. " +
-                    "Make sure the username and password are correct.")
+            throw LoginFail401Exception(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "TOMCAT-DEPLOY-ERROR-0006",
+                    "A HTTP return code indicated that the login failed due to bad credentials. " +
+                    "Make sure the username and password are correct."))
         }
 
         if (response.statusLine.statusCode == 403) {
-            throw LoginFail403Exception("TOMCAT-DEPLOY-ERROR-0007: A HTTP return code indicated that the login failed due to invalid group membership. " +
-                    "Make sure the user is part of the manager-script group in the tomcat-users.xml file.")
+            throw LoginFail403Exception(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "TOMCAT-DEPLOY-ERROR-0007",
+                    "A HTTP return code indicated that the login failed due to invalid group membership. " +
+                    "Make sure the user is part of the manager-script group in the tomcat-users.xml file."))
         }
 
         if (response.statusLine.statusCode !in 200..299) {
