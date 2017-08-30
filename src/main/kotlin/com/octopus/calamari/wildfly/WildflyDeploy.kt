@@ -65,6 +65,8 @@ object WildflyDeploy {
 
         val service = WildflyService().login(options)
 
+        options.warnAboutMismatch(service.isDomainMode)
+
         if (service.isDomainMode) {
             /*
                 Start by taking a snapshot of the current configuration

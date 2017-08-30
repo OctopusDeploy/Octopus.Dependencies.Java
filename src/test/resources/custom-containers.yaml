@@ -15,7 +15,7 @@
       configuration: *EAP7_CONFIG
   defaultType: managed
   dist: &EAP7_DIST
-    coordinates: https://s3.amazonaws.com/bamboo-support/jboss-eap-7.1.0.Beta.zip
+    coordinates: https://s3.amazonaws.com/bamboo-support/jboss-eap-7.1.zip
   exclude: &EAP7_EXCLUDE
     - org.jboss.arquillian.test:*
     - org.jboss.arquillian.testenricher:*

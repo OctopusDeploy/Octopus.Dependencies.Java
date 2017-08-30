@@ -1,9 +1,9 @@
 package com.octopus.calamari.wildfly
 
 import com.octopus.calamari.utils.Constants
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang.StringUtils
-import org.funktionale.tries.Try
 import java.util.logging.Logger
 
 /**
@@ -29,6 +29,7 @@ data class WildflyOptions(
         val password:String? = null,
         val application:String = "",
         val name:String? = "",
+        val serverType: ServerType = ServerType.NONE,
         val state:Boolean = true,
         val enabledServerGroup:String = "",
         val disabledServerGroup:String = "",
@@ -76,6 +77,8 @@ data class WildflyOptions(
             val enabled = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled"] ?: "true").toBoolean()
             val enabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_EnabledServerGroup"] ?: ""
             val disabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_DisabledServerGroup"] ?: ""
+            val serverType = ServerType.valueOf((envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_ServerType"] ?:
+                            ServerType.NONE.toString()).toUpperCase())
 
             return WildflyOptions(
                     controller.trim(),
@@ -85,6 +88,7 @@ data class WildflyOptions(
                     password,
                     application.trim(),
                     StringUtils.trim(name),
+                    serverType,
                     enabled,
                     enabledServerGroup.trim(),
                     disabledServerGroup.trim()
@@ -99,5 +103,24 @@ data class WildflyOptions(
         return this.copy(
                 password = if (this.password == null) null else "******",
                 alreadyDumped=true).toString()
+    }
+
+    /**
+     * A helper function for warning about a mismatch between the UI settings and the
+     * server type
+     * @param isDomain true if the server is a domain server, and false if it is a standalone server
+     */
+    fun warnAboutMismatch(isDomain:Boolean) {
+        if (isDomain && serverType == ServerType.STANDALONE) {
+            logger.warning(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-DEPLOY-ERROR-0009",
+                    "The server is running in domain mode, but the Octopus Deploy step " +
+                            "defined the server as a standalone server."))
+        } else if (!isDomain && serverType == ServerType.DOMAIN) {
+            logger.warning(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-DEPLOY-ERROR-0009",
+                    "The server is running in standalone mode, but the Octopus Deploy step " +
+                            "defined the server as a domain server."))
+        }
     }
 }

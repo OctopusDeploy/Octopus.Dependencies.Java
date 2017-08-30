@@ -54,6 +54,8 @@ object WildflyState {
     fun setDeploymentState(options:WildflyOptions) {
         val service = WildflyService().login(options)
 
+        options.warnAboutMismatch(service.isDomainMode)
+
         if (service.isDomainMode) {
             /*
                 Deploy the package for state server groups
@@ -68,8 +70,10 @@ object WildflyState {
                                 service.runCommandExpectSuccess(
                                         "/server-group=$serverGroup/deployment=${options.packageName}:deploy",
                                         "deploy the package ${options.packageName} to the server group $serverGroup",
-                                        "WILDFLY-DEPLOY-ERROR-0005: There was an error deploying the " +
-                                                "${options.packageName} to the server group $serverGroup"
+                                        ErrorMessageBuilderImpl.buildErrorMessage(
+                                        "WILDFLY-DEPLOY-ERROR-0005",
+                                                "There was an error deploying the " +
+                                                "${options.packageName} to the server group $serverGroup")
                                 ).onFailure { throw it }
                             }
                 }
