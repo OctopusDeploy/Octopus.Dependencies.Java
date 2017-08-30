@@ -113,12 +113,12 @@ data class WildflyOptions(
     fun warnAboutMismatch(isDomain:Boolean) {
         if (isDomain && serverType == ServerType.STANDALONE) {
             logger.warning(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-DEPLOY-ERROR-0009",
+                    "WILDFLY-DEPLOY-ERROR-0017",
                     "The server is running in domain mode, but the Octopus Deploy step " +
                             "defined the server as a standalone server."))
         } else if (!isDomain && serverType == ServerType.DOMAIN) {
             logger.warning(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-DEPLOY-ERROR-0009",
+                    "WILDFLY-DEPLOY-ERROR-0017",
                     "The server is running in standalone mode, but the Octopus Deploy step " +
                             "defined the server as a domain server."))
         }
