@@ -93,7 +93,7 @@ object TomcatState {
                                         /test:running:0:test##1
                                      */
                                     val pattern = Pattern.compile(
-                                            "^/${options.urlPath.getOrElse { "" }}:${if (options.state) "running" else "stopped"}",
+                                            "^/${options.urlPath.getOrElse { "" }}:${if (options.state) "running" else "stopped"}:\\d+:.*?${if (StringUtils.isNotBlank(options.version)) "##${options.version}" else ""}",
                                             Pattern.MULTILINE)
 
                                     if (!pattern.matcher(listContent).find()) {
