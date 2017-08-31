@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.68</version>
+    <version>1.0.69</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -98,7 +98,7 @@
         <dependency>
             <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-embedded</artifactId>
-            <version>3.0.0.Beta31</version>
+            <version>3.0.1.Final</version>
         </dependency>
         <dependency>
             <groupId>org.wildfly.security</groupId>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-cli</artifactId>
-            <version>3.0.0.Beta31</version>
+            <version>3.0.1.Final</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.retry</groupId>
