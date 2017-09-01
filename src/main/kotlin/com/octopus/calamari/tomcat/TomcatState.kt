@@ -103,7 +103,10 @@ object TomcatState {
                                         itemEntry.size == 4 &&
                                                 itemEntry.get(0) == "/${options.urlPath.getOrElse { "" }}" &&
                                                 itemEntry.get(1) == (if (options.state) "running" else "stopped") &&
-                                                if (StringUtils.isNotBlank(options.version)) itemEntry.get(3).split("##").last() == options.version else true
+                                                if (StringUtils.isNotBlank(options.version))
+                                                    itemEntry.get(3).split("##").last() == options.version
+                                                else
+                                                    !itemEntry.get(3).contains("##")
                                     }
 
                                     if (!state) {
