@@ -1,6 +1,7 @@
 package com.octopus.calamari.tomcat
 
 import com.google.common.base.Preconditions
+import com.google.common.base.Splitter
 import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.LoginException
 import com.octopus.calamari.exception.tomcat.StateChangeNotSuccessfulException
@@ -92,11 +93,20 @@ object TomcatState {
                                         /test:running:0:test##2
                                         /test:running:0:test##1
                                      */
-                                    val pattern = Pattern.compile(
-                                            "^/${options.urlPath.getOrElse { "" }}:${if (options.state) "running" else "stopped"}:\\d+:(.(?!##))*?${if (StringUtils.isNotBlank(options.version)) "##${options.version}" else ""}$",
-                                            Pattern.MULTILINE)
+                                    val state = listContent.split("\n").any {
+                                        val itemEntry = Splitter.on(':')
+                                                .trimResults()
+                                                .omitEmptyStrings()
+                                                .split(it)
+                                                .toList()
 
-                                    if (!pattern.matcher(listContent).find()) {
+                                        itemEntry.size == 4 &&
+                                                itemEntry.get(0) == "/${options.urlPath.getOrElse { "" }}" &&
+                                                itemEntry.get(1) == (if (options.state) "running" else "stopped") &&
+                                                if (StringUtils.isNotBlank(options.version)) itemEntry.get(3).split("##").last() == options.version else true
+                                    }
+
+                                    if (!state) {
                                         throw StateChangeNotSuccessfulException(
                                                 ErrorMessageBuilderImpl.buildErrorMessage(
                                             "TOMCAT-DEPLOY-ERROR-0008",
