@@ -71,7 +71,7 @@ object TomcatDeploy {
                     "Make sure the user is part of the manager-script group in the tomcat-users.xml file."))
         }
 
-        if (response.statusLine.statusCode !in 200..299) {
+        if (response.statusLine.statusCode !in 100..399) {
             throw IllegalStateException("Response code ${response.statusLine.statusCode} indicated failure.")
         }
 
