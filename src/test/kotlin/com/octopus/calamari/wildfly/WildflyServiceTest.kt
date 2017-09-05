@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
+import java.net.URLDecoder
 
 /**
  * Tests of the wildfly service
@@ -109,6 +110,72 @@ class WildflyServiceTest {
             Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
         } else {
             val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
+            Assert.assertTrue(standaloneResult.isSuccess())
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
+        }
+    }
+
+    @Test
+    @RunAsClient
+    fun testWildflyAppDeploymentWithSpace() {
+        WildflyDeploy.deployArtifact(WildflyOptions(
+                controller = "127.0.0.1",
+                port = System.getProperty("port").toInt(),
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                protocol = System.getProperty("protocol"),
+                application = File(URLDecoder.decode(this.javaClass.getResource("/dir\u0020with\u0020space/sampleapp.war").file, "UTF-8")).absolutePath,
+                enabledServerGroup = "main-server-group",
+                disabledServerGroup = "other-server-group"
+        ))
+
+        val result = runCmd(":read-children-names(child-type=deployment)")
+        Assert.assertTrue(result.isSuccess())
+        Assert.assertTrue(result.get().response.get("result").asList().any { "sampleapp.war".equals(it.asString()) } )
+
+        if (wildflyService.isDomainMode) {
+            val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=sampleapp.war:read-resource")
+            Assert.assertTrue(mainServerGroupResult.isSuccess())
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
+
+            val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=sampleapp.war:read-resource")
+            Assert.assertTrue(otherServerGroupResult.isSuccess())
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
+        } else {
+            val standaloneResult = runCmd("/deployment=sampleapp.war:read-resource")
+            Assert.assertTrue(standaloneResult.isSuccess())
+            Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
+        }
+    }
+
+    @Test
+    @RunAsClient
+    fun testWildflyAppDeploymentFileWithSpace() {
+        WildflyDeploy.deployArtifact(WildflyOptions(
+                controller = "127.0.0.1",
+                port = System.getProperty("port").toInt(),
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                protocol = System.getProperty("protocol"),
+                application = File(URLDecoder.decode(this.javaClass.getResource("/sample\u0020app\u0020with\u0020space.war").file, "UTF-8")).absolutePath,
+                enabledServerGroup = "main-server-group",
+                disabledServerGroup = "other-server-group"
+        ))
+
+        val result = runCmd(":read-children-names(child-type=deployment)")
+        Assert.assertTrue(result.isSuccess())
+        Assert.assertTrue(result.get().response.get("result").asList().any { "sample app with space.war".equals(it.asString()) } )
+
+        if (wildflyService.isDomainMode) {
+            val mainServerGroupResult = runCmd("/server-group=main-server-group/deployment=\"sample app with space.war\":read-resource")
+            Assert.assertTrue(mainServerGroupResult.isSuccess())
+            Assert.assertTrue(mainServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
+
+            val otherServerGroupResult = runCmd("/server-group=other-server-group/deployment=\"sample app with space.war\":read-resource")
+            Assert.assertTrue(otherServerGroupResult.isSuccess())
+            Assert.assertFalse(otherServerGroupResult.get().response.get("result").get("enabled").asBoolean() )
+        } else {
+            val standaloneResult = runCmd("/deployment=\"sample app with space.war\":read-resource")
             Assert.assertTrue(standaloneResult.isSuccess())
             Assert.assertTrue(standaloneResult.get().response.get("result").get("enabled").asBoolean() )
         }

@@ -46,6 +46,8 @@ data class WildflyOptions(
                 FilenameUtils.getName(application.replace(guidRegex, ""))
             else
                 name!!
+    val escapedPackageName = packageName.replace(" ", "\\ ")
+
     /**
      * An empty username is treated as null
      */

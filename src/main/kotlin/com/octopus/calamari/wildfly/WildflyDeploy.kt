@@ -77,7 +77,7 @@ object WildflyDeploy {
                      */
                     .flatMap{
                         service.runCommandExpectSuccess(
-                            "deploy --force --name=${options.packageName} ${options.application}",
+                            "deploy --force --name=${options.escapedPackageName} \"${options.application}\"",
                             "deploy application ${options.application} as ${options.packageName}",
                                 ErrorMessageBuilderImpl.buildErrorMessage(
                                         "WILDFLY-DEPLOY-ERROR-0002",
@@ -103,12 +103,12 @@ object WildflyDeploy {
                                 (options.disabledServerGroup))
                         .forEach { serverGroup ->
                             service.runCommand(
-                            "/server-group=$serverGroup/deployment=${options.packageName}:read-resource",
+                            "/server-group=$serverGroup/deployment=${options.escapedPackageName}:read-resource",
                             "read package details ${options.packageName} for server group $serverGroup")
                             .onSuccess {
                                 if (!it.isSuccess) {
                                   service.runCommandExpectSuccess(
-                                        "/server-group=$serverGroup/deployment=${options.packageName}:add",
+                                        "/server-group=$serverGroup/deployment=${options.escapedPackageName}:add",
                                         "add package ${options.packageName} to server group $serverGroup",
                                           ErrorMessageBuilderImpl.buildErrorMessage(
                                                   "WILDFLY-DEPLOY-ERROR-0004",
@@ -128,7 +128,7 @@ object WildflyDeploy {
                         .split(options.enabledServerGroup)
                         .forEach{ serverGroup ->
                             service.runCommandExpectSuccess(
-                                "/server-group=$serverGroup/deployment=${options.packageName}:deploy",
+                                "/server-group=$serverGroup/deployment=${options.escapedPackageName}:deploy",
                                 "deploy the package ${options.packageName} to the server group $serverGroup",
                                     ErrorMessageBuilderImpl.buildErrorMessage(
                                             "WILDFLY-DEPLOY-ERROR-0005",
@@ -145,7 +145,7 @@ object WildflyDeploy {
                         .omitEmptyStrings()
                         .split(options.disabledServerGroup).forEach{ serverGroup ->
                             service.runCommandExpectSuccess(
-                                "/server-group=$serverGroup/deployment=${options.packageName}:undeploy",
+                                "/server-group=$serverGroup/deployment=${options.escapedPackageName}:undeploy",
                                 "undeploy the package ${options.packageName} from the server group $serverGroup",
                                     ErrorMessageBuilderImpl.buildErrorMessage(
                                             "WILDFLY-DEPLOY-ERROR-0006",
@@ -164,7 +164,7 @@ object WildflyDeploy {
              */
             Try {service.takeSnapshot()}
                     .flatMap { service.runCommandExpectSuccess(
-                            "deploy --force ${if (!options.state) "--disabled" else ""} --name=${options.packageName} ${options.application}",
+                            "deploy --force ${if (!options.state) "--disabled" else ""} --name=${options.escapedPackageName} \"${options.application}\"",
                             "deploy application to standalone WildFly/EAP instance",
                             ErrorMessageBuilderImpl.buildErrorMessage(
                                     "WILDFLY-DEPLOY-ERROR-0007",
@@ -173,7 +173,7 @@ object WildflyDeploy {
                     .map {
                         if (options.state) {
                             service.runCommandExpectSuccess(
-                                "deploy --name=${options.packageName}",
+                                "deploy --name=${options.escapedPackageName}",
                                 "enable application in standalone WildFly/EAP instance",
                                     ErrorMessageBuilderImpl.buildErrorMessage(
                                             "WILDFLY-DEPLOY-ERROR-0008",
