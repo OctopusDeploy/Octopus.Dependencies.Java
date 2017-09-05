@@ -81,6 +81,24 @@ class TomcatServiceTest {
     }
 
     /**
+     * Test of simple app deployment
+     */
+    @Test
+    @RunAsClient
+    fun testDeploymentWithSpace() {
+        TomcatDeploy.doDeployment(TomcatOptions(
+                controller = "http://127.0.0.1:38080/manager",
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                application = File(URLDecoder.decode(this.javaClass.getResource("/sample\u0020app\u0020with\u0020space.war").file, "UTF-8")).absolutePath
+        ))
+        val deployments = listDeployments(commonOptions)
+        println("Testing simple deployment")
+        println(deployments)
+        Assert.assertTrue(deployments.contains("/sample app with space:running"))
+    }
+
+    /**
      * Test of root deployment
      */
     @Test
