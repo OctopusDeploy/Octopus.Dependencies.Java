@@ -18,6 +18,10 @@ object Constants {
      */
     const val FAILED_DEPLOYMENT_RETURN = 1
     /**
+     * The return code for a failed https config
+     */
+    const val FAILED_HTTPS_CONFIG_RETURN = 2
+    /**
      * HTTP Connection timeouts
      */
     const val CONNECTION_TIMEOUT = 30000

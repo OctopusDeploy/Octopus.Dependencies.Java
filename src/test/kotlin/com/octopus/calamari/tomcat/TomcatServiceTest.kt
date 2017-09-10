@@ -1,5 +1,6 @@
 package com.octopus.calamari.tomcat
 
+import com.octopus.calamari.utils.TomcatUtils
 import org.apache.commons.io.IOUtils
 import org.apache.http.HttpHost
 import org.apache.http.client.fluent.Executor
@@ -19,12 +20,6 @@ import java.net.URLDecoder
  */
 @RunWith(Arquillian::class)
 class TomcatServiceTest {
-
-    val commonOptions = TomcatOptions(
-        controller = "http://127.0.0.1:38080/manager",
-        user = System.getProperty("username"),
-        password = System.getProperty("password")
-    )
 
     fun listDeployments(options:TomcatOptions):String {
         return IOUtils.toString(Try.Success(Executor.newInstance()
@@ -74,7 +69,7 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath
         ))
-        val deployments = listDeployments(commonOptions)
+        val deployments = listDeployments(TomcatUtils.commonOptions)
         println("Testing simple deployment")
         println(deployments)
         Assert.assertTrue(deployments.contains("/sampleapp:running"))
@@ -92,7 +87,7 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(URLDecoder.decode(this.javaClass.getResource("/sample\u0020app\u0020with\u0020space.war").file, "UTF-8")).absolutePath
         ))
-        val deployments = listDeployments(commonOptions)
+        val deployments = listDeployments(TomcatUtils.commonOptions)
         println("Testing simple deployment")
         println(deployments)
         Assert.assertTrue(deployments.contains("/sample app with space:running"))
@@ -111,7 +106,7 @@ class TomcatServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 name = "/"
         ))
-        val deployments = listDeployments(commonOptions)
+        val deployments = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments.contains("/:running:0:ROOT"))
     }
 
@@ -128,7 +123,7 @@ class TomcatServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath,
                 name = "sampleapp2"
         ))
-        val deployments = listDeployments(commonOptions)
+        val deployments = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments.contains("/sampleapp2:running"))
     }
 
@@ -146,7 +141,7 @@ class TomcatServiceTest {
                 name = "sampleapp3",
                 tag = "tag1"
         ))
-        val deployments = listDeployments(commonOptions)
+        val deployments = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments.contains("/sampleapp3:running"))
     }
 
@@ -164,7 +159,7 @@ class TomcatServiceTest {
                 name = "sampleapp3",
                 tag = "tag1"
         ))
-        val deployments = listDeployments(commonOptions)
+        val deployments = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments.contains("/sampleapp3:running"))
 
         TomcatDeploy.doDeployment(TomcatOptions(
@@ -174,7 +169,7 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 name = "sampleapp3"
         ))
-        val deployments2 = listDeployments(commonOptions)
+        val deployments2 = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(!deployments2.contains("/sampleapp3:running"))
     }
 
@@ -193,7 +188,7 @@ class TomcatServiceTest {
                 name = "taggedapp",
                 tag = "original"
         ))
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments1.contains("/taggedapp:running"))
 
         TomcatDeploy.doDeployment(TomcatOptions(
@@ -204,7 +199,7 @@ class TomcatServiceTest {
                 name = "taggedapp",
                 tag = "new"
         ))
-        val deployments2 = listDeployments(commonOptions)
+        val deployments2 = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments2.contains("/taggedapp:running"))
 
         /*
@@ -217,7 +212,7 @@ class TomcatServiceTest {
                 name = "taggedapp",
                 tag = "original"
         ))
-        val deployments3 = listDeployments(commonOptions)
+        val deployments3 = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments3.contains("/taggedapp:running"))
 
         /*
@@ -241,7 +236,7 @@ class TomcatServiceTest {
                 name = "sampleapp2",
                 version = "1"
         ))
-        val deployments = listDeployments(commonOptions)
+        val deployments = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments.contains("/sampleapp2:running:0:sampleapp2##1"))
 
         TomcatDeploy.doDeployment(TomcatOptions(
@@ -252,7 +247,7 @@ class TomcatServiceTest {
                 name = "sampleapp2",
                 version = "2"
         ))
-        val deployments2 = listDeployments(commonOptions)
+        val deployments2 = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments2.contains("/sampleapp2:running:0:sampleapp2##2"))
     }
 
@@ -268,7 +263,7 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(this.javaClass.getResource("/sampleapp.war").file).absolutePath
         ))
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments1.contains("/sampleapp:running"))
 
         TomcatDeploy.doDeployment(TomcatOptions(
@@ -278,7 +273,7 @@ class TomcatServiceTest {
                 application = File(this.javaClass.getResource("/sampleapp2.war").file).absolutePath,
                 name = "sampleapp"
         ))
-        val deployments2 = listDeployments(commonOptions)
+        val deployments2 = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments2.contains("/sampleapp:running"))
     }
 
@@ -326,7 +321,7 @@ class TomcatServiceTest {
                 name = "/app5"
         ))
 
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         Assert.assertTrue(deployments1.contains("/app1:stopped"))
         Assert.assertTrue(deployments1.contains("/app2:stopped"))
         Assert.assertTrue(deployments1.contains("/app3:running"))
@@ -346,7 +341,7 @@ class TomcatServiceTest {
                 password = System.getProperty("password"),
                 application = File(URLDecoder.decode(this.javaClass.getResource("/appwithutf8#テスト.war").file, "UTF-8")).absolutePath
         ))
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         println(deployments1)
         Assert.assertTrue(deployments1.contains("/appwithutf8/テスト:running"))
     }
@@ -372,7 +367,7 @@ class TomcatServiceTest {
                 name = "myUndeployedApp",
                 state =true
         ))
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         println(deployments1)
         Assert.assertTrue(deployments1.contains("/myUndeployedApp:running"))
     }
@@ -398,7 +393,7 @@ class TomcatServiceTest {
                 name = "/",
                 state =true
         ))
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         println(deployments1)
         Assert.assertTrue(deployments1.contains("/:running:0:ROOT"))
     }
@@ -425,7 +420,7 @@ class TomcatServiceTest {
                 name = "myUndeployedApp",
                 state =true
         ))
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         println(deployments1)
         Assert.assertTrue(deployments1.contains("/myUndeployedApp:running"))
 
@@ -436,7 +431,7 @@ class TomcatServiceTest {
                 name = "myUndeployedApp",
                 state =true
         ))
-        val deployments2 = listDeployments(commonOptions)
+        val deployments2 = listDeployments(TomcatUtils.commonOptions)
         println(deployments2)
         Assert.assertTrue(deployments1.contains("/myUndeployedApp:running"))
     }
@@ -462,7 +457,7 @@ class TomcatServiceTest {
                 name = "myDeployedApp",
                 state =false
         ))
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         println(deployments1)
         Assert.assertTrue(deployments1.contains("/myDeployedApp:stopped"))
     }
@@ -488,7 +483,7 @@ class TomcatServiceTest {
                 name = "/",
                 state =false
         ))
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         println(deployments1)
         Assert.assertTrue(deployments1.contains("/:stopped:0:ROOT"))
     }
@@ -515,7 +510,7 @@ class TomcatServiceTest {
                 name = "myDeployedApp",
                 state =false
         ))
-        val deployments1 = listDeployments(commonOptions)
+        val deployments1 = listDeployments(TomcatUtils.commonOptions)
         println(deployments1)
         Assert.assertTrue(deployments1.contains("/myDeployedApp:stopped"))
 
@@ -526,7 +521,7 @@ class TomcatServiceTest {
                 name = "myDeployedApp",
                 state =false
         ))
-        val deployments2 = listDeployments(commonOptions)
+        val deployments2 = listDeployments(TomcatUtils.commonOptions)
         println(deployments2)
         Assert.assertTrue(deployments1.contains("/myDeployedApp:stopped"))
     }
