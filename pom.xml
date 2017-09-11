@@ -639,6 +639,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/tomcat/*Test.*</include>
+                                <include>**/tomcat8/*Test.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -671,6 +672,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/tomcat/*Test.*</include>
+                                <include>**/tomcat85/*Test.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
