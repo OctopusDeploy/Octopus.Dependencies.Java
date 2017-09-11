@@ -703,6 +703,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/tomcat/*Test.*</include>
+                                <include>**/tomcat9/*Test.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
