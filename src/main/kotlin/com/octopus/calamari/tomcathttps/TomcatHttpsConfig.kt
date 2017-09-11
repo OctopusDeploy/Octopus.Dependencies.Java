@@ -13,6 +13,7 @@ import java.io.FileWriter
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.OutputKeys
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.dom.DOMSource
@@ -53,7 +54,11 @@ object TomcatHttpsConfig {
         File(options.tomcatLocation, "conf${File.separator}server.xml")
                 .run {FileWriter(this)}
                 .run {StreamResult(this)}
-                .apply {TransformerFactory.newInstance().newTransformer().transform(DOMSource(document), this)}
+                .apply {TransformerFactory.newInstance()
+                        .apply {setAttribute("indent-number", Integer(2))}
+                        .newTransformer()
+                        .apply {setOutputProperty(OutputKeys.INDENT, "yes")}
+                        .transform(DOMSource(document), this)}
 
     /**
      * Loads the XML file and processes the matching service node
