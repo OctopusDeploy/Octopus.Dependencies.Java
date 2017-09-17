@@ -1,6 +1,6 @@
 package com.octopus.calamari.tomcat85
 
-import com.octopus.calamari.tomcat7.TomcatHTTPSTest
+import com.octopus.calamari.tomcat7.TomcatHTTPSBIOTest
 import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
@@ -33,7 +33,7 @@ class Tomcat85Arquillian(testClass: Class<*>?) : Arquillian(testClass) {
                 "Catalina",
                 "",
                 "",
-                File(TomcatHTTPSTest::class.java.getResource("/octopus.keystore").file).absolutePath,
+                File(TomcatHTTPSBIOTest::class.java.getResource("/octopus.keystore").file).absolutePath,
                 "changeit",
                 38443,
                 TomcatHttpsImplementation.NIO,

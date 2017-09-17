@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
-        <kotlin.version>1.1.4-2</kotlin.version>
+        <kotlin.version>1.1.4-3</kotlin.version>
         <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <eap.6.version>jboss-eap-6.4</eap.6.version>
@@ -30,7 +30,7 @@
         <domain.wildfly.11.version>domain-wildfly-11.0.0.CR1</domain.wildfly.11.version>
         <wildfly.11.anyaddress.version>wildfly-11.0.0.CR1-anyaddress</wildfly.11.anyaddress.version>
         <domain.wildfly.11.anyaddress.version>domain-wildfly-11.0.0.CR1-anyaddress</domain.wildfly.11.anyaddress.version>
-        <tomcat.7.version>tomcat-7.0.79</tomcat.7.version>
+        <tomcat.7.version>tomcat-7.0.81</tomcat.7.version>
         <tomcat.8.version>tomcat-8.0.45</tomcat.8.version>
         <tomcat.85.version>tomcat-8.5.16</tomcat.85.version>
         <tomcat.9.version>tomcat-9.0.0.M26</tomcat.9.version>
@@ -886,17 +886,6 @@
                             <mainClass>${main.class}</mainClass>
                         </manifest>
                     </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <javax.net.ssl.trustStore>src/test/resources/octopus.keystore</javax.net.ssl.trustStore>
-                        <javax.net.ssl.trustStorePassword>changeit</javax.net.ssl.trustStorePassword>
-                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

@@ -6,9 +6,14 @@ import org.apache.http.HttpHost
 import org.apache.http.client.HttpClient
 import org.apache.http.client.fluent.Executor
 import org.apache.http.client.fluent.Request
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory
 import org.apache.http.conn.ssl.NoopHostnameVerifier
+import org.apache.http.conn.ssl.TrustStrategy
 import org.apache.http.impl.client.HttpClients
 import org.funktionale.tries.Try
+import java.security.cert.X509Certificate
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory
+import org.apache.http.ssl.SSLContexts
 
 
 object TomcatUtils {
@@ -49,9 +54,20 @@ object TomcatUtils {
     }
 
     fun buildHttpClient(): HttpClient =
-        HttpClients
+            HttpClients
                 .custom()
                 .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                .setSSLSocketFactory(SSLConnectionSocketFactory(
+                        SSLContexts
+                                .custom()
+                                .loadTrustMaterial(
+                                        null,
+                                        TrustStrategy { chain, authType -> true })
+                                .build(),
+                        null,
+                        null,
+                        NoopHostnameVerifier()
+                ))
                 .build()
 
 }

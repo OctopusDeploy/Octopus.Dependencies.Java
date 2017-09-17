@@ -127,9 +127,9 @@
         </configuration>
     </container>
 
-    <container qualifier="tomcat-7.0.79">
+    <container qualifier="tomcat-7.0.81">
         <configuration>
-            <property name="chameleonTarget">tomcat:7.0.79:managed</property>
+            <property name="chameleonTarget">tomcat:7.0.81:managed</property>
             <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
             <property name="bindAddress">127.0.0.1</property>
             <property name="bindHttpPort">38080</property>
