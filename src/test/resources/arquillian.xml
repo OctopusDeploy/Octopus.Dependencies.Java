@@ -138,7 +138,7 @@
         </configuration>
     </container>
 
-    <container qualifier="tomcat-8.0.45">
+    <container qualifier="tomcat-8.0.46">
         <configuration>
             <property name="chameleonTarget">tomcat:8.0.45:managed</property>
             <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>
@@ -149,7 +149,7 @@
         </configuration>
     </container>
 
-    <container qualifier="tomcat-8.5.16">
+    <container qualifier="tomcat-8.5.20">
         <configuration>
             <property name="chameleonTarget">tomcat:8.5.16:managed</property>
             <property name="chameleonContainerConfigurationFile">custom-containers.yaml</property>

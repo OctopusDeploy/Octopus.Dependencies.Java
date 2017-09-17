@@ -14,7 +14,7 @@ class Tomcat7ArquillianAPR(testClass: Class<*>?) : Arquillian(testClass) {
     init {
         val options = TomcatHttpsOptions(
                 TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + "tomcat-7.0.81",
+                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
                 File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
                 File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,

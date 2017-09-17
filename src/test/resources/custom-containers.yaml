@@ -164,7 +164,7 @@
         catalinaBase: target/config/tomcat-7.0.81
   defaultType: managed
   dist: &TOMCAT_DIST
-    coordinates: https://s3.amazonaws.com/bamboo-support/apache-tomcat-7.0.81.zip
+    coordinates: https://s3.amazonaws.com/bamboo-support/apache-tomcat-arquillian-7.0.81.zip
 
 - name: Tomcat
   versionExpression: 8.0.*
@@ -177,9 +177,9 @@
       adapterClass: org.jboss.arquillian.container.tomcat.managed.Tomcat8ManagedContainer
       configuration: &TOMCAT_MANAGED_CONFIG
         catalinaHome: ${dist}
-        catalinaBase: target/config/tomcat-8.0.45
+        catalinaBase: target/config/tomcat-8.0.46
   defaultType: managed
-  dist: *TOMCAT_DIST
+  dist: https://s3.amazonaws.com/bamboo-support/apache-tomcat-arquillian-8.0.46.zip
 
 - name: Tomcat
   versionExpression: 8.5.*
@@ -192,9 +192,9 @@
       adapterClass: org.jboss.arquillian.container.tomcat.managed.Tomcat8ManagedContainer
       configuration: &TOMCAT_MANAGED_CONFIG
         catalinaHome: ${dist}
-        catalinaBase: target/config/tomcat-8.5.16
+        catalinaBase: target/config/tomcat-8.5.20
   defaultType: managed
-  dist: *TOMCAT_DIST
+  dist: https://s3.amazonaws.com/bamboo-support/apache-tomcat-arquillian-8.5.20.zip
 
 - name: Tomcat
   versionExpression: 9.*
@@ -209,4 +209,4 @@
         catalinaHome: ${dist}
         catalinaBase: target/config/tomcat-9.0.0.M26
   defaultType: managed
-  dist: *TOMCAT_DIST
+  dist: https://s3.amazonaws.com/bamboo-support/apache-tomcat-arquillian-9.0.0.M26.zip

@@ -21,24 +21,4 @@ const val TOMCAT_VERSION_INFO = "Using CATALINA_BASE:   \"C:\\Users\\matth\\Down
         "JVM Version:    1.8.0_141-b15\n" +
         "JVM Vendor:     Oracle Corporation"
 
-/**
- * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
- * configures the server.xml file before Tomcat is booted.
- */
-class Tomcat9Arquillian(testClass: Class<*>?) : Arquillian(testClass) {
-    init {
-        val options = TomcatHttpsOptions(
-                TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + "tomcat-9.0.0.M26",
-                "Catalina",
-                "",
-                "",
-                File(TomcatHTTPSBIOTest::class.java.getResource("/octopus.keystore").file).absolutePath,
-                "changeit",
-                38443,
-                TomcatHttpsImplementation.NIO,
-                "",
-                false)
-        TomcatHttpsConfig.configureHttps(options)
-    }
-}
+const val TOMCAT_VERSION = "tomcat-9.0.0.M26"

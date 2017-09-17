@@ -14,7 +14,7 @@ class Tomcat7ArquillianBIO(testClass: Class<*>?) : Arquillian(testClass) {
     init {
         val options = TomcatHttpsOptions(
                 TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + "tomcat-7.0.81",
+                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
                 "",
                 "",

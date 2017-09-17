@@ -1,5 +1,6 @@
-package com.octopus.calamari.tomcat7
+package com.octopus.calamari.tomcat8
 
+import com.octopus.calamari.tomcat7.TomcatHTTPSBIOTest
 import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
@@ -10,7 +11,7 @@ import java.io.File
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted.
  */
-class Tomcat7ArquillianNIO(testClass: Class<*>?) : Arquillian(testClass) {
+class Tomcat8ArquillianNIO(testClass: Class<*>?) : Arquillian(testClass) {
     init {
         val options = TomcatHttpsOptions(
                 TOMCAT_VERSION_INFO,
@@ -18,7 +19,7 @@ class Tomcat7ArquillianNIO(testClass: Class<*>?) : Arquillian(testClass) {
                 "Catalina",
                 "",
                 "",
-                File(Tomcat7ArquillianNIO::class.java.getResource("/octopus.keystore").file).absolutePath,
+                File(TomcatHTTPSBIOTest::class.java.getResource("/octopus.keystore").file).absolutePath,
                 "changeit",
                 38443,
                 TomcatHttpsImplementation.NIO,

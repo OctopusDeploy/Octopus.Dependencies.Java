@@ -13,3 +13,5 @@ const val TOMCAT_VERSION_INFO = "Using CATALINA_BASE:   \"C:\\Users\\matth\\Down
         "Architecture:   amd64\n" +
         "JVM Version:    1.8.0_141-b15\n" +
         "JVM Vendor:     Oracle Corporation"
+
+const val TOMCAT_VERSION = "tomcat-7.0.81"
