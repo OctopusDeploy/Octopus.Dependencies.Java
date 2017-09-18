@@ -1,5 +1,6 @@
 package com.octopus.calamari.tomcathttps
 
+import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
 import org.w3c.dom.Node
@@ -15,7 +16,7 @@ const val DEFAULT_HOST_NAME = "_default_"
 object ConfigureTomcat85Connector : ConfigureConnector {
 
     override fun configureBIO(options: TomcatHttpsOptions, node: Node): Unit =
-            throw NotImplementedError("Tomcat 9 does not support the Blocking IO Connector")
+            throw NotImplementedError("Tomcat 8.5 and above do not support the Blocking IO Connector")
 
 
     override fun configureNIO(options: TomcatHttpsOptions, node: Node): Unit =
@@ -58,13 +59,13 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                             }
                         }
                     }
-                    .run { createOrReturnElement(
+                    .run { XMLUtilsImpl.createOrReturnElement(
                             this,
                             "SSLHostConfig",
                             if (DEFAULT_HOST_NAME != options.fixedHostname) mapOf(Pair("hostName", options.fixedHostname)) else mapOf(),
-                            if (DEFAULT_HOST_NAME == options.fixedHostname) mapOf(Pair("hostName", options.fixedHostname)) else mapOf())
+                            if (DEFAULT_HOST_NAME == options.fixedHostname) mapOf(Pair("hostName", options.fixedHostname)) else mapOf()).get()
                     }
-                    .run { createOrReturnElement(this, "Certificate") }
+                    .run { XMLUtilsImpl.createOrReturnElement(this, "Certificate").get() }
                     .apply {
                         attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply { nodeValue = options.privateKey })
                         attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply { nodeValue = options.publicKey })

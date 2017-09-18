@@ -5,6 +5,7 @@ import com.octopus.calamari.tomcat7.TomcatHTTPSBIOTest
 import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
+import com.octopus.calamari.utils.BaseArquillian
 import org.jboss.arquillian.junit.Arquillian
 import java.io.File
 
@@ -12,7 +13,7 @@ import java.io.File
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted.
  */
-class Tomcat9ArquillianAPR(testClass: Class<*>?) : Arquillian(testClass) {
+class Tomcat9ArquillianAPR(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {
         /*
             Configure with NIO first to make sure we transform between implementations correctly

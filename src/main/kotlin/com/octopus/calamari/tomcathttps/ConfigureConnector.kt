@@ -28,41 +28,6 @@ interface ConfigureConnector {
      */
     fun configureARP(options: TomcatHttpsOptions, node: Node)
 
-    /**
-     * Returns or creates the named element
-     */
-    fun createOrReturnElement(node: Node,
-                              elementName: String,
-                              requiredAttributes: Map<String, String> = mapOf(),
-                              requiredOrMissingAttributes: Map<String, String> = mapOf()): Node =
-            NodeListIterator(node)
-                    .asSequence()
-                    .filter { it.nodeName == elementName }
-                    /*
-                        All required attributes must be found on this node for it to be a match
-                     */
-                    .filter { node -> requiredAttributes.entries.all { node.attributes.getNamedItem(it.key)?.nodeValue == it.value } }
-                    /*
-                        All required or missing attributes must be found with a match or missing altogether
-                        ofr this node to be a match
-                     */
-                    .filter { node ->
-                                requiredOrMissingAttributes.entries.all {
-                                    node.attributes.getNamedItem(it.key)?.nodeValue == it.value ||
-                                    node.attributes.getNamedItem(it.key) == null
-                                }
-                    }
-                    .firstOption()
-                    .getOrElse {
-                        node.ownerDocument.createElement(elementName)
-                                .apply { node.appendChild(this) }
-                                .apply {
-                                    requiredAttributes.entries.forEach {
-                                        this.attributes.setNamedItem(ownerDocument.createAttribute(it.key)
-                                                .apply { nodeValue = it.value })
-                                    }
-                                }
-                    }
 
     fun processConnector(options: TomcatHttpsOptions, node: Node) {
         if (options.implementation == TomcatHttpsImplementation.BIO) {
