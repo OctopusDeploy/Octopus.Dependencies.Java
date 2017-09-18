@@ -35,8 +35,20 @@ object ConfigureTomcat9Connector : ConfigureConnector {
             node
                     .apply {
                         attributes.setNamedItem(node.ownerDocument.createAttribute("SSLEnabled").apply { nodeValue = "true" })
-                        if (options.default)
-                            attributes.setNamedItem(node.ownerDocument.createAttribute("defaultSSLHostConfigName").apply { nodeValue = options.fixedHostname })
+                        if (options.default) {
+                            if (DEFAULT_HOST_NAME == options.fixedHostname) {
+                                /*
+                                    The entry we are adding has the default host name, so remove the
+                                    "defaultSSLHostConfigName" attribute to use the default one.
+                                 */
+                                Try { attributes.removeNamedItem("defaultSSLHostConfigName")}
+                            } else {
+                                /*
+                                    Explicitly set the default host to the named entry
+                                 */
+                                attributes.setNamedItem(node.ownerDocument.createAttribute("defaultSSLHostConfigName").apply { nodeValue = options.fixedHostname })
+                            }
+                        }
                     }
                     .run { createOrReturnElement(
                             this,
