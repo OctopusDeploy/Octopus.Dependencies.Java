@@ -42,8 +42,8 @@ data class TomcatHttpsOptions(val tomcatVersion:String = "",
             when(getTomcatVersion().toSingleInt()) {
                 in Version(7).toSingleInt() until Version(8).toSingleInt() -> ConfigureTomcat7Connector
                 in Version(8).toSingleInt() until Version(8,5).toSingleInt() -> ConfigureTomcat7Connector
-                in Version(8,5).toSingleInt() until Version(9).toSingleInt() -> ConfigureTomcat9Connector
-                in Version(9).toSingleInt() until Version(10).toSingleInt() -> ConfigureTomcat9Connector
+                in Version(8,5).toSingleInt() until Version(9).toSingleInt() -> ConfigureTomcat85Connector
+                in Version(9).toSingleInt() until Version(10).toSingleInt() -> ConfigureTomcat85Connector
                 else -> throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                         "TOMCAT-HTTPS-ERROR-0005",
                         "Only Tomcat 7 to 9 are supported"))

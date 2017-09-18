@@ -1,5 +1,6 @@
 package com.octopus.calamari.tomcathttps
 
+import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
 import org.w3c.dom.Node
 
@@ -11,7 +12,7 @@ const val DEFAULT_HOST_NAME = "_default_"
 /**
  * https://tomcat.apache.org/tomcat-8.5-doc/config/http.html#SSL_Support_-_Certificate
  */
-object ConfigureTomcat9Connector : ConfigureConnector {
+object ConfigureTomcat85Connector : ConfigureConnector {
 
     override fun configureBIO(options: TomcatHttpsOptions, node: Node): Unit =
             throw NotImplementedError("Tomcat 9 does not support the Blocking IO Connector")
@@ -21,6 +22,13 @@ object ConfigureTomcat9Connector : ConfigureConnector {
             node
                     .apply {
                         attributes.setNamedItem(ownerDocument.createAttribute("protocol").apply { nodeValue = NioClassName })
+                        if (attributes != null) {
+                            for (index in 0 until attributes.length) {
+                                if (StringUtils.startsWith(attributes.item(index)?.nodeName, "SSL")) {
+                                    attributes.removeNamedItem(attributes.item(index).nodeName)
+                                }
+                            }
+                        }
                     }
                     .run { processCommonElements(options, this) }
 
@@ -74,5 +82,11 @@ object ConfigureTomcat9Connector : ConfigureConnector {
                         Try {attributes.removeNamedItem("SSLCertificateFile")}
                         Try {attributes.removeNamedItem("SSLCertificateKeyFile")}
                         Try {attributes.removeNamedItem("SSLPassword")}
+                        Try {attributes.removeNamedItem("keyAlias")}
+                        Try {attributes.removeNamedItem("keyPass")}
+                        Try {attributes.removeNamedItem("keystoreFile")}
+                        Try {attributes.removeNamedItem("keystorePass")}
+                        Try {attributes.removeNamedItem("keystoreProvider")}
+                        Try {attributes.removeNamedItem("keystoreType")}
                     }
 }
