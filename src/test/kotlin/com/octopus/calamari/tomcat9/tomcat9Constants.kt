@@ -22,3 +22,4 @@ const val TOMCAT_VERSION_INFO = "Using CATALINA_BASE:   \"C:\\Users\\matth\\Down
         "JVM Vendor:     Oracle Corporation"
 
 const val TOMCAT_VERSION = "tomcat-9.0.0.M26"
+val SERVER_XML = "target" + File.separator + "config" + File.separator + TOMCAT_VERSION + File.separator + "conf" + File.separator + "server.xml"

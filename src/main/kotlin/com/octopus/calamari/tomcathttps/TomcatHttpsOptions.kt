@@ -2,7 +2,6 @@ package com.octopus.calamari.tomcathttps
 
 import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.utils.Constants
-import com.octopus.calamari.utils.MAJOR_MULTIPLYER
 import com.octopus.calamari.utils.Version
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import org.apache.commons.lang.StringUtils

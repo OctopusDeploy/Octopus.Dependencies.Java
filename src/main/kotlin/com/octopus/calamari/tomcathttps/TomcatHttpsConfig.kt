@@ -15,9 +15,8 @@ import java.util.logging.Logger
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.TransformerFactory
-import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.dom.DOMSource
-
+import javax.xml.transform.stream.StreamResult
 
 
 object TomcatHttpsConfig {

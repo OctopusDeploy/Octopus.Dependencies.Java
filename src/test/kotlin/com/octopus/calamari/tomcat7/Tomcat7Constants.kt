@@ -1,5 +1,7 @@
 package com.octopus.calamari.tomcat7
 
+import java.io.File
+
 const val TOMCAT_VERSION_INFO = "Using CATALINA_BASE:   \"C:\\Users\\matth\\Downloads\\apache-tomcat-7.0.81-windows-x64\\apache-tomcat-7.0.81\"\n" +
         "Using CATALINA_HOME:   \"C:\\Users\\matth\\Downloads\\apache-tomcat-7.0.81-windows-x64\\apache-tomcat-7.0.81\"\n" +
         "Using CATALINA_TMPDIR: \"C:\\Users\\matth\\Downloads\\apache-tomcat-7.0.81-windows-x64\\apache-tomcat-7.0.81\\temp\"\n" +
@@ -15,3 +17,4 @@ const val TOMCAT_VERSION_INFO = "Using CATALINA_BASE:   \"C:\\Users\\matth\\Down
         "JVM Vendor:     Oracle Corporation"
 
 const val TOMCAT_VERSION = "tomcat-7.0.81"
+val SERVER_XML = "target" + File.separator + "config" + File.separator + TOMCAT_VERSION + File.separator + "conf" + File.separator + "server.xml"

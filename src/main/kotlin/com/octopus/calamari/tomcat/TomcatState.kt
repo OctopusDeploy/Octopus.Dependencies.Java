@@ -1,6 +1,5 @@
 package com.octopus.calamari.tomcat
 
-import com.google.common.base.Preconditions
 import com.google.common.base.Splitter
 import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.LoginException
@@ -17,7 +16,6 @@ import org.funktionale.tries.Try
 import org.springframework.retry.RetryCallback
 import java.util.logging.Level
 import java.util.logging.Logger
-import java.util.regex.Pattern
 
 /**
  * A service for changing the state of applications deployed to Tomcat

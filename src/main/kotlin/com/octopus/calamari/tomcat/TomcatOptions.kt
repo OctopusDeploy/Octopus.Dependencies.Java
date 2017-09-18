@@ -4,7 +4,6 @@ import com.octopus.calamari.utils.Constants
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang.StringUtils
 import org.funktionale.option.Option
-import org.funktionale.tries.Try
 import java.lang.IllegalArgumentException
 import java.net.URL
 import java.net.URLEncoder
