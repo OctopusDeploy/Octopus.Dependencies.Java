@@ -18,10 +18,10 @@ class Tomcat7ArquillianAPR(testClass: Class<*>?) : Arquillian(testClass) {
                 "Catalina",
                 File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
                 File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
-                "",
-                "",
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
+                "changeit",
                 38443,
-                TomcatHttpsImplementation.ARP,
+                TomcatHttpsImplementation.APR,
                 "",
                 false)
         TomcatHttpsConfig.configureHttps(options)

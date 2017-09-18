@@ -1,5 +1,6 @@
 package com.octopus.calamari.tomcat8
 
+import com.octopus.calamari.tomcat7.Tomcat7ArquillianAPR
 import com.octopus.calamari.tomcat7.TomcatHTTPSBIOTest
 import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
@@ -17,9 +18,9 @@ class Tomcat8ArquillianBIO(testClass: Class<*>?) : Arquillian(testClass) {
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
-                "",
-                "",
-                File(TomcatHTTPSBIOTest::class.java.getResource("/octopus.keystore").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
                 "changeit",
                 38443,
                 TomcatHttpsImplementation.BIO,

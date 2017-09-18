@@ -19,14 +19,14 @@ import org.apache.http.ssl.SSLContexts
 object TomcatUtils {
     @JvmStatic
     val commonOptions = TomcatOptions(
-            controller = "http://127.0.0.1:38080/manager",
+            controller = "http://localhost:38080/manager",
             user = System.getProperty("username"),
             password = System.getProperty("password")
     )
 
     @JvmStatic
     val commonHttpsOptions = TomcatOptions(
-            controller = "https://127.0.0.1:38443/manager",
+            controller = "https://localhost:38443/manager",
             user = System.getProperty("username"),
             password = System.getProperty("password")
     )

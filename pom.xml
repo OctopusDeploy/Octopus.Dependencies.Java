@@ -182,7 +182,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -225,7 +225,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -261,7 +261,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -297,7 +297,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -333,7 +333,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -369,7 +369,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -405,7 +405,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -441,7 +441,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -474,7 +474,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -507,7 +507,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -540,7 +540,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -573,7 +573,7 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/wildfly/*Test.*</include>
+                                <include>**/wildfly/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -605,8 +605,8 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/tomcat/*Test.*</include>
-                                <include>**/tomcat7/*Test.*</include>
+                                <include>**/tomcat/*Test*.*</include>
+                                <include>**/tomcat7/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -672,7 +672,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/tomcat/*Test.*</include>
-                                <include>**/tomcat85/*Test.*</include>
+                                <include>**/tomcat85/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -704,8 +704,8 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
-                                <include>**/tomcat/*Test.*</include>
-                                <include>**/tomcat9/*Test.*</include>
+                                <include>**/tomcat/*Test*.*</include>
+                                <include>**/tomcat9/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -746,7 +746,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <!-- This is required to for the services defined in the org.wildfly.security:wildfly-elytron artifact -->
                 <configuration>
                     <transformers>
@@ -847,7 +847,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.7.0</version>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by maven -->
                     <execution>
@@ -878,7 +878,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.0.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -886,6 +886,14 @@
                             <mainClass>${main.class}</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <trimStackTrace>false</trimStackTrace>
+                    <useFile>false</useFile>
                 </configuration>
             </plugin>
         </plugins>

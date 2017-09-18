@@ -1,4 +1,4 @@
-package com.octopus.calamari.tomcat8
+package com.octopus.calamari.tomcat85
 
 import com.octopus.calamari.tomcat7.Tomcat7ArquillianAPR
 import com.octopus.calamari.tomcat7.TomcatHTTPSBIOTest
@@ -12,9 +12,9 @@ import java.io.File
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted.
  */
-class Tomcat8ArquillianAPR(testClass: Class<*>?) : Arquillian(testClass) {
+class Tomcat85ArquillianNIOMultiple(testClass: Class<*>?) : Arquillian(testClass) {
     init {
-        val options = TomcatHttpsOptions(
+        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
@@ -23,9 +23,21 @@ class Tomcat8ArquillianAPR(testClass: Class<*>?) : Arquillian(testClass) {
                 File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
                 "changeit",
                 38443,
-                TomcatHttpsImplementation.APR,
-                "",
-                false)
-        TomcatHttpsConfig.configureHttps(options)
+                TomcatHttpsImplementation.NIO,
+                "firsthost",
+                true))
+
+        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+                TOMCAT_VERSION_INFO,
+                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
+                "Catalina",
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
+                "changeit",
+                38443,
+                TomcatHttpsImplementation.NIO,
+                "secondhost",
+                false))
     }
 }

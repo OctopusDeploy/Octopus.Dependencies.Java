@@ -18,12 +18,12 @@ class Tomcat9ArquillianAPR(testClass: Class<*>?) : Arquillian(testClass) {
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
-                File(Tomcat9ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
-                File(Tomcat9ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
-                "",
-                "",
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
+                "changeit",
                 38443,
-                TomcatHttpsImplementation.NIO,
+                TomcatHttpsImplementation.APR,
                 "",
                 false)
         TomcatHttpsConfig.configureHttps(options)

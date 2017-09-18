@@ -4,8 +4,8 @@ import com.octopus.calamari.utils.TomcatUtils
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(Tomcat85ArquillianBIO::class)
-class TomcatHTTPSTestBIO {
+@RunWith(Tomcat85ArquillianAPRMultiple::class)
+class TomcatHTTPSTestAPRMultiple {
     @Test
     fun listDeployments() {
         println(TomcatUtils.listDeployments(TomcatUtils.commonHttpsOptions))

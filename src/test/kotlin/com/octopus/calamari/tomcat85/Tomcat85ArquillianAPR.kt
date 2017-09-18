@@ -1,7 +1,6 @@
 package com.octopus.calamari.tomcat85
 
-import com.octopus.calamari.tomcat7.TomcatHTTPSBIOTest
-import com.octopus.calamari.tomcat8.Tomcat8ArquillianAPR
+import com.octopus.calamari.tomcat7.Tomcat7ArquillianAPR
 import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
@@ -14,18 +13,17 @@ import java.io.File
  */
 class Tomcat85ArquillianAPR(testClass: Class<*>?) : Arquillian(testClass) {
     init {
-        val options = TomcatHttpsOptions(
+        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
-                File(Tomcat85ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
-                File(Tomcat85ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
-                "",
-                "",
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
+                "changeit",
                 38443,
-                TomcatHttpsImplementation.NIO,
-                "",
-                false)
-        TomcatHttpsConfig.configureHttps(options)
+                TomcatHttpsImplementation.APR,
+                "default",
+                true))
     }
 }

@@ -26,6 +26,7 @@ data class TomcatHttpsOptions(val tomcatVersion:String = "",
                               val hostName:String = "",
                               val default:Boolean = false) {
 
+    val fixedHostname = if (StringUtils.isEmpty(hostName)) DEFAULT_HOST_NAME else hostName
     private val serverPattern: Pattern = Pattern.compile("Server number:\\s+(?<major>\\d+)\\.(?<minor>\\d+)")
 
     /**
