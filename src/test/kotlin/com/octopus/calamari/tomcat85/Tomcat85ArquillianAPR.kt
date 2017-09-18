@@ -13,6 +13,22 @@ import java.io.File
  */
 class Tomcat85ArquillianAPR(testClass: Class<*>?) : Arquillian(testClass) {
     init {
+        /*
+            Configure with NIO first to make sure we transform between implementations correctly
+         */
+        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+                TOMCAT_VERSION_INFO,
+                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
+                "Catalina",
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
+                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
+                "changeit",
+                38443,
+                TomcatHttpsImplementation.NIO,
+                "default",
+                true))
+
         TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,

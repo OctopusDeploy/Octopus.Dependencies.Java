@@ -71,5 +71,8 @@ object ConfigureTomcat9Connector : ConfigureConnector {
                         Try {attributes.removeNamedItem("certificateKeystorePassword")}
                         Try {attributes.removeNamedItem("certificateKeystoreProvider")}
                         Try {attributes.removeNamedItem("certificateKeystoreType")}
+                        Try {attributes.removeNamedItem("SSLCertificateFile")}
+                        Try {attributes.removeNamedItem("SSLCertificateKeyFile")}
+                        Try {attributes.removeNamedItem("SSLPassword")}
                     }
 }
