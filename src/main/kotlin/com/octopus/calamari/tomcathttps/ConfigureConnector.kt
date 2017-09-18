@@ -47,8 +47,11 @@ interface ConfigureConnector {
                         ofr this node to be a match
                      */
                     .filter { node ->
-                                requiredOrMissingAttributes.entries.all { node.attributes.getNamedItem(it.key)?.nodeValue == it.value ||
-                                node.attributes.getNamedItem(it.value) == null } }
+                                requiredOrMissingAttributes.entries.all {
+                                    node.attributes.getNamedItem(it.key)?.nodeValue == it.value ||
+                                    node.attributes.getNamedItem(it.key) == null
+                                }
+                    }
                     .firstOption()
                     .getOrElse {
                         node.ownerDocument.createElement(elementName)
