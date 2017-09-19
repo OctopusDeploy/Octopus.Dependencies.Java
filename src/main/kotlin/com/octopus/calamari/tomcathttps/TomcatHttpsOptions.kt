@@ -71,13 +71,13 @@ data class TomcatHttpsOptions(val tomcatVersion:String = "",
         if (implementation.lowerBoundVersion.isDefined() && version.toSingleInt() < implementation.lowerBoundVersion.get().toSingleInt()) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "TOMCAT-HTTPS-ERROR-0003",
-                    "The HTTPS implementation of " + implementation.name + " is not supported by the installed version of Tomcat"))
+                    "The ${implementation.name} HTTPS implementation is not supported by the installed version of Tomcat"))
         }
 
         if (implementation.upperBoundVersion.isDefined() && version.toSingleInt() >= implementation.upperBoundVersion.get().toSingleInt()) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "TOMCAT-HTTPS-ERROR-0003",
-                    "The HTTPS implementation of " + implementation.name + " is not supported by the installed version of Tomcat"))
+                    "The ${implementation.name} HTTPS implementation is not supported by the installed version of Tomcat"))
         }
     }
 

@@ -72,7 +72,7 @@ object XMLUtilsImpl : XMLUtils {
                     .filter { node -> requiredAttributes.entries.all { node.attributes.getNamedItem(it.key)?.nodeValue == it.value } }
                     /*
                         All required or missing attributes must be found with a match or missing altogether
-                        ofr this node to be a match
+                        for this node to be a match
                      */
                     .filter { node ->
                         requiredOrMissingAttributes.entries.all {
