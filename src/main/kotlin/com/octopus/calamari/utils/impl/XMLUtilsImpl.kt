@@ -39,18 +39,27 @@ object XMLUtilsImpl : XMLUtils {
                             this
                         } else {
                             /*
-                                Search this nodes children for any matches
+                                Search this node's children for any matches
                              */
                             NodeListIterator(node)
                                     .asSequence()
                                     .map {
+                                        /*
+                                            Try to find the first matching child node
+                                         */
                                         returnFirstMatchingNode(
                                                 it,
                                                 elementName,
                                                 requiredAttributes,
                                                 requiredOrMissingAttributes)
                                     }
+                                    /*
+                                        We are only interested in positive results
+                                     */
                                     .firstOption { it.isDefined() }
+                                    /*
+                                        Return the successful result, or an empty optional
+                                     */
                                     .flatMap { it }
                         }
                     }
@@ -82,10 +91,10 @@ object XMLUtilsImpl : XMLUtils {
                     }
                     .firstOption()
                     .run {
-                        /*
-                            Create the element if we have been requested to do so
-                         */
                         if (this.isEmpty() && createIfMissing) {
+                            /*
+                                Create the element if we have been requested to do so
+                             */
                             Option.Some(node.ownerDocument.createElement(elementName)
                                     .apply { node.appendChild(this) }
                                     .apply {
@@ -95,6 +104,9 @@ object XMLUtilsImpl : XMLUtils {
                                         }
                                     })
                         } else {
+                            /*
+                                Otherwise return the successful result, or the empty Optional
+                             */
                             this
                         }
                     }
