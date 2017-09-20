@@ -2,6 +2,7 @@ package com.octopus.calamari.tomcathttps
 
 import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.exception.KeystoreCreationFailedException
+import com.octopus.calamari.exception.tomcat.VersionMatchNotSuccessfulException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.Version
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
@@ -39,13 +40,15 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
      * Get the tomcat version from the raw version info
      */
     fun getTomcatVersion() =
-            Option.Some(serverPattern.matcher(tomcatVersion))
-                    .filter { it.find() }
-                    .map {
-                        Version(it.group("major").toInt(),
-                                it.group("minor").toInt())
-                    }
-                    .get()
+            Try {
+                Option.Some(serverPattern.matcher(tomcatVersion))
+                        .filter { it.find() }
+                        .map {
+                            Version(it.group("major").toInt(),
+                                    it.group("minor").toInt())
+                        }
+                        .get()
+            }.getOrElse { throw VersionMatchNotSuccessfulException() }
 
     fun getConfigurator(): ConfigureConnector =
             when (getTomcatVersion().toSingleInt()) {
@@ -146,15 +149,15 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
         fun fromEnvironmentVars(): TomcatHttpsOptions {
             val envVars = System.getenv()
 
-            val version = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Version"] ?: ""
-            val location = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Location"] ?: ""
-            val service = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Service"] ?: ""
-            val private = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Private_Key"] ?: ""
-            val public = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Public_Key"] ?: ""
-            val port = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "HTTPS_Port"] ?: "8443"
-            val implementation = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_HTTPS_Implementation"] ?: TomcatHttpsImplementation.NIO.toString()
-            val hostName = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_HTTPS_Hostname"] ?: ""
-            val default = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_HTTPS_Hostname_Default"] ?: "true").toBoolean()
+            val version = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Version"] ?: ""
+            val location = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Location"] ?: ""
+            val service = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Service"] ?: ""
+            val private = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Private_Key"] ?: ""
+            val public = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Public_Key"] ?: ""
+            val port = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Port"] ?: "8443"
+            val implementation = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Implementation"] ?: TomcatHttpsImplementation.NIO.toString()
+            val hostName = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Hostname"] ?: ""
+            val default = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Default"] ?: "true").toBoolean()
 
             if (StringUtils.isBlank(location)) {
                 throw IllegalArgumentException("location can not be null")
