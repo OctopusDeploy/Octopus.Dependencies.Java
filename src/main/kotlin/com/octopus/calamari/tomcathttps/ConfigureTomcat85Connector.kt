@@ -67,8 +67,8 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                     }
                     .run { XMLUtilsImpl.createOrReturnElement(this, "Certificate").get() }
                     .apply {
-                        attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply { nodeValue = options.privateKey })
-                        attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply { nodeValue = options.publicKey })
+                        attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply { nodeValue = options.createPrivateKey() })
+                        attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply { nodeValue = options.createPublicCert() })
                         attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = "RSA" })
                         /*
                             We try to keep as much of the existing configuration as possible, but these values
