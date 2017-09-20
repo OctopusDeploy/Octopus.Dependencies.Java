@@ -50,13 +50,12 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
      */
     fun getTomcatVersion() =
             Try {
-                Option.Some(serverPattern.matcher(tomcatVersion))
-                        .filter { it.find() }
-                        .map {
-                            Version(it.group("major").toInt(),
-                                    it.group("minor").toInt())
-                        }
-                        .get()
+                Option.Some(serverPattern.matcher(tomcatVersion)).filter {
+                    it.find()
+                }.map {
+                    Version(it.group("major").toInt(),
+                            it.group("minor").toInt())
+                }.get()
             }.getOrElse { throw VersionMatchNotSuccessfulException() }
 
     /**
@@ -220,7 +219,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
     /**
      * Masks the password when dumping the string version of this object
      */
-    fun toSantisisedString():String {
+    fun toSantisisedString(): String {
         return this.copy(
                 privateKey = "******",
                 alreadyDumped = true).toString()

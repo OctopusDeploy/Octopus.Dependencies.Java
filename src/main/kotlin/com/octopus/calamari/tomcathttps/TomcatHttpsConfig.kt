@@ -1,5 +1,6 @@
 package com.octopus.calamari.tomcathttps
 
+import com.octopus.calamari.tomcat.TomcatDeploy
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
@@ -7,6 +8,7 @@ import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.collections4.iterators.NodeListIterator
 import org.funktionale.option.firstOption
 import org.funktionale.option.getOrElse
+import org.funktionale.tries.Try
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import java.io.File
@@ -29,7 +31,7 @@ object TomcatHttpsConfig {
         try {
             LoggingServiceImpl.configureLogging()
             configureHttps(TomcatHttpsOptions.fromEnvironmentVars())
-        } catch (ex: Exception){
+        } catch (ex: Exception) {
             logger.log(Level.SEVERE, ErrorMessageBuilderImpl.buildErrorMessage(
                     "TOMCAT-HTTPS-ERROR-0001",
                     "An exception was thrown during the HTTPS configuration."),
@@ -40,36 +42,43 @@ object TomcatHttpsConfig {
         System.exit(0)
     }
 
-    fun configureHttps(options:TomcatHttpsOptions) {
-        options
-                .apply{ validate() }
-                .run { processXml(this) }
-                .apply {
-                    XMLUtilsImpl.saveXML(
-                            "${options.tomcatLocation}${File.separator}conf${File.separator}server.xml",
-                            this)
-                }
+    fun configureHttps(options: TomcatHttpsOptions) {
+        Try {
+            options.apply {
+                validate()
+            }.run {
+                processXml(this)
+            }.apply {
+                XMLUtilsImpl.saveXML(
+                        "${options.tomcatLocation}${File.separator}conf${File.separator}server.xml",
+                        this)
+            }
+        }.onSuccess {
+            LoggingServiceImpl.printInfo { TomcatDeploy.logger.info("Certificate deployed successfully") }
+        }.onFailure {
+            throw it
+        }
     }
 
     /**
      * Loads the XML file and processes the matching service node
      */
-    private fun processXml(options:TomcatHttpsOptions): Document =
-        File(options.tomcatLocation, "conf${File.separator}server.xml")
-                .run { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this) }
-                .apply {
+    private fun processXml(options: TomcatHttpsOptions): Document =
+            File(options.tomcatLocation, "conf${File.separator}server.xml").run {
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
+            }.apply {
+                XMLUtilsImpl.createOrReturnElement(
+                        this.documentElement,
+                        "Service",
+                        mapOf(Pair("name", options.service)),
+                        mapOf(),
+                        false).map {
                     XMLUtilsImpl.createOrReturnElement(
-                                this.documentElement,
-                                "Service",
-                                mapOf(Pair("name", options.service)),
-                                mapOf(),
-                                false)
-                        .map {
-                            XMLUtilsImpl.createOrReturnElement(
-                                    it, "Connector",
-                                    mapOf(Pair("port", options.port.toString()))).get()
-                        }
-                        .forEach { options.getConfigurator().processConnector(options, it) }
+                            it, "Connector",
+                            mapOf(Pair("port", options.port.toString()))).get()
+                }.forEach {
+                    options.getConfigurator().processConnector(options, it)
                 }
+            }
 
 }
