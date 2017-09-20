@@ -5,6 +5,7 @@ import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.BaseArquillian
+import org.apache.commons.io.FileUtils
 import org.jboss.arquillian.junit.Arquillian
 import java.io.File
 
@@ -18,10 +19,8 @@ class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
-                "changeit",
+                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
+                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 38443,
                 TomcatHttpsImplementation.APR,
                 "firsthost",
@@ -33,10 +32,8 @@ class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
-                "changeit",
+                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
+                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 38443,
                 TomcatHttpsImplementation.APR,
                 "secondhost",
@@ -46,10 +43,8 @@ class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
-                "changeit",
+                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
+                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 38443,
                 TomcatHttpsImplementation.APR,
                 "_default_",
@@ -59,10 +54,8 @@ class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
                 "Catalina",
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file).absolutePath,
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file).absolutePath,
-                File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.keystore").file).absolutePath,
-                "changeit",
+                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
+                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 38443,
                 TomcatHttpsImplementation.APR,
                 "",

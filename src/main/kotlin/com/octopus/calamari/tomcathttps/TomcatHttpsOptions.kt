@@ -1,29 +1,36 @@
 package com.octopus.calamari.tomcathttps
 
 import com.octopus.calamari.exception.InvalidOptionsException
+import com.octopus.calamari.exception.KeystoreCreationFailedException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.Version
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
+import com.octopus.calamari.utils.impl.KeystoreUtilsImpl
+import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.funktionale.option.Option
 import org.funktionale.tries.Try
+import java.io.File
+import java.io.FileOutputStream
 import java.lang.IllegalArgumentException
+import java.nio.charset.StandardCharsets
 import java.util.regex.Pattern
+
+const val KEYSTORE_ALIAS = "octopus"
+const val KEYSTORE_PASSWORD = "changeit"
 
 /**
  * Options that relate to Tomcat HTTPS configuration
  */
-data class TomcatHttpsOptions(val tomcatVersion:String = "",
-                              val tomcatLocation:String = "",
-                              val service:String = "",
-                              val privateKey:String = "",
-                              val publicKey:String = "",
-                              val keystore:String = "",
-                              val keystorePassword:String = "",
-                              val port:Int = -1,
-                              val implementation:TomcatHttpsImplementation = TomcatHttpsImplementation.NONE,
-                              val hostName:String = "",
-                              val default:Boolean = false) {
+data class TomcatHttpsOptions(val tomcatVersion: String = "",
+                              val tomcatLocation: String = "",
+                              val service: String = "",
+                              val privateKey: String = "",
+                              val publicKey: String = "",
+                              val port: Int = -1,
+                              val implementation: TomcatHttpsImplementation = TomcatHttpsImplementation.NONE,
+                              val hostName: String = "",
+                              val default: Boolean = false) {
 
     val fixedHostname = if (StringUtils.isEmpty(hostName)) DEFAULT_HOST_NAME else hostName
     private val serverPattern: Pattern = Pattern.compile("Server number:\\s+(?<major>\\d+)\\.(?<minor>\\d+)")
@@ -34,21 +41,72 @@ data class TomcatHttpsOptions(val tomcatVersion:String = "",
     fun getTomcatVersion() =
             Option.Some(serverPattern.matcher(tomcatVersion))
                     .filter { it.find() }
-                    .map { Version(it.group("major").toInt(),
-                            it.group("minor").toInt())}
+                    .map {
+                        Version(it.group("major").toInt(),
+                                it.group("minor").toInt())
+                    }
                     .get()
 
-    fun getConfigurator():ConfigureConnector =
-            when(getTomcatVersion().toSingleInt()) {
+    fun getConfigurator(): ConfigureConnector =
+            when (getTomcatVersion().toSingleInt()) {
                 in Version(7).toSingleInt() until Version(8).toSingleInt() -> ConfigureTomcat7Connector
-                in Version(8).toSingleInt() until Version(8,5).toSingleInt() -> ConfigureTomcat7Connector
-                in Version(8,5).toSingleInt() until Version(9).toSingleInt() -> ConfigureTomcat85Connector
+                in Version(8).toSingleInt() until Version(8, 5).toSingleInt() -> ConfigureTomcat7Connector
+                in Version(8, 5).toSingleInt() until Version(9).toSingleInt() -> ConfigureTomcat85Connector
                 in Version(9).toSingleInt() until Version(10).toSingleInt() -> ConfigureTomcat85Connector
                 else -> throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                         "TOMCAT-HTTPS-ERROR-0005",
                         "Only Tomcat 7 to 9 are supported"))
             }
 
+    fun createKeystore() =
+            KeystoreUtilsImpl.createKeystore(
+                    KEYSTORE_ALIAS,
+                    publicKey,
+                    privateKey,
+                    Option.None,
+                    /*
+                        The password assigned to the key inside the keystore
+                        needs to be the same as the keystore password itself.
+                        Tomcat does not support mismatched keys.
+                     */
+                    Option.Some(KEYSTORE_PASSWORD)).map { keystore ->
+                "$tomcatLocation${File.separator}conf${File.separator}octopus.keystore".apply {
+                    FileOutputStream(this).use {
+                        keystore.store(
+                                it,
+                                /*
+                                    This needs to match the password used to save
+                                    the key above.
+                                 */
+                                KEYSTORE_PASSWORD.toCharArray())
+                    }
+                }.run {
+                    convertPathToTomcatVariable(this)
+                }
+            }
+
+    fun createPrivateKey() =
+            "$tomcatLocation${File.separator}conf${File.separator}octopus.key".apply {
+                FileUtils.write(
+                        File(this),
+                        privateKey,
+                        StandardCharsets.US_ASCII)
+            }.run {
+                convertPathToTomcatVariable(this)
+            }
+
+    fun createPublicCert() =
+            "$tomcatLocation${File.separator}conf${File.separator}octopus.crt".apply {
+                FileUtils.write(
+                        File(this),
+                        publicKey,
+                        StandardCharsets.US_ASCII)
+            }.run {
+                convertPathToTomcatVariable(this)
+            }
+
+    fun convertPathToTomcatVariable(path: String) =
+            path.replace(tomcatLocation, "\${catalina.base}")
 
     /**
      * @return ensures that the options supplied match the version of Tomcat installed
@@ -62,7 +120,7 @@ data class TomcatHttpsOptions(val tomcatVersion:String = "",
                     "Only Tomcat 7 to Tomcat 9 are supported"))
         }
 
-        if (StringUtils.isNotBlank(hostName) && version.toSingleInt() < Version(8,5).toSingleInt()) {
+        if (StringUtils.isNotBlank(hostName) && version.toSingleInt() < Version(8, 5).toSingleInt()) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "TOMCAT-HTTPS-ERROR-0002",
                     "SNI host names are only supported by Tomcat 8.5 and later"))
@@ -93,8 +151,6 @@ data class TomcatHttpsOptions(val tomcatVersion:String = "",
             val service = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Service"] ?: ""
             val private = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Private_Key"] ?: ""
             val public = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Public_Key"] ?: ""
-            val keystore = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Keystore_Location"] ?: ""
-            val keystorePassword = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Keystore_Password"] ?: ""
             val port = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "HTTPS_Port"] ?: "8443"
             val implementation = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_HTTPS_Implementation"] ?: TomcatHttpsImplementation.NIO.toString()
             val hostName = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_HTTPS_Hostname"] ?: ""
@@ -122,8 +178,6 @@ data class TomcatHttpsOptions(val tomcatVersion:String = "",
                     service,
                     private.trim(),
                     public.trim(),
-                    keystore.trim(),
-                    keystorePassword,
                     port.toInt(),
                     Try { TomcatHttpsImplementation.valueOf(implementation.toUpperCase()) }
                             .getOrElse { TomcatHttpsImplementation.NIO },

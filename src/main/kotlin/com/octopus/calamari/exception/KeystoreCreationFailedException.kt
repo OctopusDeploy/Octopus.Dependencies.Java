@@ -1,11 +1,9 @@
-package com.octopus.calamari.exception.wildfly
-
-import com.octopus.calamari.exception.LoginException
+package com.octopus.calamari.exception
 
 /**
- * Represents a failed login to WildFly
+ * Represents a failed keystore creation
  */
-class LoginTimeoutException : LoginException {
+class KeystoreCreationFailedException : ExpectedException {
     constructor()
     constructor(message: String, ex: Throwable?): super(message, ex)
     constructor(message: String): super(message)
