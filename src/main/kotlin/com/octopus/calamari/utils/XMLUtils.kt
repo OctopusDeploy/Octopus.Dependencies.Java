@@ -3,6 +3,7 @@ package com.octopus.calamari.utils
 import org.funktionale.option.Option
 import org.w3c.dom.Document
 import org.w3c.dom.Node
+import java.io.File
 
 interface XMLUtils {
     /**
@@ -27,6 +28,13 @@ interface XMLUtils {
      * @return The loaded XML file
      */
     fun loadXML(location: String): Document
+
+    /**
+     * Load the XML from a file
+     * @param location The XML file
+     * @return The loaded XML file
+     */
+    fun loadXML(file: File): Document
 
     /**
      * Save the XML to a file

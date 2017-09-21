@@ -15,22 +15,39 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 object XMLUtilsImpl : XMLUtils {
-    override fun loadXML(location:String):Document =
-            File(location).run {
-                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
-            }
+    /**
+     * Removes unnecessary newlines from XML files that are repeatedly parsed
+     */
+    private fun stripWhitespaceNodes(node: Node): Unit =
+            node.run {
+                NodeListIterator(this).forEach {
+                    if (it.nodeType == Node.TEXT_NODE) {
+                        it.textContent = it.textContent.trim()
+                    } else {
+                        stripWhitespaceNodes(it)
+                    }
+                }
+            }.run {}
+
+
+    override fun loadXML(location: String): Document =
+            loadXML(File(location))
+
+    override fun loadXML(file: File): Document =
+            DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file)
 
     override fun saveXML(location: String, document: Document) =
             File(location)
                     .run { FileWriter(this) }
                     .run { StreamResult(this) }
-                    .apply {
+                    .run {
                         TransformerFactory.newInstance()
-                                .apply {setAttribute("indent-number", Integer(2))}
+                                .apply { setAttribute("indent-number", Integer(2)) }
                                 .newTransformer()
-                                .apply {setOutputProperty(OutputKeys.INDENT, "yes")}
-                                .transform(DOMSource(document), this)}
-                    .run { Unit }
+                                .apply { setOutputProperty(OutputKeys.INDENT, "yes") }
+                                .transform(DOMSource(document.apply{stripWhitespaceNodes(this)}), this)
+                    }
+                    .run { }
 
     override fun createOrReturnElement(node: Node,
                                        elementName: String,

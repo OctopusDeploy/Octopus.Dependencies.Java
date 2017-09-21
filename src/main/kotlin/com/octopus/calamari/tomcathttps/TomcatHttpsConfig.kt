@@ -1,5 +1,6 @@
 package com.octopus.calamari.tomcathttps
 
+import com.octopus.calamari.exception.tomcat.ConfigFileNotFoundException
 import com.octopus.calamari.tomcat.TomcatDeploy
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
@@ -12,6 +13,7 @@ import org.funktionale.tries.Try
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileWriter
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -64,21 +66,30 @@ object TomcatHttpsConfig {
      * Loads the XML file and processes the matching service node
      */
     private fun processXml(options: TomcatHttpsOptions): Document =
-            File(options.tomcatLocation, "conf${File.separator}server.xml").run {
-                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
-            }.apply {
-                XMLUtilsImpl.createOrReturnElement(
-                        this.documentElement,
-                        "Service",
-                        mapOf(Pair("name", options.service)),
-                        mapOf(),
-                        false).map {
-                    XMLUtilsImpl.createOrReturnElement(
-                            it, "Connector",
-                            mapOf(Pair("port", options.port.toString()))).get()
-                }.forEach {
-                    options.getConfigurator().processConnector(options, it)
+            Try { File(options.tomcatLocation, "conf${File.separator}server.xml") }.map {
+                it.apply {
+                    if (!it.exists()) {
+                        throw ConfigFileNotFoundException()
+                    }
                 }
-            }
-
+            }.map {
+                XMLUtilsImpl.loadXML(it)
+            }.map {
+                it.apply {
+                    XMLUtilsImpl.createOrReturnElement(
+                            this.documentElement,
+                            "Service",
+                            mapOf(Pair("name", options.service)),
+                            mapOf(),
+                            false).map {
+                        XMLUtilsImpl.createOrReturnElement(
+                                it, "Connector",
+                                mapOf(Pair("port", options.port.toString()))).get()
+                    }.forEach {
+                        options.getConfigurator().processConnector(options, it)
+                    }
+                }
+            }.onFailure {
+                throw it
+            }.get()
 }
