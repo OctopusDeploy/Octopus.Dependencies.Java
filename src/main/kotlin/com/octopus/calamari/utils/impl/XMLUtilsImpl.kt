@@ -18,8 +18,8 @@ object XMLUtilsImpl : XMLUtils {
     /**
      * Removes unnecessary newlines from XML files that are repeatedly parsed
      */
-    private fun stripWhitespaceNodes(node: Node): Unit =
-            node.run {
+    private fun stripWhitespaceNodes(node: Node): Node =
+            node.apply {
                 NodeListIterator(this).forEach {
                     if (it.nodeType == Node.TEXT_NODE) {
                         it.textContent = it.textContent.trim()
@@ -27,7 +27,7 @@ object XMLUtilsImpl : XMLUtils {
                         stripWhitespaceNodes(it)
                     }
                 }
-            }.run {}
+            }
 
 
     override fun loadXML(location: String): Document =
@@ -37,17 +37,22 @@ object XMLUtilsImpl : XMLUtils {
             DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file)
 
     override fun saveXML(location: String, document: Document) =
-            File(location)
-                    .run { FileWriter(this) }
-                    .run { StreamResult(this) }
-                    .run {
-                        TransformerFactory.newInstance()
-                                .apply { setAttribute("indent-number", Integer(2)) }
-                                .newTransformer()
-                                .apply { setOutputProperty(OutputKeys.INDENT, "yes") }
-                                .transform(DOMSource(document.apply{stripWhitespaceNodes(this)}), this)
+            TransformerFactory.newInstance().apply {
+                setAttribute("indent-number", Integer(2))
+            }.newTransformer().apply {
+                setOutputProperty(OutputKeys.INDENT, "yes")
+            }.transform(
+                    document.run {
+                        stripWhitespaceNodes(this)
+                    }.run {
+                        DOMSource(this)
+                    },
+                    File(location).run {
+                        FileWriter(this)
+                    }.run {
+                        StreamResult(this)
                     }
-                    .run { }
+            )
 
     override fun createOrReturnElement(node: Node,
                                        elementName: String,
