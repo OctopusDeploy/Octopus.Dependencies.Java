@@ -122,8 +122,6 @@ data class TomcatOptions(val controller:String,
                             tag.trim(),
                             version.trim(),
                             enabled)
-
-
         }
     }
 

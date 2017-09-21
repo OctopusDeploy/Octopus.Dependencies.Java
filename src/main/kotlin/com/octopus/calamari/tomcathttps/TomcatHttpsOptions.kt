@@ -22,6 +22,8 @@ import java.util.regex.Pattern
 const val KEYSTORE_ALIAS = "octopus"
 const val KEYSTORE_PASSWORD = "changeit"
 const val CERTIFICATE_FILE_NAME = "octopus"
+const val FILENAME_REPLACE_RE = "[^A-Za-z0-9_.]"
+const val FILENAME_REPLACE_STRING = "_"
 
 /**
  * Options that relate to Tomcat HTTPS configuration
@@ -31,6 +33,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                               val service: String = "",
                               val privateKey: String = "",
                               val publicKey: String = "",
+                              val publicKeySubject: String = "",
                               val port: Int = -1,
                               val implementation: TomcatHttpsImplementation = TomcatHttpsImplementation.NONE,
                               val hostName: String = "",
@@ -93,7 +96,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                     Option.Some(KEYSTORE_PASSWORD)).map { keystore ->
                 FileUtilsImpl.getUniqueFilename(
                         File(tomcatLocation, "conf").absolutePath,
-                        CERTIFICATE_FILE_NAME,
+                        publicKeySubject,
                         "keystore").apply {
                     FileOutputStream(this).use {
                         keystore.store(
@@ -116,7 +119,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
     fun createPrivateKey() =
             FileUtilsImpl.getUniqueFilename(
                     File(tomcatLocation, "conf").absolutePath,
-                    CERTIFICATE_FILE_NAME,
+                    publicKeySubject,
                     "key").apply {
                 FileUtils.write(
                         this,
@@ -133,7 +136,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
     fun createPublicCert() =
             FileUtilsImpl.getUniqueFilename(
                     File(tomcatLocation, "conf").absolutePath,
-                    CERTIFICATE_FILE_NAME,
+                    publicKeySubject,
                     "crt").apply {
                 FileUtils.write(
                         this,
@@ -192,6 +195,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
             val service = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Service"] ?: ""
             val private = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Private_Key"] ?: ""
             val public = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Public_Key"] ?: ""
+            val subject = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Public_Key_Subject"] ?: CERTIFICATE_FILE_NAME
             val port = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Port"] ?: "8443"
             val implementation = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Implementation"] ?: TomcatHttpsImplementation.NIO.toString()
             val hostName = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Hostname"] ?: ""
@@ -216,10 +220,11 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
             return TomcatHttpsOptions(
                     version.trim(),
                     location.trim(),
-                    service,
+                    service.trim(),
                     private.trim(),
                     public.trim(),
-                    port.toInt(),
+                    subject.replace(Regex(FILENAME_REPLACE_RE), FILENAME_REPLACE_STRING).trim(),
+                    port.trim().toInt(),
                     Try { TomcatHttpsImplementation.valueOf(implementation.toUpperCase()) }
                             .getOrElse { TomcatHttpsImplementation.NIO },
                     hostName.trim(),
