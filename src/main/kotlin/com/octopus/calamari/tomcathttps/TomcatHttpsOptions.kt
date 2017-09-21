@@ -6,6 +6,7 @@ import com.octopus.calamari.exception.tomcat.VersionMatchNotSuccessfulException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.Version
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
+import com.octopus.calamari.utils.impl.FileUtilsImpl
 import com.octopus.calamari.utils.impl.KeystoreUtilsImpl
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
@@ -20,6 +21,7 @@ import java.util.regex.Pattern
 
 const val KEYSTORE_ALIAS = "octopus"
 const val KEYSTORE_PASSWORD = "changeit"
+const val CERTIFICATE_FILE_NAME = "octopus"
 
 /**
  * Options that relate to Tomcat HTTPS configuration
@@ -89,7 +91,10 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                         Tomcat does not support mismatched keys.
                      */
                     Option.Some(KEYSTORE_PASSWORD)).map { keystore ->
-                "$tomcatLocation${File.separator}conf${File.separator}octopus.keystore".apply {
+                FileUtilsImpl.getUniqueFilename(
+                        File(tomcatLocation, "conf").absolutePath,
+                        CERTIFICATE_FILE_NAME,
+                        "keystore").apply {
                     FileOutputStream(this).use {
                         keystore.store(
                                 it,
@@ -100,7 +105,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                                 KEYSTORE_PASSWORD.toCharArray())
                     }
                 }.run {
-                    convertPathToTomcatVariable(this)
+                    convertPathToTomcatVariable(this.absolutePath)
                 }
             }
 
@@ -109,13 +114,16 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
      * @return The path to the PEM file
      */
     fun createPrivateKey() =
-            "$tomcatLocation${File.separator}conf${File.separator}octopus.key".apply {
+            FileUtilsImpl.getUniqueFilename(
+                    File(tomcatLocation, "conf").absolutePath,
+                    CERTIFICATE_FILE_NAME,
+                    "key").apply {
                 FileUtils.write(
-                        File(this),
+                        this,
                         privateKey,
                         StandardCharsets.US_ASCII)
             }.run {
-                convertPathToTomcatVariable(this)
+                convertPathToTomcatVariable(this.absolutePath)
             }
 
     /**
@@ -123,13 +131,16 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
      * @return The path to the certificate PEM file
      */
     fun createPublicCert() =
-            "$tomcatLocation${File.separator}conf${File.separator}octopus.crt".apply {
+            FileUtilsImpl.getUniqueFilename(
+                    File(tomcatLocation, "conf").absolutePath,
+                    CERTIFICATE_FILE_NAME,
+                    "crt").apply {
                 FileUtils.write(
-                        File(this),
+                        this,
                         publicKey,
                         StandardCharsets.US_ASCII)
             }.run {
-                convertPathToTomcatVariable(this)
+                convertPathToTomcatVariable(this.absolutePath)
             }
 
     /**

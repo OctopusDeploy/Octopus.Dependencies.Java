@@ -8,12 +8,18 @@ import org.w3c.dom.Document
 import org.w3c.dom.Node
 import java.io.File
 import java.io.FileWriter
+import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 object XMLUtilsImpl : XMLUtils {
+    override fun loadXML(location:String):Document =
+            File(location).run {
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
+            }
+
     override fun saveXML(location: String, document: Document) =
             File(location)
                     .run { FileWriter(this) }
@@ -26,47 +32,6 @@ object XMLUtilsImpl : XMLUtils {
                                 .transform(DOMSource(document), this)}
                     .run { Unit }
 
-    override fun returnFirstMatchingNode(node: Node,
-                                         elementName: String,
-                                         requiredAttributes: Map<String, String>,
-                                         requiredOrMissingAttributes: Map<String, String>): Option<Node> =
-            /*
-                Find any children that match
-             */
-            createOrReturnElement(node, elementName, requiredAttributes, requiredOrMissingAttributes, false)
-                    .run {
-                        if (isDefined()) {
-                            this
-                        } else {
-                            /*
-                                Search this node's children for any matches
-                             */
-                            NodeListIterator(node)
-                                    .asSequence()
-                                    .map {
-                                        /*
-                                            Try to find the first matching child node
-                                         */
-                                        returnFirstMatchingNode(
-                                                it,
-                                                elementName,
-                                                requiredAttributes,
-                                                requiredOrMissingAttributes)
-                                    }
-                                    /*
-                                        We are only interested in positive results
-                                     */
-                                    .firstOption { it.isDefined() }
-                                    /*
-                                        Return the successful result, or an empty optional
-                                     */
-                                    .flatMap { it }
-                        }
-                    }
-
-    /**
-     * Returns or creates the named element
-     */
     override fun createOrReturnElement(node: Node,
                                        elementName: String,
                                        requiredAttributes: Map<String, String>,

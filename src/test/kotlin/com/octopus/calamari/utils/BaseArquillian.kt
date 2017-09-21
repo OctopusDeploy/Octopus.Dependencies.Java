@@ -14,7 +14,7 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
         File(xmlFile)
                 .run { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this) }
                 .apply {
-                    XMLUtilsImpl.returnFirstMatchingNode(
+                    XMLTester.returnFirstMatchingNode(
                             this.documentElement,
                             "Connector",
                             mapOf(Pair("port", "38443"))).get()

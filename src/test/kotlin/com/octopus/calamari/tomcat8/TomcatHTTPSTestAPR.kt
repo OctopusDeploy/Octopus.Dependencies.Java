@@ -19,9 +19,9 @@ class TomcatHTTPSTestAPR {
 
     @Test
     fun testImplementationIsPresent() {
-        Assert.assertTrue(XMLTester.containsAttributeAndValue(File(SERVER_XML), "protocol", AprClassName))
-        Assert.assertFalse(XMLTester.containsAttributeAndValue(File(SERVER_XML), "protocol", NioClassName))
-        Assert.assertFalse(XMLTester.containsAttributeAndValue(File(SERVER_XML), "protocol", BioClassName))
+        Assert.assertTrue(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", AprClassName))).isDefined())
+        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", NioClassName))).isDefined())
+        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", BioClassName))).isDefined())
     }
 
     @Test
@@ -29,7 +29,7 @@ class TomcatHTTPSTestAPR {
         File(SERVER_XML)
                 .run { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this) }
                 .run {
-                    XMLUtilsImpl.returnFirstMatchingNode(
+                    XMLTester.returnFirstMatchingNode(
                             this.documentElement,
                             "Connector",
                             mapOf(Pair("port", "38443"))).get()

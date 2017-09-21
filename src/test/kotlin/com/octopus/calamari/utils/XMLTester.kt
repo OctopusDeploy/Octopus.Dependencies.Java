@@ -1,6 +1,10 @@
 package com.octopus.calamari.utils
 
+import com.octopus.calamari.utils.impl.XMLUtilsImpl
+import org.apache.commons.collections4.iterators.NodeListIterator
 import org.funktionale.option.Option
+import org.funktionale.option.firstOption
+import org.w3c.dom.Node
 import java.io.File
 import java.io.FileInputStream
 import javax.xml.stream.XMLEventReader
@@ -12,25 +16,42 @@ import javax.xml.stream.events.XMLEvent
  * A service for scanning through XML files looking for certain values
  */
 object XMLTester {
-    /**
-     * @return true if the attribute is found in any element
-     */
-    fun containsAttributeAndValue(xml: File, name: String, value: String) =
-            XMLInputFactory.newInstance()
-                    .createXMLEventReader(FileInputStream(xml))
-                    .run { this as Iterator<XMLEvent> }
-                    .asSequence()
-                    .any {
-                        Option.Some(it)
-                                .filter { it.isStartElement }
-                                .map { it.asStartElement().attributes }
-                                .map { it as Iterator<Attribute> }
-                                .filter {
-                                    it.asSequence().any {
-                                        it.name.toString() == name && it.value.toString() == value
+    fun returnFirstMatchingNode(node: Node,
+                                elementName: String,
+                                requiredAttributes: Map<String, String>,
+                                requiredOrMissingAttributes: Map<String, String> = mapOf()): Option<Node> =
+            /*
+                Find any children that match
+             */
+            XMLUtilsImpl.createOrReturnElement(node, elementName, requiredAttributes, requiredOrMissingAttributes)
+                    .run {
+                        if (isDefined()) {
+                            this
+                        } else {
+                            /*
+                                Search this node's children for any matches
+                             */
+                            NodeListIterator(node)
+                                    .asSequence()
+                                    .map {
+                                        /*
+                                            Try to find the first matching child node
+                                         */
+                                        returnFirstMatchingNode(
+                                                it,
+                                                elementName,
+                                                requiredAttributes,
+                                                requiredOrMissingAttributes)
                                     }
-                                }
-                                .isDefined()
+                                    /*
+                                        We are only interested in positive results
+                                     */
+                                    .firstOption { it.isDefined() }
+                                    /*
+                                        Return the successful result, or an empty optional
+                                     */
+                                    .flatMap { it }
+                        }
                     }
 
 }

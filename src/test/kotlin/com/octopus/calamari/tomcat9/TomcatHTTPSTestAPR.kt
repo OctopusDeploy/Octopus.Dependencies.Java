@@ -5,6 +5,7 @@ import com.octopus.calamari.tomcathttps.BioClassName
 import com.octopus.calamari.tomcathttps.NioClassName
 import com.octopus.calamari.utils.TomcatUtils
 import com.octopus.calamari.utils.XMLTester
+import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,8 +19,8 @@ class TomcatHTTPSTestAPR {
 
     @Test
     fun testImplementationIsPresent() {
-        Assert.assertTrue(XMLTester.containsAttributeAndValue(File(SERVER_XML), "protocol", AprClassName))
-        Assert.assertFalse(XMLTester.containsAttributeAndValue(File(SERVER_XML), "protocol", NioClassName))
-        Assert.assertFalse(XMLTester.containsAttributeAndValue(File(SERVER_XML), "protocol", BioClassName))
+        Assert.assertTrue(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "SSLHostConfig", mapOf(Pair("protocol", AprClassName))).isDefined())
+        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "SSLHostConfig", mapOf(Pair("protocol", NioClassName))).isDefined())
+        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "SSLHostConfig", mapOf(Pair("protocol", BioClassName))).isDefined())
     }
 }
