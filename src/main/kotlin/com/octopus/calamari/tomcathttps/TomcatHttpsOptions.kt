@@ -147,7 +147,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
      * @return Converts an absolute path to a interpolated version
      */
     fun convertPathToTomcatVariable(path: String) =
-            path.replace(tomcatLocation, "\${catalina.base}")
+            path.replace(File(tomcatLocation).absolutePath, "\${catalina.base}")
 
     /**
      * ensures that the options supplied match the version of Tomcat installed

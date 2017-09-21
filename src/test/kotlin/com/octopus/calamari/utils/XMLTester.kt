@@ -23,7 +23,7 @@ object XMLTester {
             /*
                 Find any children that match
              */
-            XMLUtilsImpl.createOrReturnElement(node, elementName, requiredAttributes, requiredOrMissingAttributes)
+            XMLUtilsImpl.createOrReturnElement(node, elementName, requiredAttributes, requiredOrMissingAttributes, false)
                     .run {
                         if (isDefined()) {
                             this
