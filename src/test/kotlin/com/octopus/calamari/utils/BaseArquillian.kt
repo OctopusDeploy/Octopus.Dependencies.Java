@@ -20,11 +20,11 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                         "//Connector[@port='38443']").run {
                     NodeListIterator(this)
                 }.forEach {
-                    it.attributes.setNamedItem(ownerDocument.createAttribute(MAX_HTTP_HEADER_SIZE)
+                    it.attributes.setNamedItem(it.ownerDocument.createAttribute(MAX_HTTP_HEADER_SIZE)
                             .apply { nodeValue = MAX_HTTP_HEADER_SIZE_VALUE })
-                    it.attributes.setNamedItem(ownerDocument.createAttribute(MAX_THREADS)
+                    it.attributes.setNamedItem(it.ownerDocument.createAttribute(MAX_THREADS)
                             .apply { nodeValue = MAX_THREADS_VALUE })
-                    it.attributes.setNamedItem(ownerDocument.createAttribute(MIN_SPARE_THREADS)
+                    it.attributes.setNamedItem(it.ownerDocument.createAttribute(MIN_SPARE_THREADS)
                             .apply { nodeValue = MIN_SPARE_THREADS_VALUE })
                 }
             }.apply {
