@@ -42,10 +42,24 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                               val implementation: TomcatHttpsImplementation = TomcatHttpsImplementation.NONE,
                               val hostName: String = "",
                               val default: Boolean = false,
-                              val alreadyDumped: Boolean = false) {
+                              private val alreadyDumped: Boolean = false) {
 
     val logger: Logger = Logger.getLogger("")
     val fixedHostname = if (StringUtils.isEmpty(hostName)) DEFAULT_HOST_NAME else hostName
+    /**
+     * Attempts to get the organisation from a x500 string
+     */
+    private val organisation:String
+        get() =
+            Try {
+                LdapName(publicKeySubject).rdns.filter {
+                    it.type == "O"
+                }.map {
+                    Objects.toString(it.value)
+                }.firstOption().getOrElse {
+                    CERTIFICATE_FILE_NAME
+                }.replace(Regex(FILENAME_REPLACE_RE), FILENAME_REPLACE_STRING).trim()
+            }.getOrElse { CERTIFICATE_FILE_NAME }
     private val serverPattern: Pattern = Pattern.compile("Server number:\\s+(?<major>\\d+)\\.(?<minor>\\d+)")
 
     init {
@@ -100,7 +114,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                     Option.Some(KEYSTORE_PASSWORD)).map { keystore ->
                 FileUtilsImpl.getUniqueFilename(
                         File(tomcatLocation, "conf").absolutePath,
-                        publicKeySubject,
+                        organisation,
                         "keystore").apply {
                     FileOutputStream(this).use {
                         keystore.store(
@@ -123,7 +137,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
     fun createPrivateKey() =
             FileUtilsImpl.getUniqueFilename(
                     File(tomcatLocation, "conf").absolutePath,
-                    publicKeySubject,
+                    organisation,
                     "key").apply {
                 FileUtils.write(
                         this,
@@ -140,7 +154,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
     fun createPublicCert() =
             FileUtilsImpl.getUniqueFilename(
                     File(tomcatLocation, "conf").absolutePath,
-                    publicKeySubject,
+                    organisation,
                     "crt").apply {
                 FileUtils.write(
                         this,
@@ -192,61 +206,47 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
          * @return a new Options instance populated from the values in the environment variables
          */
         fun fromEnvironmentVars(): TomcatHttpsOptions =
-            TomcatHttpsOptions(
-                    getEnvironmentVar("Certificate_Version", "").apply {
-                        if (StringUtils.isNotBlank(this)) {
-                            throw IllegalArgumentException("version can not be null")
-                        }
-                    },
-                    getEnvironmentVar("Certificate_Location", "").apply {
-                        if (StringUtils.isNotBlank(this)) {
-                            throw IllegalArgumentException("location can not be null")
-                        }
-                    },
-                    getEnvironmentVar("Certificate_Service", ""),
-                    getEnvironmentVar("Certificate_Private_Key", "").apply {
-                        if (StringUtils.isNotBlank(this)) {
-                            throw IllegalArgumentException("private key can not be null")
-                        }
-                    },
-                    getEnvironmentVar("Certificate_Public_Key", "").apply {
-                        if (StringUtils.isNotBlank(this)) {
-                            throw IllegalArgumentException("public key can not be null")
-                        }
-                    },
-                    getOragnisation(getEnvironmentVar("Certificate_Public_Key_Subject", CERTIFICATE_FILE_NAME)),
-                    getEnvironmentVar("Certificate_Port", "8443").apply {
-                        if (StringUtils.isNotBlank(this)) {
-                            throw IllegalArgumentException("port can not be null")
-                        }
-                    }.toInt(),
-                    Try {
-                        TomcatHttpsImplementation.valueOf(getEnvironmentVar(
-                                "Certificate_Implementation",
-                                TomcatHttpsImplementation.NIO.toString()).toUpperCase())
-                    }.getOrElse { TomcatHttpsImplementation.NIO },
-                    getEnvironmentVar("Certificate_Hostname", ""),
-                    (getEnvironmentVar("Certificate_Default", "true")).toBoolean())
+                TomcatHttpsOptions(
+                        getEnvironmentVar("Certificate_Version", "").apply {
+                            if (StringUtils.isNotBlank(this)) {
+                                throw IllegalArgumentException("version can not be null")
+                            }
+                        },
+                        getEnvironmentVar("Certificate_Location", "").apply {
+                            if (StringUtils.isNotBlank(this)) {
+                                throw IllegalArgumentException("location can not be null")
+                            }
+                        },
+                        getEnvironmentVar("Certificate_Service", ""),
+                        getEnvironmentVar("Certificate_Private_Key", "").apply {
+                            if (StringUtils.isNotBlank(this)) {
+                                throw IllegalArgumentException("private key can not be null")
+                            }
+                        },
+                        getEnvironmentVar("Certificate_Public_Key", "").apply {
+                            if (StringUtils.isNotBlank(this)) {
+                                throw IllegalArgumentException("public key can not be null")
+                            }
+                        },
+                        getEnvironmentVar("Certificate_Public_Key_Subject", CERTIFICATE_FILE_NAME),
+                        getEnvironmentVar("Certificate_Port", "8443").apply {
+                            if (StringUtils.isNotBlank(this)) {
+                                throw IllegalArgumentException("port can not be null")
+                            }
+                        }.toInt(),
+                        Try {
+                            TomcatHttpsImplementation.valueOf(getEnvironmentVar(
+                                    "Certificate_Implementation",
+                                    TomcatHttpsImplementation.NIO.toString()).toUpperCase())
+                        }.getOrElse { TomcatHttpsImplementation.NIO },
+                        getEnvironmentVar("Certificate_Hostname", ""),
+                        (getEnvironmentVar("Certificate_Default", "true")).toBoolean())
 
 
-        private fun getEnvironmentVar(name:String, default:String, trim:Boolean = true) =
+        private fun getEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Tomcat_Certificate_$name"] ?: default).run {
                     if (trim) this.trim() else this
                 }
-
-        /**
-         * Attempts to get the organisation from a x500 string
-         */
-        private fun getOragnisation(x500: String) =
-                Try {
-                    LdapName(x500).rdns.filter {
-                        it.type == "O"
-                    }.map {
-                        Objects.toString(it.value)
-                    }.firstOption().getOrElse {
-                        CERTIFICATE_FILE_NAME
-                    }.replace(Regex(FILENAME_REPLACE_RE), FILENAME_REPLACE_STRING).trim()
-                }.getOrElse { CERTIFICATE_FILE_NAME }
     }
 
     /**
