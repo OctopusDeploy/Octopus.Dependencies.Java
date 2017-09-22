@@ -19,8 +19,8 @@ class TomcatHTTPSNIOTest : BaseTomcatTest() {
 
     @Test
     fun testImplementationIsPresent() {
-        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", AprClassName))).isDefined())
-        Assert.assertTrue(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", NioClassName))).isDefined())
-        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", BioClassName))).isDefined())
+        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, AprClassName))
+        Assert.assertTrue(testImplementationIsPresent(SERVER_XML, NioClassName))
+        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, BioClassName))
     }
 }

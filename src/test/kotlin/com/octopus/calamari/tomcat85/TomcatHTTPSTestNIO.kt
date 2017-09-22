@@ -13,37 +13,16 @@ import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
 @RunWith(Tomcat85ArquillianNIO::class)
-class TomcatHTTPSTestNIO {
+class TomcatHTTPSTestNIO : BaseTomcatTest() {
     @Test
     fun listDeployments() =
             println(TomcatUtils.listDeployments(TomcatUtils.commonHttpsOptions))
 
     @Test
     fun testImplementationIsPresent() {
-        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", AprClassName))).isDefined())
-        Assert.assertTrue(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", NioClassName))).isDefined())
-        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", BioClassName))).isDefined())
-    }
-
-    @Test
-    fun ensureOtherAttrsStillExist() {
-        File(SERVER_XML)
-                .run { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this) }
-                .run {
-                    XMLUtilsImpl.xpathQueryNodelist(
-                            this,
-                            "//Connector[@port='38443']")
-                }.run {
-                    NodeListIterator(this)
-                }
-                .forEach {
-                    Assert.assertTrue(it.attributes.getNamedItem(MAX_HTTP_HEADER_SIZE).nodeValue ==
-                            MAX_HTTP_HEADER_SIZE_VALUE)
-                    Assert.assertTrue(it.attributes.getNamedItem(MAX_THREADS).nodeValue ==
-                            MAX_THREADS_VALUE)
-                    Assert.assertTrue(it.attributes.getNamedItem(MIN_SPARE_THREADS).nodeValue ==
-                            MIN_SPARE_THREADS_VALUE)
-                }
+        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, AprClassName))
+        Assert.assertTrue(testImplementationIsPresent(SERVER_XML, NioClassName))
+        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, BioClassName))
     }
 
 }

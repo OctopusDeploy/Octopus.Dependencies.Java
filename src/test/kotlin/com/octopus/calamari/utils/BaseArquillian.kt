@@ -15,18 +15,18 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
             File(xmlFile).run {
                 DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
             }.apply {
-                XMLTester.returnFirstMatchingNode(
-                        this.documentElement,
-                        "Connector",
-                        mapOf(Pair("port", "38443"))).get()
-                        .apply {
-                            attributes.setNamedItem(ownerDocument.createAttribute(MAX_HTTP_HEADER_SIZE)
-                                    .apply { nodeValue = MAX_HTTP_HEADER_SIZE_VALUE })
-                            attributes.setNamedItem(ownerDocument.createAttribute(MAX_THREADS)
-                                    .apply { nodeValue = MAX_THREADS_VALUE })
-                            attributes.setNamedItem(ownerDocument.createAttribute(MIN_SPARE_THREADS)
-                                    .apply { nodeValue = MIN_SPARE_THREADS_VALUE })
-                        }
+                XMLUtilsImpl.xpathQueryNodelist(
+                        this,
+                        "//Connector[@port='38443']").run {
+                    NodeListIterator(this)
+                }.forEach {
+                    it.attributes.setNamedItem(ownerDocument.createAttribute(MAX_HTTP_HEADER_SIZE)
+                            .apply { nodeValue = MAX_HTTP_HEADER_SIZE_VALUE })
+                    it.attributes.setNamedItem(ownerDocument.createAttribute(MAX_THREADS)
+                            .apply { nodeValue = MAX_THREADS_VALUE })
+                    it.attributes.setNamedItem(ownerDocument.createAttribute(MIN_SPARE_THREADS)
+                            .apply { nodeValue = MIN_SPARE_THREADS_VALUE })
+                }
             }.apply {
                 XMLUtilsImpl.saveXML(xmlFile, this)
             }
