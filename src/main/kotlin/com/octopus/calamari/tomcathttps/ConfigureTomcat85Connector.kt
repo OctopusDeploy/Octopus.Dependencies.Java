@@ -1,7 +1,10 @@
 package com.octopus.calamari.tomcathttps
 
+import com.octopus.calamari.exception.tomcat.ConfigurationOperationInvalidException
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
+import org.apache.commons.collections4.iterators.NodeListIterator
 import org.apache.commons.lang.StringUtils
+import org.funktionale.option.Option
 import org.funktionale.tries.Try
 import org.w3c.dom.Node
 
@@ -18,7 +21,6 @@ object ConfigureTomcat85Connector : ConfigureConnector {
     override fun configureBIO(options: TomcatHttpsOptions, node: Node): Unit =
             throw NotImplementedError("Tomcat 8.5 and above do not support the Blocking IO Connector")
 
-
     override fun configureNIO(options: TomcatHttpsOptions, node: Node): Unit =
             node.apply {
                 attributes.setNamedItem(ownerDocument.createAttribute("protocol").apply { nodeValue = NioClassName })
@@ -33,6 +35,9 @@ object ConfigureTomcat85Connector : ConfigureConnector {
 
     override fun configureARP(options: TomcatHttpsOptions, node: Node): Unit =
             node.apply {
+                validateCertificatesForAPR(node, options)
+                validateConnectorForAPR(node, options)
+            }.apply {
                 attributes.setNamedItem(ownerDocument.createAttribute("protocol").apply { nodeValue = AprClassName })
             }.run { processCommonElements(options, this) }
 
@@ -53,6 +58,15 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                         attributes.setNamedItem(node.ownerDocument.createAttribute("defaultSSLHostConfigName").apply { nodeValue = options.fixedHostname })
                     }
                 }
+            }.apply {
+                /*
+                    Attributes on the <Connector> element are considered to be the _default_
+                    config. If we are adding a new default config, clean up these values from
+                    the <Connector> element.
+                 */
+                if (DEFAULT_HOST_NAME == options.fixedHostname) {
+                    cleanUpOldAttributes(this)
+                }
             }.run {
                 XMLUtilsImpl.createOrReturnElement(
                         this,
@@ -65,24 +79,72 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                 attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply { nodeValue = options.createPrivateKey() })
                 attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply { nodeValue = options.createPublicCert() })
                 attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = "RSA" })
-                /*
-                    We try to keep as much of the existing configuration as possible, but these values
-                    can conflict with the new settings, so they are removed
-                 */
-                Try { attributes.removeNamedItem("certificateKeyAlias") }
-                Try { attributes.removeNamedItem("certificateKeyPassword") }
-                Try { attributes.removeNamedItem("certificateKeystoreFile") }
-                Try { attributes.removeNamedItem("certificateKeystorePassword") }
-                Try { attributes.removeNamedItem("certificateKeystoreProvider") }
-                Try { attributes.removeNamedItem("certificateKeystoreType") }
-                Try { attributes.removeNamedItem("SSLCertificateFile") }
-                Try { attributes.removeNamedItem("SSLCertificateKeyFile") }
-                Try { attributes.removeNamedItem("SSLPassword") }
-                Try { attributes.removeNamedItem("keyAlias") }
-                Try { attributes.removeNamedItem("keyPass") }
-                Try { attributes.removeNamedItem("keystoreFile") }
-                Try { attributes.removeNamedItem("keystorePass") }
-                Try { attributes.removeNamedItem("keystoreProvider") }
-                Try { attributes.removeNamedItem("keystoreType") }
+                cleanUpOldAttributes(this)
             }
+
+    private fun cleanUpOldAttributes(node: Node) {
+        /*
+            We try to keep as much of the existing configuration as possible, but these values
+            can conflict with the new settings, so they are removed
+         */
+        Try { node.attributes.removeNamedItem("certificateKeyAlias") }
+        Try { node.attributes.removeNamedItem("certificateKeyPassword") }
+        Try { node.attributes.removeNamedItem("certificateKeystoreFile") }
+        Try { node.attributes.removeNamedItem("certificateKeystorePassword") }
+        Try { node.attributes.removeNamedItem("certificateKeystoreProvider") }
+        Try { node.attributes.removeNamedItem("certificateKeystoreType") }
+        Try { node.attributes.removeNamedItem("SSLCertificateFile") }
+        Try { node.attributes.removeNamedItem("SSLCertificateKeyFile") }
+        Try { node.attributes.removeNamedItem("SSLPassword") }
+        Try { node.attributes.removeNamedItem("keyAlias") }
+        Try { node.attributes.removeNamedItem("keyPass") }
+        Try { node.attributes.removeNamedItem("keystoreFile") }
+        Try { node.attributes.removeNamedItem("keystorePass") }
+        Try { node.attributes.removeNamedItem("keystoreProvider") }
+        Try { node.attributes.removeNamedItem("keystoreType") }
+    }
+
+    /**
+     * We may find a situation where we are being asked to change a NIO implementation with a keystore
+     * in the <Certificate> element to an APR implementation. APR does not support keystores, a
+     * nd any certificates defined with a keystore can not be re-configured under the APR protocol.
+     */
+    private fun validateCertificatesForAPR(node: Node, options:TomcatHttpsOptions) =
+            Option.Some(XMLUtilsImpl.xpathQueryNodelist(
+                    node,
+                    "SSLHostConfig[not(@hostName='${options.hostName}')" +
+                        "${if (DEFAULT_HOST_NAME == options.hostName) " and not(@hostName)" else ""}" +
+                        "]/Certificate[@certificateKeystoreFile or @keystoreFile]")).filter {
+                it.length != 0
+            }.forEach {
+                throw ConfigurationOperationInvalidException(
+                        "A <Certificate> element with an existing certificateKeystoreFile or keystoreFile " +
+                                "attribute was found. These certificates are not compatible with the APR protocol. " +
+                                "Attempting to change the connector to the APR protocol will leave the configuration file " +
+                                "in an inconsistent state.")
+            }
+
+    /**
+     * We may find a situation where we are being asked to change a NIO implementation with a keystore
+     * defined in the <Connector> element to an APR implementation. APR does not support keystores, and any
+     * connectors defined with a keystore can not be re-configured under the APR protocol.
+     */
+    private fun validateConnectorForAPR(node: Node, options:TomcatHttpsOptions) =
+            Option.Some(XMLUtilsImpl.xpathQueryBoolean(
+                    node,
+                    "(@certificateKeystoreFile or @keystoreFile)")).filter {
+                /*
+                    If the supplied certificate is the default one, all settings in
+                    the Connector will be removed, so we don't worry about it having
+                    keyStore information
+                 */
+                it && DEFAULT_HOST_NAME != options.hostName
+            }.forEach {
+                throw ConfigurationOperationInvalidException(
+                        "A <Connector> element with an existing certificateKeystoreFile or keystoreFile " +
+                                "attribute was found. These certificates are not compatible with the APR protocol. " +
+                                "Attempting to change the connector to the APR protocol will leave the configuration file " +
+                                "in an inconsistent state.")
+            }
+
 }

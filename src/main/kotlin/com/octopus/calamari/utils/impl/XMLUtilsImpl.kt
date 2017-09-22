@@ -1,11 +1,13 @@
 package com.octopus.calamari.utils.impl
 
 import com.octopus.calamari.utils.XMLUtils
+import com.sun.org.apache.xpath.internal.NodeSet
 import org.apache.commons.collections4.iterators.NodeListIterator
 import org.funktionale.option.Option
 import org.funktionale.option.firstOption
 import org.w3c.dom.Document
 import org.w3c.dom.Node
+import org.w3c.dom.NodeList
 import java.io.File
 import java.io.FileWriter
 import javax.xml.parsers.DocumentBuilderFactory
@@ -13,8 +15,27 @@ import javax.xml.transform.OutputKeys
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathFactory
 
 object XMLUtilsImpl : XMLUtils {
+    override fun xpathQueryNodelist(node: Node, query: String): NodeList =
+            XPathFactory
+                    .newInstance()
+                    .newXPath()
+                    .compile(query)
+                    .evaluate(node, XPathConstants.NODESET)
+                    .run { this as NodeList }
+
+    override fun xpathQueryBoolean(node: Node, query: String): Boolean =
+            XPathFactory
+                    .newInstance()
+                    .newXPath()
+                    .compile(query)
+                    .evaluate(node, XPathConstants.BOOLEAN)
+                    .run { this as Boolean }
+
+
     /**
      * Removes unnecessary newlines from XML files that are repeatedly parsed
      */
@@ -56,7 +77,7 @@ object XMLUtilsImpl : XMLUtils {
 
     override fun createOrReturnElement(node: Node,
                                        elementName: String,
-                                       requiredAttributes: Map<String, String>,
+                                       requiredAttributeValues: Map<String, String>,
                                        requiredOrMissingAttributes: Map<String, String>,
                                        createIfMissing: Boolean): Option<Node> =
             NodeListIterator(node)
@@ -65,7 +86,7 @@ object XMLUtilsImpl : XMLUtils {
                     /*
                         All required attributes must be found on this node for it to be a match
                      */
-                    .filter { node -> requiredAttributes.entries.all { node.attributes.getNamedItem(it.key)?.nodeValue == it.value } }
+                    .filter { node -> requiredAttributeValues.entries.all { node.attributes.getNamedItem(it.key)?.nodeValue == it.value } }
                     /*
                         All required or missing attributes must be found with a match or missing altogether
                         for this node to be a match
@@ -85,7 +106,7 @@ object XMLUtilsImpl : XMLUtils {
                             Option.Some(node.ownerDocument.createElement(elementName)
                                     .apply { node.appendChild(this) }
                                     .apply {
-                                        requiredAttributes.entries.forEach {
+                                        requiredAttributeValues.entries.forEach {
                                             this.attributes.setNamedItem(ownerDocument.createAttribute(it.key)
                                                     .apply { nodeValue = it.value })
                                         }

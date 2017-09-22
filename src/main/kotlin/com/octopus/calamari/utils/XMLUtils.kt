@@ -3,6 +3,7 @@ package com.octopus.calamari.utils
 import org.funktionale.option.Option
 import org.w3c.dom.Document
 import org.w3c.dom.Node
+import org.w3c.dom.NodeList
 import java.io.File
 
 interface XMLUtils {
@@ -10,7 +11,7 @@ interface XMLUtils {
      * Create or return a matching node
      * @param the parent node whose children are matched against the criteria
      * @param elementName the name of the child element node to match
-     * @param requiredAttributes a map of attribute names and values that are required to be present
+     * @param requiredAttributeValues a map of attribute names and values that are required to be present
      * @param requiredOrMissingAttributes a map of attributes and values that are required to be present,
      * or completely absent. This is used to match default values.
      * @param createIfMissing true if the child is to be created if it is missing, and false otherwise
@@ -18,7 +19,7 @@ interface XMLUtils {
      */
     fun createOrReturnElement(node: Node,
                               elementName: String,
-                              requiredAttributes: Map<String, String> = mapOf(),
+                              requiredAttributeValues: Map<String, String> = mapOf(),
                               requiredOrMissingAttributes: Map<String, String> = mapOf(),
                               createIfMissing: Boolean = true): Option<Node>
 
@@ -42,4 +43,13 @@ interface XMLUtils {
      * @param document The document to be saved
      */
     fun saveXML(location: String, document: Document)
+
+    /**
+     * @param node The node to start the query from
+     * @param query The xpath query to run
+     * @return The collection of matching nodes
+     */
+    fun xpathQueryNodelist(node:Node, query: String): NodeList
+
+    fun xpathQueryBoolean(node: Node, query: String): Boolean
 }

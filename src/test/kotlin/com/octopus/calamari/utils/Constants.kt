@@ -8,3 +8,6 @@ const val MAX_THREADS_VALUE = "150"
 
 const val MIN_SPARE_THREADS = "minSpareThreads"
 const val MIN_SPARE_THREADS_VALUE = "2"
+
+const val KEYSTORE_FILE = "keystoreFile"
+const val KEYSTORE_FILE_VALUE = "whatever.keystore"

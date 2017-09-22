@@ -240,7 +240,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                                     TomcatHttpsImplementation.NIO.toString()).toUpperCase())
                         }.getOrElse { TomcatHttpsImplementation.NIO },
                         getEnvironmentVar("Certificate_Hostname", ""),
-                        (getEnvironmentVar("Certificate_Default", "true")).toBoolean())
+                        getEnvironmentVar("Certificate_Default", "true").toBoolean())
 
 
         private fun getEnvironmentVar(name: String, default: String, trim: Boolean = true) =
