@@ -1,9 +1,6 @@
 package com.octopus.calamari.utils
 
 import com.octopus.calamari.tomcat8.SERVER_XML
-import com.octopus.calamari.tomcathttps.AprClassName
-import com.octopus.calamari.tomcathttps.BioClassName
-import com.octopus.calamari.tomcathttps.NioClassName
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.collections4.iterators.NodeListIterator
 import org.junit.Assert

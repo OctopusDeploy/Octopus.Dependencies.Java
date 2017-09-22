@@ -3,13 +3,11 @@ package com.octopus.calamari.tomcat7
 import com.octopus.calamari.tomcathttps.AprClassName
 import com.octopus.calamari.tomcathttps.BioClassName
 import com.octopus.calamari.tomcathttps.NioClassName
-import com.octopus.calamari.utils.*
-import com.octopus.calamari.utils.impl.XMLUtilsImpl
+import com.octopus.calamari.utils.BaseTomcatTest
+import com.octopus.calamari.utils.TomcatUtils
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
-import javax.xml.parsers.DocumentBuilderFactory
 
 @RunWith(Tomcat7ArquillianAPR::class)
 class TomcatHTTPSAPRTest : BaseTomcatTest() {

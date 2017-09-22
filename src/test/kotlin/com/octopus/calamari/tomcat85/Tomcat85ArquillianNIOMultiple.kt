@@ -1,13 +1,11 @@
 package com.octopus.calamari.tomcat85
 
 import com.octopus.calamari.tomcat7.Tomcat7ArquillianAPR
-import com.octopus.calamari.tomcat7.TomcatHTTPSBIOTest
 import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.BaseArquillian
 import org.apache.commons.io.FileUtils
-import org.jboss.arquillian.junit.Arquillian
 import java.io.File
 
 /**

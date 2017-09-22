@@ -5,7 +5,6 @@ import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.BaseArquillian
 import org.apache.commons.io.FileUtils
-import org.jboss.arquillian.junit.Arquillian
 import java.io.File
 
 /**
