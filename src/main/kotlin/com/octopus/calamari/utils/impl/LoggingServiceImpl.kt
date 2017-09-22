@@ -49,14 +49,14 @@ object LoggingServiceImpl : LoggingService {
             /*
                 Info level messages should go to std out
              */
-            val infoLogger = StreamHandler(System.out, SimpleFormatter())
+            val infoLogger = StreamHandler(System.out, CustomFormatter)
             infoLogger.level = Level.INFO
             rootLog.addHandler(infoLogger)
 
             /*
                 Warning level messages should go to std err
              */
-            val warnLogger = StreamHandler(System.err, SimpleFormatter())
+            val warnLogger = StreamHandler(System.err, CustomFormatter)
             warnLogger.level = Level.WARNING
             rootLog.addHandler(warnLogger)
         }
