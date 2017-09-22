@@ -112,8 +112,8 @@ object ConfigureTomcat85Connector : ConfigureConnector {
     private fun validateCertificatesForAPR(node: Node, options:TomcatHttpsOptions) =
             Option.Some(XMLUtilsImpl.xpathQueryNodelist(
                     node,
-                    "SSLHostConfig[not(@hostName='${options.hostName}')" +
-                        "${if (DEFAULT_HOST_NAME == options.hostName) " and not(@hostName)" else ""}" +
+                    "SSLHostConfig[not(@hostName='${options.fixedHostname}')" +
+                        "${if (DEFAULT_HOST_NAME == options.fixedHostname) " and not(@hostName)" else ""}" +
                         "]/Certificate[@certificateKeystoreFile or @keystoreFile]")).filter {
                 it.length != 0
             }.forEach {
@@ -138,7 +138,7 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                     the Connector will be removed, so we don't worry about it having
                     keyStore information
                  */
-                it && DEFAULT_HOST_NAME != options.hostName
+                it && DEFAULT_HOST_NAME != options.fixedHostname
             }.forEach {
                 throw ConfigurationOperationInvalidException(
                         "A <Connector> element with an existing certificateKeystoreFile or keystoreFile " +

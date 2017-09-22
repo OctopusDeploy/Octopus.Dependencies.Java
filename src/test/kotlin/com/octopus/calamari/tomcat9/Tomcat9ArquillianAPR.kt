@@ -31,6 +31,8 @@ class Tomcat9ArquillianAPR(testClass: Class<*>?) : BaseArquillian(testClass) {
                 "",
                 false))
 
+        addConnectorAttributes(SERVER_XML)
+
         TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,

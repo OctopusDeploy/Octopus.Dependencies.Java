@@ -3,6 +3,7 @@ package com.octopus.calamari.tomcat9
 import com.octopus.calamari.tomcathttps.AprClassName
 import com.octopus.calamari.tomcathttps.BioClassName
 import com.octopus.calamari.tomcathttps.NioClassName
+import com.octopus.calamari.utils.BaseTomcatTest
 import com.octopus.calamari.utils.TomcatUtils
 import com.octopus.calamari.utils.XMLTester
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
@@ -12,7 +13,7 @@ import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(Tomcat9ArquillianNIO::class)
-class TomcatHTTPSTestNIO {
+class TomcatHTTPSTestNIO : BaseTomcatTest() {
     @Test
     fun listDeployments() =
             println(TomcatUtils.listDeployments(TomcatUtils.commonHttpsOptions))

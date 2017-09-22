@@ -11,7 +11,10 @@ import java.io.File
 
 /**
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
- * configures the server.xml file before Tomcat is booted.
+ * configures the server.xml file before Tomcat is booted. This configuration
+ * is used to simulate a situation where Tomcat has NIO with a keystoreFile
+ * configured and we are attempting to add a new APR configuration, which will
+ * leave the configuration in an invalid state.
  */
 class Tomcat85ArquillianAPRInvalid(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {

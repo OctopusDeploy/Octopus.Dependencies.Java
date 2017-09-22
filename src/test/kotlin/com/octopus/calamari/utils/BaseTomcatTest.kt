@@ -1,30 +1,17 @@
-package com.octopus.calamari.tomcat85
+package com.octopus.calamari.utils
 
-import com.octopus.calamari.tomcathttps.AprClassName
-import com.octopus.calamari.tomcathttps.BioClassName
-import com.octopus.calamari.tomcathttps.NioClassName
-import com.octopus.calamari.utils.*
+import com.octopus.calamari.tomcat8.SERVER_XML
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.collections4.iterators.NodeListIterator
 import org.junit.Assert
 import org.junit.Test
-import org.junit.runner.RunWith
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
-@RunWith(Tomcat85ArquillianNIO::class)
-class TomcatHTTPSTestNIO {
-    @Test
-    fun listDeployments() =
-            println(TomcatUtils.listDeployments(TomcatUtils.commonHttpsOptions))
-
-    @Test
-    fun testImplementationIsPresent() {
-        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", AprClassName))).isDefined())
-        Assert.assertTrue(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", NioClassName))).isDefined())
-        Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", BioClassName))).isDefined())
-    }
-
+/**
+ * A base class that checks for the attributes added by addConnectorAttributes()
+ */
+open class BaseTomcatTest {
     @Test
     fun ensureOtherAttrsStillExist() {
         File(SERVER_XML)
@@ -45,5 +32,4 @@ class TomcatHTTPSTestNIO {
                             MIN_SPARE_THREADS_VALUE)
                 }
     }
-
 }

@@ -12,7 +12,7 @@ import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
 @RunWith(Tomcat7ArquillianBIO::class)
-class TomcatHTTPSBIOTest {
+class TomcatHTTPSBIOTest : BaseTomcatTest() {
     @Test
     fun listDeployments() =
             println(TomcatUtils.listDeployments(TomcatUtils.commonHttpsOptions))
@@ -22,26 +22,5 @@ class TomcatHTTPSBIOTest {
         Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", AprClassName))).isDefined())
         Assert.assertFalse(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", NioClassName))).isDefined())
         Assert.assertTrue(XMLTester.returnFirstMatchingNode(XMLUtilsImpl.loadXML(SERVER_XML), "Connector", mapOf(Pair("protocol", BioClassName))).isDefined())
-    }
-
-    @Test
-    fun ensureOtherAttrsStillExist() {
-        File(SERVER_XML)
-                .run { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this) }
-                .run {
-                    XMLTester.returnFirstMatchingNode(
-                            this.documentElement,
-                            "Connector",
-                            mapOf(Pair("port", "38443"))).get()
-
-                }
-                .apply {
-                    Assert.assertTrue(this.attributes.getNamedItem(MAX_HTTP_HEADER_SIZE).nodeValue ==
-                            MAX_HTTP_HEADER_SIZE_VALUE)
-                    Assert.assertTrue(this.attributes.getNamedItem(MAX_THREADS).nodeValue ==
-                            MAX_THREADS_VALUE)
-                    Assert.assertTrue(this.attributes.getNamedItem(MIN_SPARE_THREADS).nodeValue ==
-                            MIN_SPARE_THREADS_VALUE)
-                }
     }
 }
