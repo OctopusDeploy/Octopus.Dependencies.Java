@@ -11,13 +11,17 @@ import com.octopus.calamari.utils.impl.KeystoreUtilsImpl
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.funktionale.option.Option
+import org.funktionale.option.firstOption
+import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
 import java.io.File
 import java.io.FileOutputStream
 import java.lang.IllegalArgumentException
 import java.nio.charset.StandardCharsets
+import java.util.*
 import java.util.logging.Logger
 import java.util.regex.Pattern
+import javax.naming.ldap.LdapName
 
 const val KEYSTORE_ALIAS = "octopus"
 const val KEYSTORE_PASSWORD = "changeit"
@@ -187,49 +191,62 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
         /**
          * @return a new Options instance populated from the values in the environment variables
          */
-        fun fromEnvironmentVars(): TomcatHttpsOptions {
-            val envVars = System.getenv()
+        fun fromEnvironmentVars(): TomcatHttpsOptions =
+            TomcatHttpsOptions(
+                    getEnvironmentVar("Certificate_Version", "").apply {
+                        if (StringUtils.isNotBlank(this)) {
+                            throw IllegalArgumentException("version can not be null")
+                        }
+                    },
+                    getEnvironmentVar("Certificate_Location", "").apply {
+                        if (StringUtils.isNotBlank(this)) {
+                            throw IllegalArgumentException("location can not be null")
+                        }
+                    },
+                    getEnvironmentVar("Certificate_Service", ""),
+                    getEnvironmentVar("Certificate_Private_Key", "").apply {
+                        if (StringUtils.isNotBlank(this)) {
+                            throw IllegalArgumentException("private key can not be null")
+                        }
+                    },
+                    getEnvironmentVar("Certificate_Public_Key", "").apply {
+                        if (StringUtils.isNotBlank(this)) {
+                            throw IllegalArgumentException("public key can not be null")
+                        }
+                    },
+                    getOragnisation(getEnvironmentVar("Certificate_Public_Key_Subject", CERTIFICATE_FILE_NAME)),
+                    getEnvironmentVar("Certificate_Port", "8443").apply {
+                        if (StringUtils.isNotBlank(this)) {
+                            throw IllegalArgumentException("port can not be null")
+                        }
+                    }.toInt(),
+                    Try {
+                        TomcatHttpsImplementation.valueOf(getEnvironmentVar(
+                                "Certificate_Implementation",
+                                TomcatHttpsImplementation.NIO.toString()).toUpperCase())
+                    }.getOrElse { TomcatHttpsImplementation.NIO },
+                    getEnvironmentVar("Certificate_Hostname", ""),
+                    (getEnvironmentVar("Certificate_Default", "true")).toBoolean())
 
-            val version = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Version"] ?: ""
-            val location = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Location"] ?: ""
-            val service = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Service"] ?: ""
-            val private = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Private_Key"] ?: ""
-            val public = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Public_Key"] ?: ""
-            val subject = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Public_Key_Subject"] ?: CERTIFICATE_FILE_NAME
-            val port = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Port"] ?: "8443"
-            val implementation = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Implementation"] ?: TomcatHttpsImplementation.NIO.toString()
-            val hostName = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Hostname"] ?: ""
-            val default = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Tomcat_Certificate_Default"] ?: "true").toBoolean()
 
-            if (StringUtils.isBlank(location)) {
-                throw IllegalArgumentException("location can not be null")
-            }
+        private fun getEnvironmentVar(name:String, default:String, trim:Boolean = true) =
+                (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Tomcat_Certificate_$name"] ?: default).run {
+                    if (trim) this.trim() else this
+                }
 
-            if (StringUtils.isBlank(private)) {
-                throw IllegalArgumentException("private can not be null")
-            }
-
-            if (StringUtils.isBlank(public)) {
-                throw IllegalArgumentException("public can not be null")
-            }
-
-            if (StringUtils.isBlank(port)) {
-                throw IllegalArgumentException("port can not be null")
-            }
-
-            return TomcatHttpsOptions(
-                    version.trim(),
-                    location.trim(),
-                    service.trim(),
-                    private.trim(),
-                    public.trim(),
-                    subject.replace(Regex(FILENAME_REPLACE_RE), FILENAME_REPLACE_STRING).trim(),
-                    port.trim().toInt(),
-                    Try { TomcatHttpsImplementation.valueOf(implementation.toUpperCase()) }
-                            .getOrElse { TomcatHttpsImplementation.NIO },
-                    hostName.trim(),
-                    default)
-        }
+        /**
+         * Attempts to get the organisation from a x500 string
+         */
+        private fun getOragnisation(x500: String) =
+                Try {
+                    LdapName(x500).rdns.filter {
+                        it.type == "O"
+                    }.map {
+                        Objects.toString(it.value)
+                    }.firstOption().getOrElse {
+                        CERTIFICATE_FILE_NAME
+                    }.replace(Regex(FILENAME_REPLACE_RE), FILENAME_REPLACE_STRING).trim()
+                }.getOrElse { CERTIFICATE_FILE_NAME }
     }
 
     /**
