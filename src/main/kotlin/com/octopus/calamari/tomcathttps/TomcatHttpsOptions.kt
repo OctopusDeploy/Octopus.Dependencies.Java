@@ -221,40 +221,40 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
          */
         fun fromEnvironmentVars(): TomcatHttpsOptions =
                 TomcatHttpsOptions(
-                        getEnvironmentVar("Certificate_Version", "").apply {
+                        getEnvironmentVar("Version", "").apply {
                             if (StringUtils.isNotBlank(this)) {
                                 throw IllegalArgumentException("version can not be null")
                             }
                         },
-                        getEnvironmentVar("Certificate_Location", "").apply {
+                        getEnvironmentVar("Location", "").apply {
                             if (StringUtils.isNotBlank(this)) {
                                 throw IllegalArgumentException("location can not be null")
                             }
                         },
-                        getEnvironmentVar("Certificate_Service", ""),
-                        getEnvironmentVar("Certificate_Private_Key", "").apply {
+                        getEnvironmentVar("Service", ""),
+                        getEnvironmentVar("Private_Key", "").apply {
                             if (StringUtils.isNotBlank(this)) {
                                 throw IllegalArgumentException("private key can not be null")
                             }
                         },
-                        getEnvironmentVar("Certificate_Public_Key", "").apply {
+                        getEnvironmentVar("Public_Key", "").apply {
                             if (StringUtils.isNotBlank(this)) {
                                 throw IllegalArgumentException("public key can not be null")
                             }
                         },
-                        getEnvironmentVar("Certificate_Public_Key_Subject", CERTIFICATE_FILE_NAME),
-                        getEnvironmentVar("Certificate_Port", "8443").apply {
+                        getEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
+                        getEnvironmentVar("Port", "8443").apply {
                             if (StringUtils.isNotBlank(this)) {
                                 throw IllegalArgumentException("port can not be null")
                             }
                         }.toInt(),
                         Try {
                             TomcatHttpsImplementation.valueOf(getEnvironmentVar(
-                                    "Certificate_Implementation",
+                                    "Implementation",
                                     TomcatHttpsImplementation.NIO.toString()).toUpperCase())
                         }.getOrElse { TomcatHttpsImplementation.NIO },
-                        getEnvironmentVar("Certificate_Hostname", ""),
-                        getEnvironmentVar("Certificate_Default", "true").toBoolean())
+                        getEnvironmentVar("Hostname", ""),
+                        getEnvironmentVar("Default", "true").toBoolean())
 
 
         private fun getEnvironmentVar(name: String, default: String, trim: Boolean = true) =
