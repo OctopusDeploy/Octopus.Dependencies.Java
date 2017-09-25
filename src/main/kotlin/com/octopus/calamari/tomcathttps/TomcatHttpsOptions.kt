@@ -138,7 +138,11 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                 }.run {
                     convertPathToTomcatVariable(this.absolutePath)
                 }
-            }
+            }.onFailure {
+                throw KeystoreCreationFailedException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0015",
+                        "Failed to create the keystore file."), it)
+            }.get()
 
     /**
      * Creates a private PEM key file in the Tomcat conf dir

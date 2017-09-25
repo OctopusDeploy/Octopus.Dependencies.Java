@@ -52,7 +52,7 @@ object ConfigureTomcat7Connector : ConfigureConnector {
     private fun configureBIOAndNIO(options: TomcatHttpsOptions, node: Node) =
             node.apply {
                 attributes.setNamedItem(node.ownerDocument.createAttribute("keystoreFile").apply {
-                    value = options.createKeystore().get()
+                    value = options.createKeystore()
                 })
                 attributes.setNamedItem(node.ownerDocument.createAttribute("keystorePass").apply {
                     value = KEYSTORE_PASSWORD

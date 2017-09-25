@@ -102,7 +102,7 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                     })
                 } else {
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keystoreFile").apply {
-                        value = options.createKeystore().get()
+                        value = options.createKeystore()
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keystorePass").apply {
                         value = KEYSTORE_PASSWORD

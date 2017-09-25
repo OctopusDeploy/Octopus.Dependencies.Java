@@ -134,4 +134,3 @@ object XMLUtilsImpl : XMLUtils {
                 }
             }
 }
-}
