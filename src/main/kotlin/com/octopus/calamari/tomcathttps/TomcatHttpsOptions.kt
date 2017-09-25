@@ -222,29 +222,29 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
         fun fromEnvironmentVars(): TomcatHttpsOptions =
                 TomcatHttpsOptions(
                         getEnvironmentVar("Version", "").apply {
-                            if (StringUtils.isNotBlank(this)) {
+                            if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("version can not be null")
                             }
                         },
                         getEnvironmentVar("Location", "").apply {
-                            if (StringUtils.isNotBlank(this)) {
+                            if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("location can not be null")
                             }
                         },
                         getEnvironmentVar("Service", ""),
                         getEnvironmentVar("Private_Key", "").apply {
-                            if (StringUtils.isNotBlank(this)) {
+                            if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("private key can not be null")
                             }
                         },
                         getEnvironmentVar("Public_Key", "").apply {
-                            if (StringUtils.isNotBlank(this)) {
+                            if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("public key can not be null")
                             }
                         },
                         getEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
                         getEnvironmentVar("Port", "8443").apply {
-                            if (StringUtils.isNotBlank(this)) {
+                            if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("port can not be null")
                             }
                         }.toInt(),

@@ -16,7 +16,7 @@ object CustomFormatter : Formatter() {
 
     fun getMessage(record: LogRecord?) =
         if (record?.message != null) {
-            record?.message?.toString() + "\n"
+            record.message?.toString() + "\n"
         } else {
             ""
         }
@@ -26,7 +26,7 @@ object CustomFormatter : Formatter() {
        if (record?.thrown != null) {
            StringWriter().apply {
                PrintWriter(this).use {
-                   record?.thrown?.printStackTrace(it)
+                   record.thrown.printStackTrace(it)
                    it.println()
                }
            }.toString()
