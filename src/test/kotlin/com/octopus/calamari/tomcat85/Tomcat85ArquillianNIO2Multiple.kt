@@ -13,7 +13,7 @@ import java.io.File
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted.
  */
-class Tomcat85ArquillianNIOMultiple(testClass: Class<*>?) : BaseArquillian(testClass) {
+class Tomcat85ArquillianNIO2Multiple(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {
         removeConnector(SERVER_XML, HTTPS_PORT)
 
@@ -25,7 +25,7 @@ class Tomcat85ArquillianNIOMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
                 HTTPS_PORT,
-                TomcatHttpsImplementation.NIO,
+                TomcatHttpsImplementation.NIO2,
                 "firsthost",
                 true))
 
@@ -39,7 +39,7 @@ class Tomcat85ArquillianNIOMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
                 HTTPS_PORT,
-                TomcatHttpsImplementation.NIO,
+                TomcatHttpsImplementation.NIO2,
                 "secondhost",
                 false))
     }

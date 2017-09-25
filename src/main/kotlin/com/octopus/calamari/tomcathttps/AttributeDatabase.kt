@@ -4,7 +4,8 @@ object AttributeDatabase {
     val defaultSSLHostConfigName = "defaultSSLHostConfigName"
 
     /**
-     * A list of <Connector> attributes. The easiest way to get this list is to use
+     * A list of <Connector> attributes that don't define certificate information.
+     * The easiest way to get this list is to use
      * https://www.changedetection.com/comparepages.html and compare these pages:
      *
      * https://tomcat.apache.org/tomcat-7.0-doc/config/http.html

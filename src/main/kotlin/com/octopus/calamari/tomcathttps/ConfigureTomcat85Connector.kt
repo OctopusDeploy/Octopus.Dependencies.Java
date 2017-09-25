@@ -9,7 +9,8 @@ import org.w3c.dom.Node
  * https://tomcat.apache.org/tomcat-8.5-doc/config/http.html#SSL_Support_-_Certificate
  */
 object ConfigureTomcat85Connector : ConfigureConnector {
-
+    override fun configureNIO2(options: TomcatHttpsOptions, node: Node) =
+            processCommonElements(options, node).run {}
 
     override fun configureBIO(options: TomcatHttpsOptions, node: Node) =
             throw NotImplementedError("TOMCAT-HTTPS-ERROR-0007: Tomcat 8.5 and above do not support the Blocking IO Connector")

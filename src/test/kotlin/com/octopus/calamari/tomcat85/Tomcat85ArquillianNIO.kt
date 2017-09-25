@@ -22,6 +22,18 @@ class Tomcat85ArquillianNIO(testClass: Class<*>?) : BaseArquillian(testClass) {
                 "Catalina",
                 FileUtils.readFileToString(File(Tomcat85ArquillianNIO::class.java.getResource("/octopus.key").file), "UTF-8"),
                 FileUtils.readFileToString(File(Tomcat85ArquillianNIO::class.java.getResource("/octopus.crt").file), "UTF-8"),
+                "O=ACME Pty Ltd,ST=Some-State,C=AU",
+                HTTPS_PORT,
+                TomcatHttpsImplementation.NIO,
+                "",
+                false))
+
+        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+                TOMCAT_VERSION_INFO,
+                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
+                "Catalina",
+                FileUtils.readFileToString(File(Tomcat85ArquillianNIO::class.java.getResource("/octopus.key").file), "UTF-8"),
+                FileUtils.readFileToString(File(Tomcat85ArquillianNIO::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
                 HTTPS_PORT,
                 TomcatHttpsImplementation.NIO,
