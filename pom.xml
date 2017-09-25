@@ -29,7 +29,8 @@
         <wildfly.11.version>wildfly-11.0.0.CR1</wildfly.11.version>
         <domain.wildfly.11.version>domain-wildfly-11.0.0.CR1</domain.wildfly.11.version>
         <wildfly.11.anyaddress.version>wildfly-11.0.0.CR1-anyaddress</wildfly.11.anyaddress.version>
-        <domain.wildfly.11.anyaddress.version>domain-wildfly-11.0.0.CR1-anyaddress</domain.wildfly.11.anyaddress.version>
+        <domain.wildfly.11.anyaddress.version>domain-wildfly-11.0.0.CR1-anyaddress
+        </domain.wildfly.11.anyaddress.version>
         <tomcat.7.version>tomcat-7.0.81</tomcat.7.version>
         <tomcat.8.version>tomcat-8.0.46</tomcat.8.version>
         <tomcat.85.version>tomcat-8.5.20</tomcat.85.version>
@@ -184,7 +185,8 @@
                                 <protocol>remoting</protocol>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -227,7 +229,8 @@
                                 <protocol>remoting</protocol>
                                 <!--<username></username>
                                 <password></password>-->
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -263,7 +266,8 @@
                                 <protocol>http-remoting</protocol>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -299,7 +303,8 @@
                                 <protocol>http-remoting</protocol>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -335,7 +340,8 @@
                                 <projDir>${project.basedir}</projDir>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -371,7 +377,8 @@
                                 <projDir>${project.basedir}</projDir>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -407,7 +414,8 @@
                                 <projDir>${project.basedir}</projDir>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -443,7 +451,8 @@
                                 <projDir>${project.basedir}</projDir>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -476,7 +485,8 @@
                                 <projDir>${project.basedir}</projDir>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -509,7 +519,8 @@
                                 <projDir>${project.basedir}</projDir>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -542,7 +553,8 @@
                                 <projDir>${project.basedir}</projDir>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -575,7 +587,8 @@
                                 <projDir>${project.basedir}</projDir>
                                 <username>admin</username>
                                 <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -607,7 +620,8 @@
                                 <username>admin</username>
                                 <password>password1!</password>
                                 <projDir>${project.basedir}</projDir>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -640,7 +654,8 @@
                                 <username>admin</username>
                                 <password>password1!</password>
                                 <projDir>${project.basedir}</projDir>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -673,7 +688,8 @@
                                 <username>admin</username>
                                 <password>password1!</password>
                                 <projDir>${project.basedir}</projDir>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -706,7 +722,8 @@
                                 <username>admin</username>
                                 <password>password1!</password>
                                 <projDir>${project.basedir}</projDir>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml</org.apache.maven.user-settings>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
@@ -737,7 +754,7 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <tasks>
-                                <replace token= "{{Version}}" value="${project.version}" dir="target">
+                                <replace token="{{Version}}" value="${project.version}" dir="target">
                                     <include name="**/*.nuspec"/>
                                 </replace>
                             </tasks>
@@ -770,7 +787,8 @@
                         </filter>
                     </filters>
                     <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                     </transformers>
                 </configuration>
                 <executions>

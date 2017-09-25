@@ -1,9 +1,7 @@
 package com.octopus.calamari.utils.impl
 
 import com.octopus.calamari.exception.tomcat.ConfigurationFileInvalidException
-import com.octopus.calamari.utils.FileUtils
 import com.octopus.calamari.utils.XMLUtils
-import com.sun.org.apache.xpath.internal.NodeSet
 import org.apache.commons.collections4.iterators.NodeListIterator
 import org.funktionale.option.Option
 import org.funktionale.option.firstOption
