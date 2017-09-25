@@ -1,6 +1,5 @@
 package com.octopus.calamari.tomcat85
 
-import com.octopus.calamari.tomcathttps.AttributeDatabase
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation.*
 import com.octopus.calamari.utils.BaseTomcatTest
 import com.octopus.calamari.utils.TomcatUtils

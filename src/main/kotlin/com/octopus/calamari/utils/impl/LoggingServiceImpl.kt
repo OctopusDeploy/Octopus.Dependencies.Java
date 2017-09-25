@@ -2,7 +2,10 @@ package com.octopus.calamari.utils.impl
 
 import com.octopus.calamari.utils.LoggingService
 import org.funktionale.tries.Try
-import java.util.logging.*
+import java.util.logging.Level
+import java.util.logging.LogManager
+import java.util.logging.Logger
+import java.util.logging.StreamHandler
 
 object LoggingServiceImpl : LoggingService {
     override fun flushStreams() {

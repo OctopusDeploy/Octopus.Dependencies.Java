@@ -3,7 +3,6 @@ package com.octopus.calamari.utils.impl
 import com.octopus.calamari.exception.CreateFileException
 import com.octopus.calamari.utils.FileUtils
 import org.apache.commons.io.FilenameUtils
-import org.apache.commons.io.IOUtils
 import org.funktionale.option.firstOption
 import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try

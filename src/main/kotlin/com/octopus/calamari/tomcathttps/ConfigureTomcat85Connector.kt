@@ -152,7 +152,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
     private fun connectorContainsDefaultSSLHostConfig(node: Node, hostName:String) =
             XMLUtilsImpl.xpathQueryNodelist(
                     node,
-                    "//SSLHostConfig[@hostname='$hostName'${if (hostName == DEFAULT_HOST_NAME) " or not(@hostName)" else ""}]").length != 0
+                    "//SSLHostConfig[@hostName='$hostName'${if (hostName == DEFAULT_HOST_NAME) " or not(@hostName)" else ""}]").length != 0
 
     /**
      * If we have an existing configuration like this:

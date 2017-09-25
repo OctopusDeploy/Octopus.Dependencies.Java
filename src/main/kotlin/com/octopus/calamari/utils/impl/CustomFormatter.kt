@@ -2,7 +2,8 @@ package com.octopus.calamari.utils.impl
 
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.util.logging.*
+import java.util.logging.Formatter
+import java.util.logging.LogRecord
 
 /**
  * A custom logging formatter

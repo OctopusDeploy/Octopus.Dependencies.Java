@@ -7,22 +7,11 @@ import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
-import org.apache.commons.collections4.iterators.NodeListIterator
-import org.funktionale.option.firstOption
-import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
 import org.w3c.dom.Document
-import org.w3c.dom.Node
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileWriter
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.transform.OutputKeys
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 
 
 object TomcatHttpsConfig {

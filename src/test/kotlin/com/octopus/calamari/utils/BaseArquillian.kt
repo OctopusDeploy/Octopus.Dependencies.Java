@@ -4,7 +4,6 @@ import com.octopus.calamari.tomcathttps.AttributeDatabase
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.collections4.iterators.NodeListIterator
-import org.funktionale.tries.Try
 import org.jboss.arquillian.junit.Arquillian
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory

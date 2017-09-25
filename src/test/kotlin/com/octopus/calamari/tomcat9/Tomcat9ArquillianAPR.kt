@@ -1,6 +1,5 @@
 package com.octopus.calamari.tomcat9
 
-import com.octopus.calamari.tomcat7.Tomcat7ArquillianAPR
 import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
