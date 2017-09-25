@@ -7,9 +7,11 @@ import org.jboss.arquillian.junit.Arquillian
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
+const val HTTPS_PORT = 38443
+
 open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
     /**
-        Save some values unrelated to the certificate. The test will ensure these values are preserved.
+    Save some values unrelated to the certificate. The test will ensure these values are preserved.
      */
     fun addConnectorAttributes(xmlFile: String) =
             File(xmlFile).run {
@@ -17,7 +19,7 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
             }.apply {
                 XMLUtilsImpl.xpathQueryNodelist(
                         this,
-                        "//Connector[@port='38443']").run {
+                        "//Connector[@port='$HTTPS_PORT']").run {
                     NodeListIterator(this)
                 }.forEach {
                     it.attributes.setNamedItem(it.ownerDocument.createAttribute(MAX_HTTP_HEADER_SIZE)
@@ -32,57 +34,9 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
             }
 
     /**
-     * Adds a keystoreFile attribute to the <Connector> element matching the given port
-     */
-    fun addConnectorKeystore(xmlFile: String) =
-            File(xmlFile).run {
-                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
-            }.apply {
-                XMLUtilsImpl.xpathQueryNodelist(
-                        this,
-                        "//Connector[@port='38443']").run {
-                    NodeListIterator(this)
-                }.forEach {
-                    it.attributes.setNamedItem(it.ownerDocument.createAttribute(KEYSTORE_FILE)
-                            .apply { nodeValue = KEYSTORE_FILE_VALUE })
-                }
-            }.apply {
-                XMLUtilsImpl.saveXML(xmlFile, this)
-            }
-
-    /**
-     * Adds a keystoreFile attribute to the <Certificate> element for the given host
-     */
-    fun addCertificateKeystore(xmlFile: String, hostName: String, port: Int) =
-            File(xmlFile).run {
-                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
-            }.apply {
-                XMLUtilsImpl.xpathQueryNodelist(
-                        this,
-                        "//SSLHostConfig[@hostName='$hostName']/Certificate").run {
-                    NodeListIterator(this)
-                }.forEach {
-                    it.attributes.setNamedItem(it.ownerDocument.createAttribute(KEYSTORE_FILE)
-                            .apply { nodeValue = KEYSTORE_FILE_VALUE })
-                }
-            }.apply {
-                XMLUtilsImpl.xpathQueryNodelist(
-                        this,
-                        "//Connector[@port='$port']").run {
-                    NodeListIterator(this)
-                }.forEach {
-                    Try {
-                        it.attributes.removeNamedItem("defaultSSLHostConfigName")
-                    }
-                }
-            }.apply {
-                XMLUtilsImpl.saveXML(xmlFile, this)
-            }
-
-    /**
      * Deletes the <Connector> element with the matching port
      */
-    fun removeConnector(xmlFile: String, port:Int) =
+    fun removeConnector(xmlFile: String, port: Int) =
             File(xmlFile).run {
                 DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
             }.apply {

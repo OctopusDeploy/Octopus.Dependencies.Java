@@ -5,19 +5,24 @@ import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.BaseArquillian
+import com.octopus.calamari.utils.HTTPS_PORT
 import org.apache.commons.io.FileUtils
+import org.funktionale.tries.Try
 import java.io.File
 
 /**
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted. This configuration
  * is designed to simulate a case where a NIO connection is already defined with
- * a keystoreFile, and we are converting to APR. However, we are overwriting the NIO
- * configuration, so the existing keystoreFile will be deleted, and this operation
- * should work.
+ * a keystoreFile and a second host in a <SSLHostConfig> element.
+ *
+ * Even though we are overwriting the <SSLHostConfig> element, this should fail
+ * because of the configuration in the <Connector> element.
  */
 class Tomcat85ArquillianAPRInvalidOverwrite(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {
+        removeConnector(SERVER_XML, HTTPS_PORT)
+
         /*
             Configure with NIO first to make sure we transform between implementations correctly
          */
@@ -28,7 +33,7 @@ class Tomcat85ArquillianAPRInvalidOverwrite(testClass: Class<*>?) : BaseArquilli
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                38443,
+                HTTPS_PORT,
                 TomcatHttpsImplementation.NIO,
                 "somehost",
                 false))
@@ -36,27 +41,24 @@ class Tomcat85ArquillianAPRInvalidOverwrite(testClass: Class<*>?) : BaseArquilli
         addConnectorAttributes(SERVER_XML)
 
         /*
-            Add a keystore to the connector, which is valid for NIO, but not for APR
+            We are now adding an overwriting the "somehost" configuration with the APR protocol. This must fail
+            because of the configuration in the <Connector> element, which may be left in an invalid state
+            after the protocol swap.
          */
-        addConnectorKeystore(SERVER_XML)
-
-        /*
-            We are now adding an unnamed APR configuration, which will assume the name of
-            _default_, and will clear out the ssl config in the <Connector>. This means the
-            potentially conflicting configuration in the keystoreFile attribute will be removed,
-            and all is good.
-         */
-        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
-                TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                "Catalina",
-                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
-                FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
-                "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                38443,
-                TomcatHttpsImplementation.APR,
-                "",
-                true))
-
+        Try {
+            TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+                    TOMCAT_VERSION_INFO,
+                    "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
+                    "Catalina",
+                    FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
+                    FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
+                    "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
+                    HTTPS_PORT,
+                    TomcatHttpsImplementation.APR,
+                    "somehost",
+                    true))
+        }.onSuccess {
+            throw Exception("This should have failed because the server was configured with a NIO")
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.octopus.calamari.tomcathttps
 
+import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.tomcat.ConfigFileNotFoundException
 import com.octopus.calamari.tomcat.TomcatDeploy
 import com.octopus.calamari.utils.Constants
@@ -33,6 +34,9 @@ object TomcatHttpsConfig {
         try {
             LoggingServiceImpl.configureLogging()
             configureHttps(TomcatHttpsOptions.fromEnvironmentVars())
+        } catch (ex: ExpectedException) {
+            logger.log(Level.SEVERE, "", ex)
+            System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception) {
             logger.log(Level.SEVERE, ErrorMessageBuilderImpl.buildErrorMessage(
                     "TOMCAT-HTTPS-ERROR-0001",

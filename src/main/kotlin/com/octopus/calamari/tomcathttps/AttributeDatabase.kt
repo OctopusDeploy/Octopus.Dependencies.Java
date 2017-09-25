@@ -123,7 +123,9 @@ object AttributeDatabase {
      * A list of the attributes that may conflict with the configuration we are defining
      */
     val conflictingAttributes
-        get() = listOf("certificateKeyAlias",
+        get() = listOf("certificateKeyFile",
+                "certificateFile",
+                "certificateKeyAlias",
                 "certificateKeyPassword",
                 "certificateKeystoreFile",
                 "certificateKeystorePassword",

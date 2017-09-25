@@ -4,6 +4,7 @@ import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.BaseArquillian
+import com.octopus.calamari.utils.HTTPS_PORT
 import org.apache.commons.io.FileUtils
 import java.io.File
 
@@ -13,6 +14,8 @@ import java.io.File
  */
 class Tomcat7ArquillianBIO(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {
+        removeConnector(SERVER_XML, HTTPS_PORT)
+
         /*
             Configure with APR and NIO first to make sure we transform between implementations correctly
         */
@@ -23,7 +26,7 @@ class Tomcat7ArquillianBIO(testClass: Class<*>?) : BaseArquillian(testClass) {
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 "",
-                38443,
+                HTTPS_PORT,
                 TomcatHttpsImplementation.APR,
                 "",
                 false))
@@ -37,7 +40,7 @@ class Tomcat7ArquillianBIO(testClass: Class<*>?) : BaseArquillian(testClass) {
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 "SomeNonX500String",
-                38443,
+                HTTPS_PORT,
                 TomcatHttpsImplementation.NIO,
                 "",
                 false))

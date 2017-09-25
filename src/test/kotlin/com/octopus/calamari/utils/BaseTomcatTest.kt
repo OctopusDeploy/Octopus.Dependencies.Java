@@ -1,8 +1,8 @@
 package com.octopus.calamari.utils
 
-import com.octopus.calamari.tomcat8.SERVER_XML
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.collections4.iterators.NodeListIterator
+import org.apache.commons.lang.StringUtils
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -12,18 +12,18 @@ import javax.xml.parsers.DocumentBuilderFactory
  * A base class that checks for the attributes added by addConnectorAttributes()
  */
 open class BaseTomcatTest {
-    @Test
-    fun ensureOtherAttrsStillExist() {
-        File(SERVER_XML)
-                .run { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this) }
+
+    fun ensureOtherAttrsStillExist(xml:String) {
+        File(xml)
                 .run {
+                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
+                }.run {
                     XMLUtilsImpl.xpathQueryNodelist(
                             this,
-                            "//Connector[@port='38443']")
+                            "//Connector[@port='$HTTPS_PORT']")
                 }.run {
                     NodeListIterator(this)
-                }
-                .forEach {
+                }.forEach {
                     Assert.assertTrue(it.attributes.getNamedItem(MAX_HTTP_HEADER_SIZE).nodeValue ==
                             MAX_HTTP_HEADER_SIZE_VALUE)
                     Assert.assertTrue(it.attributes.getNamedItem(MAX_THREADS).nodeValue ==
@@ -32,6 +32,24 @@ open class BaseTomcatTest {
                             MIN_SPARE_THREADS_VALUE)
                 }
     }
+
+    fun ensureNoAttrsPresent(xml:String, attrs:List<String>) =
+                File(xml)
+                        .run { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this) }
+                        .run {
+                            XMLUtilsImpl.xpathQueryNodelist(
+                                    this,
+                                    "//Connector[@port='$HTTPS_PORT']")
+                        }.run {
+                            NodeListIterator(this)
+                        }
+                        .forEach { node ->
+                            Assert.assertFalse(attrs.any { attr ->
+                                (0 until node.attributes.length).any {
+                                    StringUtils.equals(node.attributes.item(it)?.nodeName, attr)
+                                }
+                            })
+                        }
 
     fun testImplementationIsPresent(xml:String, protocol:String):Boolean =
             XMLUtilsImpl.loadXML(xml).run {

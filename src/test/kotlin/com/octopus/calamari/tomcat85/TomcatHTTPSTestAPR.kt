@@ -1,8 +1,6 @@
 package com.octopus.calamari.tomcat85
 
-import com.octopus.calamari.tomcathttps.AprClassName
-import com.octopus.calamari.tomcathttps.BioClassName
-import com.octopus.calamari.tomcathttps.NioClassName
+import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation.*
 import com.octopus.calamari.utils.BaseTomcatTest
 import com.octopus.calamari.utils.TomcatUtils
 import org.junit.Assert
@@ -16,9 +14,14 @@ class TomcatHTTPSTestAPR : BaseTomcatTest() {
             println(TomcatUtils.listDeployments(TomcatUtils.commonHttpsOptions))
 
     @Test
-    fun testImplementationIsPresent() {
-        Assert.assertTrue(testImplementationIsPresent(SERVER_XML, AprClassName))
-        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, NioClassName))
-        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, BioClassName))
+    fun testImplementationIsConfigured() {
+        Assert.assertTrue(testImplementationIsPresent(SERVER_XML, APR.className.get()))
+        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, NIO.className.get()))
+        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, BIO.className.get()))
+    }
+
+    @Test
+    fun testExistingAttrsExist() {
+        ensureOtherAttrsStillExist(SERVER_XML)
     }
 }

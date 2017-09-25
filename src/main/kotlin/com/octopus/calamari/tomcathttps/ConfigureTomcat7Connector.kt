@@ -8,7 +8,9 @@ object ConfigureTomcat7Connector : ConfigureConnector {
 
     override fun configureBIO(options: TomcatHttpsOptions, node: Node): Unit =
             node.apply {
-                attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply { value = BioClassName })
+                attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
+                    value = options.implementation.className.get()
+                })
                 configureBIOAndNIO(options, this)
                 configureCommonIO(options, this)
             }.run { Unit }
@@ -16,7 +18,9 @@ object ConfigureTomcat7Connector : ConfigureConnector {
 
     override fun configureNIO(options: TomcatHttpsOptions, node: Node): Unit =
             node.apply {
-                attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply { nodeValue = NioClassName })
+                attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
+                    nodeValue = options.implementation.className.get()
+                })
                 configureBIOAndNIO(options, this)
                 configureCommonIO(options, this)
             }.run { Unit }
@@ -24,7 +28,9 @@ object ConfigureTomcat7Connector : ConfigureConnector {
 
     override fun configureARP(options: TomcatHttpsOptions, node: Node): Unit =
             node.apply {
-                attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply { nodeValue = AprClassName })
+                attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
+                    nodeValue = options.implementation.className.get()
+                })
                 attributes.setNamedItem(node.ownerDocument.createAttribute("SSLCertificateKeyFile").apply {
                     nodeValue = options.createPrivateKey()
                 })
@@ -49,11 +55,13 @@ object ConfigureTomcat7Connector : ConfigureConnector {
                     value = KEYSTORE_ALIAS
                 })
                 if (attributes != null) {
-                    for (index in 0 until attributes.length) {
-                        if (StringUtils.startsWith(attributes.item(index)?.nodeName, "SSL")) {
-                            attributes.removeNamedItem(attributes.item(index).nodeName)
-                        }
-                    }
+                    /*
+                        SSL specific attributes are not valid for JSSE
+                        https://tomcat.apache.org/tomcat-7.0-doc/config/http.html#SSL_Support_-_APR/Native
+                     */
+                    (0 until attributes.length)
+                            .filter { StringUtils.startsWith(attributes.item(it)?.nodeName, "SSL") }
+                            .forEach { attributes.removeNamedItem(attributes.item(it).nodeName) }
                 }
             }
 

@@ -5,6 +5,7 @@ import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.BaseArquillian
+import com.octopus.calamari.utils.HTTPS_PORT
 import org.apache.commons.io.FileUtils
 import java.io.File
 
@@ -14,6 +15,8 @@ import java.io.File
  */
 class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {
+        removeConnector(SERVER_XML, HTTPS_PORT)
+
         TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
@@ -21,7 +24,7 @@ class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                38443,
+                HTTPS_PORT,
                 TomcatHttpsImplementation.APR,
                 "firsthost",
                 true))
@@ -35,7 +38,7 @@ class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                38443,
+                HTTPS_PORT,
                 TomcatHttpsImplementation.APR,
                 "secondhost",
                 false))
@@ -47,7 +50,7 @@ class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                38443,
+                HTTPS_PORT,
                 TomcatHttpsImplementation.APR,
                 "_default_",
                 false))
@@ -59,7 +62,7 @@ class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.key").file), "UTF-8"),
                 FileUtils.readFileToString(File(Tomcat7ArquillianAPR::class.java.getResource("/octopus.crt").file), "UTF-8"),
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                38443,
+                HTTPS_PORT,
                 TomcatHttpsImplementation.APR,
                 "",
                 false))

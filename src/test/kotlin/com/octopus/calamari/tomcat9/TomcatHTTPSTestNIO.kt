@@ -1,8 +1,6 @@
 package com.octopus.calamari.tomcat9
 
-import com.octopus.calamari.tomcathttps.AprClassName
-import com.octopus.calamari.tomcathttps.BioClassName
-import com.octopus.calamari.tomcathttps.NioClassName
+import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation.*
 import com.octopus.calamari.utils.BaseTomcatTest
 import com.octopus.calamari.utils.TomcatUtils
 import org.junit.Assert
@@ -17,8 +15,8 @@ class TomcatHTTPSTestNIO : BaseTomcatTest() {
 
     @Test
     fun testImplementationIsPresent() {
-        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, AprClassName))
-        Assert.assertTrue(testImplementationIsPresent(SERVER_XML, NioClassName))
-        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, BioClassName))
+        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, APR.className.get()))
+        Assert.assertTrue(testImplementationIsPresent(SERVER_XML, NIO.className.get()))
+        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, BIO.className.get()))
     }
 }

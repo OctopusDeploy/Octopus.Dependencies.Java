@@ -1,13 +1,6 @@
 package com.octopus.calamari.tomcathttps
 
-import org.apache.commons.io.FileUtils
-import org.funktionale.option.getOrElse
 import org.w3c.dom.Node
-import java.io.FileOutputStream
-
-const val BioClassName: String = "org.apache.coyote.http11.Http11Protocol"
-const val NioClassName: String = "org.apache.coyote.http11.Http11NioProtocol"
-const val AprClassName: String = "org.apache.coyote.http11.Http11AprProtocol"
 
 /**
  * Represents the ways a HTTPS connector can be configured

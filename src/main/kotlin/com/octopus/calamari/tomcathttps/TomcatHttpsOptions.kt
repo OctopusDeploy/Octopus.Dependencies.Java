@@ -28,6 +28,10 @@ const val KEYSTORE_PASSWORD = "changeit"
 const val CERTIFICATE_FILE_NAME = "octopus"
 const val FILENAME_REPLACE_RE = "[^A-Za-z0-9_.]"
 const val FILENAME_REPLACE_STRING = "_"
+/**
+ * An empty hostname is equivalent to this host name
+ */
+const val DEFAULT_HOST_NAME = "_default_"
 
 /**
  * Options that relate to Tomcat HTTPS configuration
@@ -46,6 +50,8 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
 
     val logger: Logger = Logger.getLogger("")
     val fixedHostname = if (StringUtils.isEmpty(hostName)) DEFAULT_HOST_NAME else hostName
+    val isDefaultHostname = fixedHostname == DEFAULT_HOST_NAME
+
     /**
      * Attempts to get the organisation from a x500 string
      */
