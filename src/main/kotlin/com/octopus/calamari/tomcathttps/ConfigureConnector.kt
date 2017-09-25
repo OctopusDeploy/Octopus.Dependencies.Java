@@ -67,7 +67,9 @@ open abstract class ConfigureConnector {
 
     private fun convertProtocolToEnum(protocol: String?, default: String) =
             Try {
-                TomcatHttpsImplementation.valueOf(protocol ?: TomcatHttpsImplementation.NONE.name).name
+                TomcatHttpsImplementation.values().iterator().asSequence().first {
+                    it.className.isDefined() && it.className.get() == protocol
+                }.name
             }.handle {
                 default
             }.get()
