@@ -1,5 +1,7 @@
 package com.octopus.calamari.utils.impl
 
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.util.logging.*
 
 /**
@@ -11,5 +13,15 @@ object CustomFormatter : Formatter() {
                     .append(record?.level)
                     .append(": ")
                     .append(record?.message).append('\n')
+                    .append(getThrownDetails(record))
                     .toString()
+
+    fun getThrownDetails(record: LogRecord?) =
+       StringWriter().apply {
+           PrintWriter(this).use {
+               record?.thrown?.printStackTrace(it).apply {
+                   it.println()
+               }
+           }
+       }.toString()
 }
