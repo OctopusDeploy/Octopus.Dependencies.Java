@@ -80,42 +80,43 @@ object XMLUtilsImpl : XMLUtils {
                                        requiredAttributeValues: Map<String, String>,
                                        requiredOrMissingAttributes: Map<String, String>,
                                        createIfMissing: Boolean): Option<Node> =
-            NodeListIterator(node)
-                    .asSequence()
-                    .filter { it.nodeName == elementName }
-                    /*
+            NodeListIterator(node).asSequence().filter {
+                it.nodeName == elementName
+            }.filter {
+                /*
                         All required attributes must be found on this node for it to be a match
                      */
-                    .filter { node -> requiredAttributeValues.entries.all { node.attributes.getNamedItem(it.key)?.nodeValue == it.value } }
-                    /*
+                node ->
+                requiredAttributeValues.entries.all {
+                    node.attributes.getNamedItem(it.key)?.nodeValue == it.value
+                }
+            }.filter { node ->
+                /*
                         All required or missing attributes must be found with a match or missing altogether
                         for this node to be a match
                      */
-                    .filter { node ->
-                        requiredOrMissingAttributes.entries.all {
-                            node.attributes.getNamedItem(it.key)?.nodeValue == it.value ||
-                                    node.attributes.getNamedItem(it.key) == null
-                        }
-                    }
-                    .firstOption()
-                    .run {
-                        if (this.isEmpty() && createIfMissing) {
-                            /*
-                                Create the element if we have been requested to do so
-                             */
-                            Option.Some(node.ownerDocument.createElement(elementName)
-                                    .apply { node.appendChild(this) }
-                                    .apply {
-                                        requiredAttributeValues.entries.forEach {
-                                            this.attributes.setNamedItem(ownerDocument.createAttribute(it.key)
-                                                    .apply { nodeValue = it.value })
-                                        }
-                                    })
-                        } else {
-                            /*
-                                Otherwise return the successful result, or the empty Optional
-                             */
-                            this
-                        }
-                    }
+                requiredOrMissingAttributes.entries.all {
+                    node.attributes.getNamedItem(it.key)?.nodeValue == it.value ||
+                            node.attributes.getNamedItem(it.key) == null
+                }
+            }.firstOption().run {
+                if (this.isEmpty() && createIfMissing) {
+                    /*
+                        Create the element if we have been requested to do so
+                     */
+                    Option.Some(node.ownerDocument.createElement(elementName)
+                            .apply { node.appendChild(this) }
+                            .apply {
+                                requiredAttributeValues.entries.forEach {
+                                    this.attributes.setNamedItem(ownerDocument.createAttribute(it.key)
+                                            .apply { nodeValue = it.value })
+                                }
+                            })
+                } else {
+                    /*
+                        Otherwise return the successful result, or the empty Optional
+                     */
+                    this
+                }
+            }
 }

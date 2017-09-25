@@ -87,7 +87,8 @@ object TomcatHttpsConfig {
                             mapOf(),
                             false).map {
                         XMLUtilsImpl.createOrReturnElement(
-                                it, "Connector",
+                                it,
+                                "Connector",
                                 mapOf(Pair("port", options.port.toString()))).get()
                     }.forEach {
                         options.getConfigurator().processConnector(options, it)

@@ -1,5 +1,6 @@
 package com.octopus.calamari.utils
 
+import com.octopus.calamari.tomcathttps.AttributeDatabase
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.collections4.iterators.NodeListIterator
 import org.funktionale.tries.Try
@@ -11,9 +12,9 @@ const val HTTPS_PORT = 38443
 
 open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
     /**
-    Save some values unrelated to the certificate. The test will ensure these values are preserved.
+        Save some values unrelated to the certificate. The test will ensure these values are preserved.
      */
-    fun addConnectorAttributes(xmlFile: String) =
+    fun addConnectorAttributes(xmlFile: String):Unit =
             File(xmlFile).run {
                 DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
             }.apply {
@@ -31,12 +32,28 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                 }
             }.apply {
                 XMLUtilsImpl.saveXML(xmlFile, this)
-            }
+            }.run { }
+
+    fun addNIOConnectorCertConfig(xmlFile: String, defaultName: String):Unit =
+            File(xmlFile).run {
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
+            }.apply {
+                XMLUtilsImpl.createOrReturnElement(this.documentElement.getElementsByTagName("Service").item(0),
+                        "Connector",
+                        mapOf(Pair("port", "$HTTPS_PORT"))).get().apply {
+                    attributes.setNamedItem(ownerDocument.createAttribute(AttributeDatabase.defaultSSLHostConfigName)
+                            .apply { nodeValue = defaultName })
+                    attributes.setNamedItem(ownerDocument.createAttribute(KEYSTORE_FILE)
+                            .apply { nodeValue = KEYSTORE_FILE_VALUE })
+                }
+            }.apply {
+                XMLUtilsImpl.saveXML(xmlFile, this)
+            }.run { }
 
     /**
      * Deletes the <Connector> element with the matching port
      */
-    fun removeConnector(xmlFile: String, port: Int) =
+    fun removeConnector(xmlFile: String, port: Int):Unit =
             File(xmlFile).run {
                 DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
             }.apply {
@@ -49,5 +66,5 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                 }
             }.apply {
                 XMLUtilsImpl.saveXML(xmlFile, this)
-            }
+            }.run { }
 }

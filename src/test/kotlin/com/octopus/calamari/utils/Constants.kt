@@ -11,15 +11,3 @@ const val MIN_SPARE_THREADS_VALUE = "2"
 
 const val KEYSTORE_FILE = "keystoreFile"
 const val KEYSTORE_FILE_VALUE = "whatever.keystore"
-
-/**
- * An example of an attribute that is only valid for the APR protocol
- */
-const val SSL_CERTIFICATE_FILE = "SSLCACertificateFile"
-const val SSL_CERTIFICATE_FILE_VALUE = "public.key"
-
-/**
- * An example of an attribute that is only valid for NIO in Tomcat 8.5 and above
- */
-const val CERTIFICATE_KEY_ALIAS = "certificateKeyAlias"
-const val CERTIFICATE_KEY_ALIAS_VALUE = "whatever"

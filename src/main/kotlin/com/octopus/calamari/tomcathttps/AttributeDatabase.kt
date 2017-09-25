@@ -1,8 +1,16 @@
 package com.octopus.calamari.tomcathttps
 
 object AttributeDatabase {
+    val defaultSSLHostConfigName = "defaultSSLHostConfigName"
+
     /**
-     * A list of <Connector> attributes
+     * A list of <Connector> attributes. The easiest way to get this list is to use
+     * https://www.changedetection.com/comparepages.html and compare these pages:
+     *
+     * https://tomcat.apache.org/tomcat-7.0-doc/config/http.html
+     * https://tomcat.apache.org/tomcat-8.0-doc/config/http.html
+     * https://tomcat.apache.org/tomcat-8.5-doc/config/http.html
+     * https://tomcat.apache.org/tomcat-9.0-doc/config/http.html
      */
     val connectorAttribuites
         get() = listOf("allowTrace",
@@ -140,53 +148,4 @@ object AttributeDatabase {
                 "keystorePass",
                 "keystoreProvider",
                 "keystoreType")
-
-    /**
-     * A list of JSSE only attributes in tomcat 8.5 and 9
-     */
-    val tomcat85JSEEOnlyAttributes
-        get() = listOf("keyManagerAlgorithm",
-                "algorithm",
-                "revocationEnabled",
-                "sessionCacheSize",
-                "sessionTimeout",
-                "sslProtocol",
-                "trustManagerClassName",
-                "truststoreAlgorithm",
-                "truststoreFile",
-                "truststorePassword",
-                "truststorePass",
-                "truststoreProvider",
-                "truststoreType",
-                "certificateKeyAlias",
-                "keyAlias",
-                "certificateKeystoreFile",
-                "keystoreFile",
-                "certificateKeystorePassword",
-                "keystorePass",
-                "certificateKeystoreProvider",
-                "keystoreProvider",
-                "certificateKeystoreType",
-                "keystoreType")
-
-    /**
-     * A list of OpenSSL only attributes in tomcat 8.5 and 9
-     */
-    val tomcat85OpenSSLOnlyAttributes
-        get() = listOf("certificateRevocationFile", // tomcat 8.5
-                "certificateRevocationListFile", // tomcat 9
-                "SSLCARevocationFile",
-                "crlFile",
-                "certificateRevocationPath", // tomcat 8.5
-                "certificateRevocationListPath", // tomcat 9
-                "SSLCARevocationPath",
-                "caCertificateFile",
-                "SSLCACertificateFile",
-                "caCertificatePath",
-                "SSLCACertificatePath",
-                "disableCompression",
-                "SSLDisableCompression",
-                "disableSessionTickets",
-                "SSLDisableSessionTickets",
-                "insecureRenegotiation")
 }

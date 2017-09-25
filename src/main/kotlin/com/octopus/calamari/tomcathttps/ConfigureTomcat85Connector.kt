@@ -52,18 +52,18 @@ object ConfigureTomcat85Connector : ConfigureConnector {
      * Builds up the <Connector> with the certificate information
      */
     private fun addDefaultHostNameToConnector(node: Node, options: TomcatHttpsOptions) {
-        if (options.default) {
+        if (options.default || connectorIsEmpty(node)) {
             if (options.isDefaultHostname) {
                 /*
                     The entry we are adding has the default host name, so remove the
                     "defaultSSLHostConfigName" attribute to use the default one.
                  */
-                Try { node.attributes.removeNamedItem("defaultSSLHostConfigName") }
+                Try { node.attributes.removeNamedItem(AttributeDatabase.defaultSSLHostConfigName) }
             } else {
                 /*
                     Explicitly set the default host to the named entry
                  */
-                node.attributes.setNamedItem(node.ownerDocument.createAttribute("defaultSSLHostConfigName").apply {
+                node.attributes.setNamedItem(node.ownerDocument.createAttribute(AttributeDatabase.defaultSSLHostConfigName).apply {
                     nodeValue = options.fixedHostname
                 })
             }
@@ -140,7 +140,13 @@ object ConfigureTomcat85Connector : ConfigureConnector {
      * may not be defined in which case the default value or "_default_" is returned
      */
     private fun getConnectorDefaultHost(node:Node) =
-            node.attributes.getNamedItem("defaultSSLHostConfigName")?.nodeValue ?: DEFAULT_HOST_NAME
+            node.attributes.getNamedItem(AttributeDatabase.defaultSSLHostConfigName)?.nodeValue ?: DEFAULT_HOST_NAME
+
+    /**
+     * @returns the value of the "protocol" attribute on a <Connector>, or null if the attribute does not exist
+     */
+    private fun getConnectorProtocol(node:Node) =
+            node.attributes.getNamedItem("protocol")?.nodeValue
 
     /**
      * @returns true if the <Connector> element contains a <SSLHostConfig> element that matches the supplied hostName
@@ -220,7 +226,8 @@ object ConfigureTomcat85Connector : ConfigureConnector {
         if (protocolIsBeingSwapped(node, options)) {
             throw ConfigurationOperationInvalidException("TOMCAT-HTTPS-ERROR-0006: The <Connector> " +
                     "listening to port ${options.port} already has a certificate defined. You can not change the " +
-                    "protocol to ${options.implementation} as this may leave the existing configuration in an invalid state.")
+                    "protocol from ${getConnectorProtocol(node) ?: "the empty default value"} to ${options.implementation} " +
+                    "as this may leave the existing configuration in an invalid state.")
         }
     }
 
@@ -228,17 +235,18 @@ object ConfigureTomcat85Connector : ConfigureConnector {
      * @return true if the options indicate that we are attempting to change the protocol
      */
     private fun protocolIsBeingSwapped(node: Node, options: TomcatHttpsOptions) =
-            options.implementation.className.get() != node.attributes.getNamedItem("protocol")?.nodeValue &&
+            options.implementation.className.get() != getConnectorProtocol(node) &&
                     !connectorIsEmpty(node)
 
     /**
      * @returns true if we consider this <Connector> to be an empty configuration. Note that the only time
      * we should be seeing an empty <Connector> is because it is one that we created for a new configuration.
-     * Empty connectors are not a valid Tomcat configuration otherwise.
      */
     private fun connectorIsEmpty(node: Node) =
-            (node.attributes.length == 0 || (node.attributes.length == 1 && node.attributes.getNamedItem("port") != null)) &&
-                    node.childNodes.length == 0
+            (0 until node.attributes.length).all {
+                AttributeDatabase.connectorAttribuites.contains(node.attributes.item(it).nodeName)
+            } &&
+            node.childNodes.length == 0
 
     /**
      * @return true if the configuration for the certificate we are replacing or defining exists in the <Connector> node
@@ -247,7 +255,7 @@ object ConfigureTomcat85Connector : ConfigureConnector {
             /*
                 See if the defaultSSLHostConfigName attribute matches the option we are adding
              */
-            options.fixedHostname == node.attributes.getNamedItem("defaultSSLHostConfigName")?.nodeValue ?: DEFAULT_HOST_NAME &&
+            options.fixedHostname == node.attributes.getNamedItem(AttributeDatabase.defaultSSLHostConfigName)?.nodeValue ?: DEFAULT_HOST_NAME &&
                     !connectorContainsDefaultHostname(node, options.fixedHostname) &&
                     !connectorIsEmpty(node)
 }
