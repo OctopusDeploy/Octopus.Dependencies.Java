@@ -35,7 +35,7 @@ object TomcatHttpsConfig {
             LoggingServiceImpl.configureLogging()
             configureHttps(TomcatHttpsOptions.fromEnvironmentVars())
         } catch (ex: ExpectedException) {
-            logger.log(Level.SEVERE, "", ex)
+            logger.log(Level.SEVERE, null, ex)
             System.exit(Constants.FAILED_DEPLOYMENT_RETURN)
         } catch (ex: Exception) {
             logger.log(Level.SEVERE, ErrorMessageBuilderImpl.buildErrorMessage(

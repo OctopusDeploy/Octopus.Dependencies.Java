@@ -10,18 +10,27 @@ import java.util.logging.*
 object CustomFormatter : Formatter() {
     override fun format(record: LogRecord?): String =
             StringBuilder()
-                    .append(record?.level)
-                    .append(": ")
-                    .append(record?.message).append('\n')
+                    .append(getMessage(record))
                     .append(getThrownDetails(record))
                     .toString()
 
+    fun getMessage(record: LogRecord?) =
+        if (record?.message != null) {
+            record?.message?.toString() + "\n"
+        } else {
+            ""
+        }
+
+
     fun getThrownDetails(record: LogRecord?) =
-       StringWriter().apply {
-           PrintWriter(this).use {
-               record?.thrown?.printStackTrace(it).apply {
+       if (record?.thrown != null) {
+           StringWriter().apply {
+               PrintWriter(this).use {
+                   record?.thrown?.printStackTrace(it)
                    it.println()
                }
-           }
-       }.toString()
+           }.toString()
+       } else {
+           ""
+       }
 }
