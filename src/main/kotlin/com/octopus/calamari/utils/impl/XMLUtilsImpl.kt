@@ -61,7 +61,7 @@ object XMLUtilsImpl : XMLUtils {
             }.onFailure {
                 throw ConfigurationFileInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
                         "TOMCAT-HTTPS-ERROR-0013",
-                        "The server.xml file was not valid XML."), it)
+                        "The server.xml file was not valid XML, or was not accessible."), it)
             }.get()
 
     override fun saveXML(location: String, document: Document) =

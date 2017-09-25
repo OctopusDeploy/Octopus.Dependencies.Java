@@ -1,5 +1,6 @@
 package com.octopus.calamari.tomcathttps
 
+import com.octopus.calamari.exception.CreateFileException
 import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.exception.KeystoreCreationFailedException
 import com.octopus.calamari.exception.tomcat.VersionMatchNotSuccessfulException
@@ -55,7 +56,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
     /**
      * Attempts to get the organisation from a x500 string
      */
-    private val organisation:String
+    private val organisation: String
         get() =
             Try {
                 LdapName(publicKeySubject).rdns.filter {
@@ -149,34 +150,48 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
      * @return The path to the PEM file
      */
     fun createPrivateKey() =
-            FileUtilsImpl.getUniqueFilename(
-                    File(tomcatLocation, "conf").absolutePath,
-                    organisation,
-                    "key").apply {
-                FileUtils.write(
-                        this,
-                        privateKey,
-                        StandardCharsets.US_ASCII)
-            }.run {
-                convertPathToTomcatVariable(this.absolutePath)
-            }
+            Try {
+                FileUtilsImpl.getUniqueFilename(
+                        File(tomcatLocation, "conf").absolutePath,
+                        organisation,
+                        "key")
+            }.map {
+                it.apply {
+                    FileUtils.write(
+                            it,
+                            privateKey,
+                            StandardCharsets.US_ASCII)
+                }
+            }.map {
+                convertPathToTomcatVariable(it.absolutePath)
+            }.onFailure {
+                throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0016",
+                        "The private key could not be created"), it)
+            }.get()
 
     /**
      * Creates a public certificate in the Tomcat conf dir
      * @return The path to the certificate PEM file
      */
     fun createPublicCert() =
-            FileUtilsImpl.getUniqueFilename(
-                    File(tomcatLocation, "conf").absolutePath,
-                    organisation,
-                    "crt").apply {
-                FileUtils.write(
+            Try {
+                FileUtilsImpl.getUniqueFilename(
+                        File(tomcatLocation, "conf").absolutePath,
+                        organisation,
+                        "crt")
+            }.map {
+                it.apply{FileUtils.write(
                         this,
                         publicKey,
-                        StandardCharsets.US_ASCII)
-            }.run {
-                convertPathToTomcatVariable(this.absolutePath)
-            }
+                        StandardCharsets.US_ASCII)}
+            }.map {
+                convertPathToTomcatVariable(it.absolutePath)
+            }.onFailure {
+                throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0017",
+                        "The public key could not be created"), it)
+            }.get()
 
     /**
      * @return Converts an absolute path to a interpolated version
