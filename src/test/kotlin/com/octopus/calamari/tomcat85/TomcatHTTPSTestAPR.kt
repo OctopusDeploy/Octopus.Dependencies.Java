@@ -24,4 +24,9 @@ class TomcatHTTPSTestAPR : BaseTomcatTest() {
     fun testExistingAttrsExist() {
         ensureOtherAttrsStillExist(SERVER_XML)
     }
+
+    @Test
+    fun testExistingSSLHostConfigAttrsExist() {
+        ensureOtherSSLHostConfigAttrsStillExist(SERVER_XML)
+    }
 }

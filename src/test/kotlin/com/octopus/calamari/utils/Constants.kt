@@ -11,3 +11,6 @@ const val MIN_SPARE_THREADS_VALUE = "2"
 
 const val KEYSTORE_FILE = "keystoreFile"
 const val KEYSTORE_FILE_VALUE = "whatever.keystore"
+
+const val CIPHERS = "ciphers"
+const val CIPHERS_VALUE = "HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!kRSA"

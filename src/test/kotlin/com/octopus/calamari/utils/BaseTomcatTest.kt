@@ -33,6 +33,22 @@ open class BaseTomcatTest {
                 }
     }
 
+    fun ensureOtherSSLHostConfigAttrsStillExist(xml:String) {
+        File(xml)
+                .run {
+                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
+                }.run {
+            XMLUtilsImpl.xpathQueryNodelist(
+                    this,
+                    "//Connector[@port='$HTTPS_PORT']/SSLHostConfig")
+        }.run {
+            NodeListIterator(this)
+        }.forEach {
+            Assert.assertTrue(it.attributes.getNamedItem(CIPHERS).nodeValue ==
+                    CIPHERS_VALUE)
+        }
+    }
+
     fun ensureNoAttrsPresent(xml:String, attrs:List<String>) =
                 File(xml)
                         .run { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this) }

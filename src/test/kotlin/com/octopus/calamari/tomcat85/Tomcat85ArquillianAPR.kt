@@ -43,5 +43,6 @@ class Tomcat85ArquillianAPR(testClass: Class<*>?) : BaseArquillian(testClass) {
                 true))
 
         addConnectorAttributes(SERVER_XML)
+        addSSLHostConfigAttributes(SERVER_XML)
     }
 }

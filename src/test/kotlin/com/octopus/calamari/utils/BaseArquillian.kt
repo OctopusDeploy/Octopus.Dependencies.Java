@@ -15,6 +15,25 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
     /**
         Save some values unrelated to the certificate. The test will ensure these values are preserved.
      */
+    fun addSSLHostConfigAttributes(xmlFile: String):Unit =
+            File(xmlFile).run {
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
+            }.apply {
+                XMLUtilsImpl.xpathQueryNodelist(
+                        this,
+                        "//Connector[@port='$HTTPS_PORT']/SSLHostConfig").run {
+                    NodeListIterator(this)
+                }.forEach {
+                    it.attributes.setNamedItem(it.ownerDocument.createAttribute(CIPHERS)
+                            .apply { nodeValue = CIPHERS_VALUE })
+                }
+            }.apply {
+                XMLUtilsImpl.saveXML(xmlFile, this)
+            }.run { }
+
+    /**
+    Save some values unrelated to the certificate. The test will ensure these values are preserved.
+     */
     fun addConnectorAttributes(xmlFile: String):Unit =
             File(xmlFile).run {
                 DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
