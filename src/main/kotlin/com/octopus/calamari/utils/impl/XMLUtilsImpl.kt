@@ -1,10 +1,12 @@
 package com.octopus.calamari.utils.impl
 
+import com.octopus.calamari.exception.tomcat.ConfigurationFileInvalidException
 import com.octopus.calamari.utils.XMLUtils
 import com.sun.org.apache.xpath.internal.NodeSet
 import org.apache.commons.collections4.iterators.NodeListIterator
 import org.funktionale.option.Option
 import org.funktionale.option.firstOption
+import org.funktionale.tries.Try
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -55,25 +57,37 @@ object XMLUtilsImpl : XMLUtils {
             loadXML(File(location))
 
     override fun loadXML(file: File): Document =
-            DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file)
+            Try {
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file)
+            }.onFailure {
+                throw ConfigurationFileInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0013",
+                        "The server.xml file was not valid XML."), it)
+            }.get()
 
     override fun saveXML(location: String, document: Document) =
-            TransformerFactory.newInstance().apply {
-                setAttribute("indent-number", Integer(2))
-            }.newTransformer().apply {
-                setOutputProperty(OutputKeys.INDENT, "yes")
-            }.transform(
-                    document.run {
-                        stripWhitespaceNodes(this)
-                    }.run {
-                        DOMSource(this)
-                    },
-                    File(location).run {
-                        FileWriter(this)
-                    }.run {
-                        StreamResult(this)
-                    }
-            )
+            Try {
+                TransformerFactory.newInstance().apply {
+                    setAttribute("indent-number", Integer(2))
+                }.newTransformer().apply {
+                    setOutputProperty(OutputKeys.INDENT, "yes")
+                }.transform(
+                        document.run {
+                            stripWhitespaceNodes(this)
+                        }.run {
+                            DOMSource(this)
+                        },
+                        File(location).run {
+                            FileWriter(this)
+                        }.run {
+                            StreamResult(this)
+                        }
+                )
+            }.onFailure {
+                throw ConfigurationFileInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0014",
+                        "Failed to save the server.xml file."), it)
+            }.run {}
 
     override fun createOrReturnElement(node: Node,
                                        elementName: String,
@@ -119,4 +133,5 @@ object XMLUtilsImpl : XMLUtils {
                     this
                 }
             }
+}
 }
