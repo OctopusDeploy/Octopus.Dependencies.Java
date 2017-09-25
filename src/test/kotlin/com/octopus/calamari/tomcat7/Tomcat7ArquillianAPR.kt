@@ -16,35 +16,6 @@ class Tomcat7ArquillianAPR(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {
         removeConnector(SERVER_XML, HTTPS_PORT)
 
-        /*
-            Configure with BIO and NIO first to make sure we transform between implementations correctly
-        */
-        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
-                TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                "Catalina",
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                HTTPS_PORT,
-                TomcatHttpsImplementation.BIO,
-                "",
-                false))
-
-        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
-                TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                "Catalina",
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                HTTPS_PORT,
-                TomcatHttpsImplementation.NIO,
-                "",
-                false))
-
-        addConnectorAttributes(SERVER_XML)
-
         TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
                 TOMCAT_VERSION_INFO,
                 "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
@@ -56,5 +27,7 @@ class Tomcat7ArquillianAPR(testClass: Class<*>?) : BaseArquillian(testClass) {
                 TomcatHttpsImplementation.APR,
                 "",
                 false))
+
+        addConnectorAttributes(SERVER_XML)
     }
 }

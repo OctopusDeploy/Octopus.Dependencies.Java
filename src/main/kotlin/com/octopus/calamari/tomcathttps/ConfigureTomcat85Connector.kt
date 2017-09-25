@@ -9,7 +9,7 @@ import org.w3c.dom.Node
 /**
  * https://tomcat.apache.org/tomcat-8.5-doc/config/http.html#SSL_Support_-_Certificate
  */
-object ConfigureTomcat85Connector : ConfigureConnector {
+object ConfigureTomcat85Connector : ConfigureConnector() {
     override fun configureNIO2(options: TomcatHttpsOptions, node: Node) =
             processCommonElements(options, node).run {}
 
@@ -145,11 +145,6 @@ object ConfigureTomcat85Connector : ConfigureConnector {
     private fun getConnectorDefaultHost(node:Node) =
             node.attributes.getNamedItem(AttributeDatabase.defaultSSLHostConfigName)?.nodeValue ?: DEFAULT_HOST_NAME
 
-    /**
-     * @returns the value of the "protocol" attribute on a <Connector>, or null if the attribute does not exist
-     */
-    private fun getConnectorProtocol(node:Node) =
-            node.attributes.getNamedItem("protocol")?.nodeValue
 
     /**
      * @returns true if the <Connector> element contains a <SSLHostConfig> element that matches the supplied hostName
@@ -223,37 +218,6 @@ object ConfigureTomcat85Connector : ConfigureConnector {
             }
 
     }
-
-    /**
-     * @throws ConfigurationOperationInvalidException if we would be adding a new certificate with a different protocol.
-     */
-    private fun validateProtocolSwap(node: Node, options: TomcatHttpsOptions) {
-        if (protocolIsBeingSwapped(node, options)) {
-            throw ConfigurationOperationInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "TOMCAT-HTTPS-ERROR-0006",
-                    "The <Connector> " +
-                    "listening to port ${options.port} already has a certificate defined. You can not change the " +
-                    "protocol from ${getConnectorProtocol(node) ?: "the empty default value"} to ${options.implementation} " +
-                    "as this may leave the existing configuration in an invalid state."))
-        }
-    }
-
-    /**
-     * @return true if the options indicate that we are attempting to change the protocol
-     */
-    private fun protocolIsBeingSwapped(node: Node, options: TomcatHttpsOptions) =
-            options.implementation.className.get() != getConnectorProtocol(node) &&
-                    !connectorIsEmpty(node)
-
-    /**
-     * @returns true if we consider this <Connector> to be an empty configuration. Note that the only time
-     * we should be seeing an empty <Connector> is because it is one that we created for a new configuration.
-     */
-    private fun connectorIsEmpty(node: Node) =
-            (0 until node.attributes.length).all {
-                AttributeDatabase.connectorAttribuites.contains(node.attributes.item(it).nodeName)
-            } &&
-            node.childNodes.length == 0
 
     /**
      * @return true if the configuration for the certificate we are replacing or defining exists in the <Connector> node

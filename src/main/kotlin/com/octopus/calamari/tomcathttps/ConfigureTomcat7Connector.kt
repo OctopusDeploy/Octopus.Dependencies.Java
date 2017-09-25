@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
 import org.w3c.dom.Node
 
-object ConfigureTomcat7Connector : ConfigureConnector {
+object ConfigureTomcat7Connector : ConfigureConnector() {
     override fun configureNIO2(options: TomcatHttpsOptions, node: Node) {
         throw NotImplementedError(ErrorMessageBuilderImpl.buildErrorMessage(
                 "TOMCAT-HTTPS-ERROR-0009",
@@ -14,6 +14,8 @@ object ConfigureTomcat7Connector : ConfigureConnector {
 
     override fun configureBIO(options: TomcatHttpsOptions, node: Node): Unit =
             node.apply {
+                validateProtocolSwap(node, options)
+            }.apply {
                 attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
                     value = options.implementation.className.get()
                 })
@@ -24,6 +26,8 @@ object ConfigureTomcat7Connector : ConfigureConnector {
 
     override fun configureNIO(options: TomcatHttpsOptions, node: Node): Unit =
             node.apply {
+                validateProtocolSwap(node, options)
+            }.apply {
                 attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
                     nodeValue = options.implementation.className.get()
                 })
@@ -34,6 +38,8 @@ object ConfigureTomcat7Connector : ConfigureConnector {
 
     override fun configureARP(options: TomcatHttpsOptions, node: Node): Unit =
             node.apply {
+                validateProtocolSwap(node, options)
+            }.apply {
                 attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
                     nodeValue = options.implementation.className.get()
                 })
