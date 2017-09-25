@@ -16,8 +16,8 @@ class TomcatHTTPSTestNIO2 : BaseTomcatTest() {
     @Test
     fun testImplementationIsPresent() {
         Assert.assertFalse(testImplementationIsPresent(SERVER_XML, TomcatHttpsImplementation.APR.className.get()))
-        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, TomcatHttpsImplementation.NIO2.className.get()))
-        Assert.assertTrue(testImplementationIsPresent(SERVER_XML, TomcatHttpsImplementation.NIO.className.get()))
+        Assert.assertTrue(testImplementationIsPresent(SERVER_XML, TomcatHttpsImplementation.NIO2.className.get()))
+        Assert.assertFalse(testImplementationIsPresent(SERVER_XML, TomcatHttpsImplementation.NIO.className.get()))
         Assert.assertFalse(testImplementationIsPresent(SERVER_XML, TomcatHttpsImplementation.BIO.className.get()))
     }
 

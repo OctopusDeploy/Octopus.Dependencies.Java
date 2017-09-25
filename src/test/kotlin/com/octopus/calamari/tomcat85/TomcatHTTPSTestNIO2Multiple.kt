@@ -7,7 +7,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(Tomcat85ArquillianNIOMultiple::class)
+@RunWith(Tomcat85ArquillianNIO2Multiple::class)
 class TomcatHTTPSTestNIO2Multiple : BaseTomcatTest() {
     @Test
     fun listDeployments() =
