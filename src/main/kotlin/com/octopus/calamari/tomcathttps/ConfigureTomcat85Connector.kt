@@ -18,7 +18,7 @@ object ConfigureTomcat85Connector : ConfigureConnector {
             processCommonElements(options, node).run {}
 
     override fun configureARP(options: TomcatHttpsOptions, node: Node): Unit =
-            processCommonElements(options, node).run{}
+            processCommonElements(options, node).run {}
 
     /**
      * Configure the default host ir required, add the <SSLHostConfig> element, and clean up any
@@ -27,6 +27,7 @@ object ConfigureTomcat85Connector : ConfigureConnector {
     private fun processCommonElements(options: TomcatHttpsOptions, node: Node): Node =
             node.apply {
                 validateProtocolSwap(node, options)
+                validateAddingDefaultWithConnectorCertificate(node, options)
             }.apply {
                 attributes.setNamedItem(ownerDocument.createAttribute("protocol").apply {
                     nodeValue = options.implementation.className.get()
@@ -47,6 +48,9 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                 }
             }
 
+    /**
+     * Builds up the <Connector> with the certificate information
+     */
     private fun addDefaultHostNameToConnector(node: Node, options: TomcatHttpsOptions) {
         if (options.default) {
             if (options.isDefaultHostname) {
@@ -66,7 +70,10 @@ object ConfigureTomcat85Connector : ConfigureConnector {
         }
     }
 
-    private fun createCertificateNode(node: Node, options: TomcatHttpsOptions):Node =
+    /**
+     * Builds up a <SSLHostConfig> element with the certificate information.
+     */
+    private fun createCertificateNode(node: Node, options: TomcatHttpsOptions): Node =
             XMLUtilsImpl.createOrReturnElement(
                     node,
                     "SSLHostConfig",
@@ -129,6 +136,84 @@ object ConfigureTomcat85Connector : ConfigureConnector {
             }
 
     /**
+     * @returns the value of the defaultSSLHostConfigName attribute, taking into account the fact that it
+     * may not be defined in which case the default value or "_default_" is returned
+     */
+    private fun getConnectorDefaultHost(node:Node) =
+            node.attributes.getNamedItem("defaultSSLHostConfigName")?.nodeValue ?: DEFAULT_HOST_NAME
+
+    /**
+     * @returns true if the <Connector> element contains a <SSLHostConfig> element that matches the supplied hostName
+     */
+    private fun connectorContainsDefaultHostname(node: Node, hostName:String) =
+            XMLUtilsImpl.xpathQueryNodelist(
+                    node,
+                    "//SSLHostConfig[@hostname='$hostName'${if (hostName == DEFAULT_HOST_NAME) " or not(@hostName)" else ""}]").length != 0
+
+    /**
+     * If we have an existing configuration like this:
+     *
+     * <Connector
+     *  defaultSSLHostConfigName="default"
+     *  port="12345"
+     *  scheme="https"
+     *  secure="true"
+     *  SSLEnabled="true"
+     *  SSLCertificateFile="/usr/local/ssl/server.crt"
+     *  SSLCertificateKeyFile="/usr/local/ssl/server.pem"/>
+     *
+     *  then this configuration is assumed to have the hostName of default, because it is derived from the
+     *  defaultSSLHostConfigName attribute. At this point trying to add another default named <SSLHostConfig> element
+     *  will fail. For example, this is not a valid configuration:
+     *
+     * <Connector
+     *  defaultSSLHostConfigName="default"
+     *  port="12345"
+     *  scheme="https"
+     *  secure="true"
+     *  SSLEnabled="true"
+     *  SSLCertificateFile="/usr/local/ssl/server.crt"
+     *  SSLCertificateKeyFile="/usr/local/ssl/server.pem">
+     *      <SSLHostConfig hostName="default">
+     *          <Certificate ... />
+     *      </SSLHostConfig>
+     *  </Connector>
+     *
+     *  The above will throw an error about having duplicate default configurations.
+     *
+     *  This function checks to make sure that we are not attempting to add a duplicated certificate
+     *  configuration.
+     */
+    private fun validateAddingDefaultWithConnectorCertificate(node: Node, options: TomcatHttpsOptions) {
+            getConnectorDefaultHost(node).run {
+                if(
+                    /*
+                         We can only conflict if this is not an empty node
+                     */
+                    !connectorIsEmpty(node) &&
+                        /*
+                            We can only conflict if we are trying to add another default hostname
+                         */
+                        options.default &&
+                        /*
+                            We can only conflict if we are changing the default hostname
+                         */
+                        options.fixedHostname != this &&
+                        /*
+                            We can only conflict if the default host name does not exist in a
+                            <SSLHostConfig> element
+                         */
+                        !connectorContainsDefaultHostname(node, this)) {
+                    throw ConfigurationOperationInvalidException("TOMCAT-HTTPS-ERROR-0008: The <Connector> " +
+                            "listening to port ${options.port} has certificate information with the hostName of " +
+                            "${this} already configured. Attempting to add a new default hostName of ${options.fixedHostname} " +
+                            "will lead to an invalid configuration.")
+                }
+            }
+
+    }
+
+    /**
      * @throws ConfigurationOperationInvalidException if we would be adding a new certificate with a different protocol.
      */
     private fun validateProtocolSwap(node: Node, options: TomcatHttpsOptions) {
@@ -139,15 +224,21 @@ object ConfigureTomcat85Connector : ConfigureConnector {
         }
     }
 
+    /**
+     * @return true if the options indicate that we are attempting to change the protocol
+     */
     private fun protocolIsBeingSwapped(node: Node, options: TomcatHttpsOptions) =
             options.implementation.className.get() != node.attributes.getNamedItem("protocol")?.nodeValue &&
-                    /*
-                        It is possible that we got here after creating an empty <Connector port="whatever"> element.
-                        We consider a <Connector> element with no attributes, or just the port attribute, to be
-                        unconfigured and OK to add our certificate to.
-                     */
-                    !(node.attributes.length == 0 || (node.attributes.length == 1 && node.attributes.getNamedItem("port") != null)) &&
-                    node.childNodes.length != 0
+                    !connectorIsEmpty(node)
+
+    /**
+     * @returns true if we consider this <Connector> to be an empty configuration. Note that the only time
+     * we should be seeing an empty <Connector> is because it is one that we created for a new configuration.
+     * Empty connectors are not a valid Tomcat configuration otherwise.
+     */
+    private fun connectorIsEmpty(node: Node) =
+            (node.attributes.length == 0 || (node.attributes.length == 1 && node.attributes.getNamedItem("port") != null)) &&
+                    node.childNodes.length == 0
 
     /**
      * @return true if the configuration for the certificate we are replacing or defining exists in the <Connector> node
@@ -157,20 +248,7 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                 See if the defaultSSLHostConfigName attribute matches the option we are adding
              */
             options.fixedHostname == node.attributes.getNamedItem("defaultSSLHostConfigName")?.nodeValue ?: DEFAULT_HOST_NAME &&
-                    /*
-                        See if there is no SSLHostConfig with the host name
-                     */
-                    XMLUtilsImpl.xpathQueryNodelist(
-                            node,
-                            "//SSLHostConfig[@hostname='${options.fixedHostname}'${if (options.isDefaultHostname) " or not(@hostName)" else ""}]").length == 0 &&
-                    /*
-                        See if there are any SSLHostConfig elements. This means that if we are
-                        defining a certificate in a blank <Connector> (which we assume is only
-                        happening because this <Connector> is one we just created), the new
-                        configuration will be placed in a <SSLHostConfig> element.
-                     */
-                    XMLUtilsImpl.xpathQueryNodelist(
-                            node,
-                            "//SSLHostConfig").length != 0
+                    !connectorContainsDefaultHostname(node, options.fixedHostname) &&
+                    !connectorIsEmpty(node)
 }
 
