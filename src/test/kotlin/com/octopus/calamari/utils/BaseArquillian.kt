@@ -48,6 +48,10 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                             .apply { nodeValue = TomcatHttpsImplementation.NIO.className.get() })
                     attributes.setNamedItem(ownerDocument.createAttribute(KEYSTORE_FILE)
                             .apply { nodeValue = KEYSTORE_FILE_VALUE })
+                    /*
+                        Add an empty text node to simulate a line break
+                     */
+                    appendChild(ownerDocument.createTextNode("\n"))
                 }
             }.apply {
                 XMLUtilsImpl.saveXML(xmlFile, this)

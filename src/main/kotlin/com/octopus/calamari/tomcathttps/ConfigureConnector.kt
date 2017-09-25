@@ -2,6 +2,7 @@ package com.octopus.calamari.tomcathttps
 
 import com.octopus.calamari.exception.tomcat.ConfigurationOperationInvalidException
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
+import org.funktionale.option.getOrElse
 import org.w3c.dom.Node
 
 /**
@@ -43,7 +44,7 @@ open abstract class ConfigureConnector {
     /**
      * @returns the value of the "protocol" attribute on a <Connector>, or null if the attribute does not exist
      */
-    protected fun getConnectorProtocol(node:Node) =
+    protected fun getConnectorProtocol(node: Node) =
             node.attributes.getNamedItem("protocol")?.nodeValue
 
     /**
@@ -55,15 +56,15 @@ open abstract class ConfigureConnector {
                     "TOMCAT-HTTPS-ERROR-0006",
                     "The <Connector> " +
                             "listening to port ${options.port} already has a certificate defined. You can not change the " +
-                            "protocol from ${ConfigureTomcat85Connector.getConnectorProtocol(node) ?: "the empty default value"} to ${options.implementation} " +
-                            "as this may leave the existing configuration in an invalid state."))
+                            "protocol from ${ConfigureTomcat85Connector.getConnectorProtocol(node) ?: "the empty default value"} " +
+                            "to ${options.implementation.className.getOrElse { "NONE" }} as this may leave the existing configuration in an invalid state."))
         }
     }
 
     /**
      * @return true if the options indicate that we are attempting to change the protocol
      */
-    protected fun protocolIsBeingSwapped(node: Node, options: TomcatHttpsOptions) =
+    private fun protocolIsBeingSwapped(node: Node, options: TomcatHttpsOptions) =
             options.implementation.className.get() != ConfigureTomcat85Connector.getConnectorProtocol(node) &&
                     !connectorIsEmpty(node)
 
@@ -72,8 +73,19 @@ open abstract class ConfigureConnector {
      * we should be seeing an empty <Connector> is because it is one that we created for a new configuration.
      */
     protected fun connectorIsEmpty(node: Node) =
+            /*
+                All the attributes need to be not associated with certificate information.
+             */
             (0 until node.attributes.length).all {
                 AttributeDatabase.connectorAttribuites.contains(node.attributes.item(it).nodeName)
             } &&
-                    node.childNodes.length == 0
+                    /*
+                        All the children (if any) need to be text (these will just be whitespace in
+                         a valid server.xml file) or comment nodes
+                     */
+                    (0 until node.childNodes.length).all {
+                        node.childNodes.item(it).nodeType.run {
+                            this == Node.TEXT_NODE || this == Node.COMMENT_NODE
+                        }
+                    }
 }

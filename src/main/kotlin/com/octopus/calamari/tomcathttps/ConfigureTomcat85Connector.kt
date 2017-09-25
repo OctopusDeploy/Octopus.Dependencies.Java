@@ -149,7 +149,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
     /**
      * @returns true if the <Connector> element contains a <SSLHostConfig> element that matches the supplied hostName
      */
-    private fun connectorContainsDefaultHostname(node: Node, hostName:String) =
+    private fun connectorContainsDefaultSSLHostConfig(node: Node, hostName:String) =
             XMLUtilsImpl.xpathQueryNodelist(
                     node,
                     "//SSLHostConfig[@hostname='$hostName'${if (hostName == DEFAULT_HOST_NAME) " or not(@hostName)" else ""}]").length != 0
@@ -207,7 +207,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                             We can only conflict if the default host name does not exist in a
                             <SSLHostConfig> element
                          */
-                        !connectorContainsDefaultHostname(node, this)) {
+                        !connectorContainsDefaultSSLHostConfig(node, this)) {
                     throw ConfigurationOperationInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
                             "TOMCAT-HTTPS-ERROR-0008" ,
                             "The <Connector> " +
@@ -226,8 +226,8 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
             /*
                 See if the defaultSSLHostConfigName attribute matches the option we are adding
              */
-            options.fixedHostname == node.attributes.getNamedItem(AttributeDatabase.defaultSSLHostConfigName)?.nodeValue ?: DEFAULT_HOST_NAME &&
-                    !connectorContainsDefaultHostname(node, options.fixedHostname) &&
+            options.fixedHostname == getConnectorDefaultHost(node) &&
+                    !connectorContainsDefaultSSLHostConfig(node, options.fixedHostname) &&
                     !connectorIsEmpty(node)
 }
 
