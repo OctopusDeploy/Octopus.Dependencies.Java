@@ -11,4 +11,9 @@ interface FileUtils {
      * @return A File that does not exist in the base directory
      */
     fun getUniqueFilename(basePath:String, baseFileName:String, extension:String): File
+
+    /**
+     * Creates a copy of the file in the same path
+     */
+    fun backupFile(location: String)
 }

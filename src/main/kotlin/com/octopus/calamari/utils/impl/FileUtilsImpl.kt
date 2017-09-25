@@ -2,12 +2,25 @@ package com.octopus.calamari.utils.impl
 
 import com.octopus.calamari.exception.CreateFileException
 import com.octopus.calamari.utils.FileUtils
+import org.apache.commons.io.FilenameUtils
+import org.apache.commons.io.IOUtils
 import org.funktionale.option.firstOption
 import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
 import java.io.File
 
 object FileUtilsImpl : FileUtils {
+    override fun backupFile(location: String) =
+            File(location).run {
+                org.apache.commons.io.FileUtils.copyFile(
+                        this,
+                        getUniqueFilename(
+                                parent,
+                                FilenameUtils.getBaseName(canonicalPath),
+                                FilenameUtils.getExtension(name)))
+            }
+
+
     /**
      * There are some opportunities for failure here:
      * 1. Multiple executions of this method from different JVMs may enter a race condition

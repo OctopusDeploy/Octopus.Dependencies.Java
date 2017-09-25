@@ -3,6 +3,7 @@ package com.octopus.calamari.tomcathttps
 import com.octopus.calamari.exception.tomcat.ConfigurationOperationInvalidException
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import org.funktionale.option.getOrElse
+import org.funktionale.tries.Try
 import org.w3c.dom.Node
 
 /**
@@ -54,12 +55,22 @@ open abstract class ConfigureConnector {
         if (protocolIsBeingSwapped(node, options)) {
             throw ConfigurationOperationInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "TOMCAT-HTTPS-ERROR-0006",
-                    "The <Connector> " +
+                    ConfigureTomcat85Connector.getConnectorProtocol(node).run {
+                        "The <Connector> " +
                             "listening to port ${options.port} already has a certificate defined. You can not change the " +
-                            "protocol from ${ConfigureTomcat85Connector.getConnectorProtocol(node) ?: "the empty default value"} " +
-                            "to ${options.implementation.className.getOrElse { "NONE" }} as this may leave the existing configuration in an invalid state."))
+                            "protocol from $this (${convertProtocolToEnum(this, "Unrecognised protocol")}) " +
+                            "to ${options.implementation.className.getOrElse { "NONE" }} (${options.implementation.name}) " +
+                            "as this may leave the existing configuration in an invalid state."
+                    }))
         }
     }
+
+    private fun convertProtocolToEnum(protocol: String?, default: String) =
+            Try {
+                TomcatHttpsImplementation.valueOf(protocol ?: TomcatHttpsImplementation.NONE.name).name
+            }.handle {
+                default
+            }.get()
 
     /**
      * @return true if the options indicate that we are attempting to change the protocol

@@ -1,6 +1,7 @@
 package com.octopus.calamari.utils.impl
 
 import com.octopus.calamari.exception.tomcat.ConfigurationFileInvalidException
+import com.octopus.calamari.utils.FileUtils
 import com.octopus.calamari.utils.XMLUtils
 import com.sun.org.apache.xpath.internal.NodeSet
 import org.apache.commons.collections4.iterators.NodeListIterator
@@ -67,6 +68,8 @@ object XMLUtilsImpl : XMLUtils {
 
     override fun saveXML(location: String, document: Document) =
             Try {
+                FileUtilsImpl.backupFile(location)
+            }.map {
                 TransformerFactory.newInstance().apply {
                     setAttribute("indent-number", Integer(2))
                 }.newTransformer().apply {

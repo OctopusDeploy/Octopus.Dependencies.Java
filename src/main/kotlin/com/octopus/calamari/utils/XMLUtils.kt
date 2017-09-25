@@ -51,5 +51,10 @@ interface XMLUtils {
      */
     fun xpathQueryNodelist(node:Node, query: String): NodeList
 
+    /**
+     * @param node The node to start the query from
+     * @param query The query to run
+     * @return true or false based on the result of the query
+     */
     fun xpathQueryBoolean(node: Node, query: String): Boolean
 }
