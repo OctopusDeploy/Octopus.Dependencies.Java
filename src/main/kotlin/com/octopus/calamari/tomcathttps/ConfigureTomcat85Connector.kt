@@ -108,7 +108,6 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                         value = KEYSTORE_ALIAS
                     })
                 }
-                attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = "RSA" })
             }
 
     /**

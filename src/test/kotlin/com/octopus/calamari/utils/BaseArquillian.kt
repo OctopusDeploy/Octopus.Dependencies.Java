@@ -1,6 +1,7 @@
 package com.octopus.calamari.utils
 
 import com.octopus.calamari.tomcathttps.AttributeDatabase
+import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.collections4.iterators.NodeListIterator
 import org.funktionale.tries.Try
@@ -43,6 +44,8 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                         mapOf(Pair("port", "$HTTPS_PORT"))).get().apply {
                     attributes.setNamedItem(ownerDocument.createAttribute(AttributeDatabase.defaultSSLHostConfigName)
                             .apply { nodeValue = defaultName })
+                    attributes.setNamedItem(ownerDocument.createAttribute("protocol")
+                            .apply { nodeValue = TomcatHttpsImplementation.NIO.className.get() })
                     attributes.setNamedItem(ownerDocument.createAttribute(KEYSTORE_FILE)
                             .apply { nodeValue = KEYSTORE_FILE_VALUE })
                 }
