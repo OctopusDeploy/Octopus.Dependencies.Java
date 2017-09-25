@@ -73,7 +73,10 @@ object TomcatHttpsConfig {
             Try { File(options.tomcatLocation, "conf${File.separator}server.xml") }.map {
                 it.apply {
                     if (!it.exists()) {
-                        throw ConfigFileNotFoundException()
+                        throw ConfigFileNotFoundException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                "TOMCAT-HTTPS-ERROR-0010",
+                                "The server.xml file could not be found."
+                        ))
                     }
                 }
             }.map {

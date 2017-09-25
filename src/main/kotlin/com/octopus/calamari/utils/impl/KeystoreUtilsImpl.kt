@@ -86,7 +86,9 @@ object KeystoreUtilsImpl : KeystoreUtils {
                 Try {
                     this.apply {
                         if (isEmpty())
-                            throw CertificateException("Certificate file does not contain any certificates")
+                            throw CertificateException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                    "JAVA-HTTPS-ERROR-0001",
+                                    "Certificate file does not contain any certificates. This is probably because the input certificate file is invalid."))
                     }
                 }
             }
@@ -95,7 +97,8 @@ object KeystoreUtilsImpl : KeystoreUtils {
             Try {
                 KEY_PATTERN.matcher(content).apply {
                     if (!find())
-                        throw KeyStoreException("Could not find a private key")
+                        throw KeyStoreException(ErrorMessageBuilderImpl.buildErrorMessage("JAVA-HTTPS-ERROR-0002",
+                                "Could not find a private key. This is probably because the input key file is invalid."))
                 }
             }.map {
                 base64Decode(it.group(1))

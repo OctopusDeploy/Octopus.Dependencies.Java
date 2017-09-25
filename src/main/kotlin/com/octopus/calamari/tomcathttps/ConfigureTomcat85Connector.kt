@@ -1,6 +1,7 @@
 package com.octopus.calamari.tomcathttps
 
 import com.octopus.calamari.exception.tomcat.ConfigurationOperationInvalidException
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.funktionale.tries.Try
 import org.w3c.dom.Node
@@ -13,7 +14,9 @@ object ConfigureTomcat85Connector : ConfigureConnector {
             processCommonElements(options, node).run {}
 
     override fun configureBIO(options: TomcatHttpsOptions, node: Node) =
-            throw NotImplementedError("TOMCAT-HTTPS-ERROR-0007: Tomcat 8.5 and above do not support the Blocking IO Connector")
+            throw NotImplementedError(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "TOMCAT-HTTPS-ERROR-0007",
+                    "Tomcat 8.5 and above do not support the Blocking IO Connector"))
 
     override fun configureNIO(options: TomcatHttpsOptions, node: Node): Unit =
             processCommonElements(options, node).run {}
@@ -210,10 +213,12 @@ object ConfigureTomcat85Connector : ConfigureConnector {
                             <SSLHostConfig> element
                          */
                         !connectorContainsDefaultHostname(node, this)) {
-                    throw ConfigurationOperationInvalidException("TOMCAT-HTTPS-ERROR-0008: The <Connector> " +
+                    throw ConfigurationOperationInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
+                            "TOMCAT-HTTPS-ERROR-0008" ,
+                            "The <Connector> " +
                             "listening to port ${options.port} has certificate information with the hostName of " +
                             "${this} already configured. Attempting to add a new default hostName of ${options.fixedHostname} " +
-                            "will lead to an invalid configuration.")
+                            "will lead to an invalid configuration."))
                 }
             }
 
@@ -224,10 +229,12 @@ object ConfigureTomcat85Connector : ConfigureConnector {
      */
     private fun validateProtocolSwap(node: Node, options: TomcatHttpsOptions) {
         if (protocolIsBeingSwapped(node, options)) {
-            throw ConfigurationOperationInvalidException("TOMCAT-HTTPS-ERROR-0006: The <Connector> " +
+            throw ConfigurationOperationInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "TOMCAT-HTTPS-ERROR-0006",
+                    "The <Connector> " +
                     "listening to port ${options.port} already has a certificate defined. You can not change the " +
                     "protocol from ${getConnectorProtocol(node) ?: "the empty default value"} to ${options.implementation} " +
-                    "as this may leave the existing configuration in an invalid state.")
+                    "as this may leave the existing configuration in an invalid state."))
         }
     }
 

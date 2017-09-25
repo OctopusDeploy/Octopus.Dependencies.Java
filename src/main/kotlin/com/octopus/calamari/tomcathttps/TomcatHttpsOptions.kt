@@ -85,7 +85,11 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                     Version(it.group("major").toInt(),
                             it.group("minor").toInt())
                 }.get()
-            }.getOrElse { throw VersionMatchNotSuccessfulException() }
+            }.getOrElse {
+                throw VersionMatchNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0011",
+                        "Failed to extract the version number from the information in ${tomcatVersion}"))
+            }
 
     /**
      * @return The configurator for the given Tomcat version

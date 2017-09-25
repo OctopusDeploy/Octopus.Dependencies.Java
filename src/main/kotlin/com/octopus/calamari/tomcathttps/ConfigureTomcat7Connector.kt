@@ -1,12 +1,15 @@
 package com.octopus.calamari.tomcathttps
 
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
 import org.w3c.dom.Node
 
 object ConfigureTomcat7Connector : ConfigureConnector {
     override fun configureNIO2(options: TomcatHttpsOptions, node: Node) {
-        throw NotImplementedError("TOMCAT-HTTPS-ERROR-0009: Tomcat 7.0 does not support the Non-Blocking IO 2 Connector")
+        throw NotImplementedError(ErrorMessageBuilderImpl.buildErrorMessage(
+                "TOMCAT-HTTPS-ERROR-0009",
+                "Tomcat 7.0 does not support the Non-Blocking IO 2 Connector"))
     }
 
     override fun configureBIO(options: TomcatHttpsOptions, node: Node): Unit =

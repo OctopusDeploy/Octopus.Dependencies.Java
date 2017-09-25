@@ -21,11 +21,15 @@ object FileUtilsImpl : FileUtils {
             synchronized(this) {
                 Try { File(basePath) }.map {
                     it.apply {
-                        if (!it.exists()) throw CreateFileException("Base path \"$basePath\" does not exist")
+                        if (!it.exists()) throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                "JAVA-HTTPS-ERROR-0004",
+                                "Base path \"$basePath\" does not exist"))
                     }
                 }.map {
                     it.apply {
-                        if (!it.isDirectory) throw CreateFileException("Base path \"$basePath\" is not a directory")
+                        if (!it.isDirectory) throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                "JAVA-HTTPS-ERROR-0003",
+                                "Base path \"$basePath\" is not a directory"))
                     }
                 }.map {
                     (1..Int.MAX_VALUE).asSequence().map { fileIndex ->
@@ -33,7 +37,9 @@ object FileUtilsImpl : FileUtils {
                     }.firstOption {
                         !it.exists()
                     }.getOrElse {
-                        throw CreateFileException()
+                        throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                "Failed to generate a unique file.",
+                                "Filed to generate a unique file in \"$basePath\""))
                     }
                 }.onFailure {
                     throw it
