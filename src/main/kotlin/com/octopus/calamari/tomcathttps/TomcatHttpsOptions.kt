@@ -52,6 +52,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
     val logger: Logger = Logger.getLogger("")
     val fixedHostname = if (StringUtils.isEmpty(hostName)) DEFAULT_HOST_NAME else hostName
     val isDefaultHostname = fixedHostname == DEFAULT_HOST_NAME
+    val serverXmlFile = "$tomcatLocation${File.separator}conf${File.separator}server.xml"
 
     /**
      * Attempts to get the organisation from a x500 string
@@ -167,7 +168,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
             }.onFailure {
                 throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
                         "TOMCAT-HTTPS-ERROR-0016",
-                        "The private key could not be created"), it)
+                        "The private key could not be created."), it)
             }.get()
 
     /**
@@ -190,7 +191,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
             }.onFailure {
                 throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
                         "TOMCAT-HTTPS-ERROR-0017",
-                        "The public key could not be created"), it)
+                        "The public key could not be created."), it)
             }.get()
 
     /**

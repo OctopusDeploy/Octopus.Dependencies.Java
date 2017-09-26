@@ -66,8 +66,6 @@ object XMLUtilsImpl : XMLUtils {
 
     override fun saveXML(location: String, document: Document) =
             Try {
-                FileUtilsImpl.backupFile(location)
-            }.map {
                 TransformerFactory.newInstance().apply {
                     setAttribute("indent-number", Integer(2))
                 }.newTransformer().apply {

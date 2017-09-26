@@ -9,7 +9,7 @@ import org.w3c.dom.Node
 /**
  * Represents the ways a HTTPS connector can be configured
  */
-open abstract class ConfigureConnector {
+abstract class ConfigureConnector {
     /**
      * Configures a Blocking IO HTTPS connector
      */

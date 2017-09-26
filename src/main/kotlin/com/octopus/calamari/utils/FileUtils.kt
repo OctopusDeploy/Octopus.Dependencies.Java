@@ -16,4 +16,9 @@ interface FileUtils {
      * Creates a copy of the file in the same path
      */
     fun backupFile(location: String)
+
+    /**
+     * Add a file to a zip file
+     */
+    fun addToZipFile(sourceFile: String, destination: File, folderInZip: String)
 }

@@ -2,6 +2,9 @@ package com.octopus.calamari.utils.impl
 
 import com.octopus.calamari.exception.CreateFileException
 import com.octopus.calamari.utils.FileUtils
+import net.lingala.zip4j.core.ZipFile
+import net.lingala.zip4j.model.ZipParameters
+import net.lingala.zip4j.util.Zip4jConstants
 import org.apache.commons.io.FilenameUtils
 import org.funktionale.option.firstOption
 import org.funktionale.option.getOrElse
@@ -9,6 +12,18 @@ import org.funktionale.tries.Try
 import java.io.File
 
 object FileUtilsImpl : FileUtils {
+    override fun addToZipFile(sourceFile: String, destination: File, folderInZip: String) =
+            ZipFile(destination).apply {
+                addFile(File(sourceFile), createZipParameters(folderInZip))
+            }.run { }
+
+    private fun createZipParameters(rootFolder: String) =
+            ZipParameters().apply{
+                setCompressionMethod(Zip4jConstants.COMP_DEFLATE)
+                setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL)
+                setRootFolderInZip(rootFolder)
+            }
+
     override fun backupFile(location: String) =
             File(location).run {
                 org.apache.commons.io.FileUtils.copyFile(

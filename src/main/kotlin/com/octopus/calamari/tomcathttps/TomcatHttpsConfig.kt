@@ -5,14 +5,19 @@ import com.octopus.calamari.exception.tomcat.ConfigFileNotFoundException
 import com.octopus.calamari.tomcat.TomcatDeploy
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
+import com.octopus.calamari.utils.impl.FileUtilsImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.funktionale.tries.Try
 import org.w3c.dom.Document
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
+const val BACKUP_FILE = "octopus_backup.zip"
+const val BACKUP_FOLDER_FORMAT = "yyyy.MM.dd-HH.mm.ss.S"
 
 object TomcatHttpsConfig {
 
@@ -44,8 +49,13 @@ object TomcatHttpsConfig {
             }.run {
                 processXml(this)
             }.apply {
+                FileUtilsImpl.addToZipFile(
+                        options.serverXmlFile,
+                        File(options.tomcatLocation, "conf${File.separator}$BACKUP_FILE"),
+                        SimpleDateFormat(BACKUP_FOLDER_FORMAT).format(Date()))
+            }.apply {
                 XMLUtilsImpl.saveXML(
-                        "${options.tomcatLocation}${File.separator}conf${File.separator}server.xml",
+                        options.serverXmlFile,
                         this)
             }
         }.onSuccess {
