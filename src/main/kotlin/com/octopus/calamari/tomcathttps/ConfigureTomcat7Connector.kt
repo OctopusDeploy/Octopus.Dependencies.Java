@@ -72,7 +72,7 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
                     value = options.keystorePassword
                 })
                 attributes.setNamedItem(ownerDocument.createAttribute("keyAlias").apply {
-                    value = KEYSTORE_ALIAS
+                    value = options.fixedKeystoreAlias
                 })
                 if (attributes != null) {
                     /*

@@ -22,7 +22,12 @@ class Tomcat85ArquillianNIO2Multiple(testClass: Class<*>?) : BaseArquillian(test
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
                 TomcatHttpsImplementation.NIO2,
                 "firsthost",
-                true))
+                true,
+                "",
+                "",
+                "",
+                "",
+                "myAlias"))
 
         addConnectorAttributes(SERVER_XML)
 

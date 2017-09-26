@@ -102,7 +102,11 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                       implementation: TomcatHttpsImplementation,
                       hostName: String = "",
                       defaultHost: Boolean = false,
-                      password: String = "") =
+                      password: String = "",
+                      privateKeyName: String = "",
+                      publicKeyName:String = "",
+                      keyStoreName: String = "",
+                      keyStoreAlias: String = "") =
             TomcatHttpsOptions(
                     tomcatVersionInfo,
                     "target" + File.separator + "config" + File.separator + tomcatVersion,
@@ -111,6 +115,10 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                     FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     password,
                     subject,
+                    privateKeyName,
+                    publicKeyName,
+                    keyStoreName,
+                    keyStoreAlias,
                     HTTPS_PORT,
                     implementation,
                     hostName,

@@ -1,6 +1,7 @@
 package com.octopus.calamari.tomcathttps
 
 import com.octopus.calamari.exception.CreateFileException
+import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.exception.KeystoreCreationFailedException
 import com.octopus.calamari.exception.tomcat.VersionMatchNotSuccessfulException
@@ -45,6 +46,10 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                               private val publicKey: String = "",
                               private val privateKeyPassword:String = "",
                               private val publicKeySubject: String = "",
+                              private val privateKeyName: String = "",
+                              private val publicKeyName: String = "",
+                              private val keystoreName: String = "",
+                              private val keystoreAlias: String = "",
                               val port: Int = -1,
                               val implementation: TomcatHttpsImplementation = TomcatHttpsImplementation.NONE,
                               private val hostName: String = "",
@@ -57,6 +62,7 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
     val serverXmlFile = "$tomcatLocation${File.separator}conf${File.separator}server.xml"
     val keystorePassword = if (StringUtils.isBlank(privateKeyPassword)) KEYSTORE_PASSWORD else privateKeyPassword
     val openSSLPassword = if (StringUtils.isBlank(privateKeyPassword)) Option.None else Option.Some(privateKeyPassword)
+    val fixedKeystoreAlias = if (StringUtils.isBlank(keystoreAlias)) KEYSTORE_ALIAS else keystoreAlias
 
     /**
      * Attempts to get the organisation from a x500 string
@@ -118,7 +124,7 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
      */
     fun createKeystore() =
             KeystoreUtilsImpl.createKeystore(
-                    KEYSTORE_ALIAS,
+                    fixedKeystoreAlias,
                     publicKey,
                     privateKey,
                     Option.None,
@@ -128,10 +134,7 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                         Tomcat does not support mismatched keys.
                      */
                     Option.Some(keystorePassword)).map { keystore ->
-                FileUtilsImpl.getUniqueFilename(
-                        File(tomcatLocation, "conf").absolutePath,
-                        organisation,
-                        "keystore").apply {
+                getKeystoreFile().apply {
                     FileOutputStream(this).use {
                         keystore.store(
                                 it,
@@ -150,16 +153,65 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                         "Failed to create the keystore file."), it)
             }.get()
 
+    private fun getKeyDirectory(file:String) =
+            Try {
+                File(file)
+            }.map {
+                it.apply {
+                    if (!it.parentFile.exists() || !it.parentFile.isDirectory) {
+                        throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                "TOMCAT-HTTPS-ERROR-0019",
+                                "The path \"$file\" does not reference a directory that exists"))
+                    }
+                }
+            }.onFailure { throw it }.get()
+
+    /**
+     * @return Either a unique file in the Tomcat conf folder, or the name that was supplied by the user
+     */
+    private fun getKeystoreFile():File =
+            if (StringUtils.isBlank(keystoreName)) {
+                FileUtilsImpl.getUniqueFilename(
+                        File(tomcatLocation, "conf").absolutePath,
+                        organisation,
+                        "keystore")
+            } else {
+                getKeyDirectory(keystoreName)
+            }
+
+    /**
+     * @return Either a unique file in the Tomcat conf folder, or the name that was supplied by the user
+     */
+    private fun getPrivateKeyFile():File =
+            if (StringUtils.isBlank(privateKeyName)) {
+                FileUtilsImpl.getUniqueFilename(
+                        File(tomcatLocation, "conf").absolutePath,
+                        organisation,
+                        "key")
+            } else {
+                getKeyDirectory(privateKeyName)
+            }
+
+    /**
+     * @return Either a unique file in the Tomcat conf folder, or the name that was supplied by the user
+     */
+    private fun getPublicKeyFile():File =
+            if (StringUtils.isBlank(publicKeyName)) {
+                FileUtilsImpl.getUniqueFilename(
+                        File(tomcatLocation, "conf").absolutePath,
+                        organisation,
+                        "crt")
+            } else {
+                getKeyDirectory(publicKeyName)
+            }
+
     /**
      * Creates a private PEM key file in the Tomcat conf dir
      * @return The path to the PEM file
      */
     fun createPrivateKey() =
             Try {
-                FileUtilsImpl.getUniqueFilename(
-                        File(tomcatLocation, "conf").absolutePath,
-                        organisation,
-                        "key")
+                getPrivateKeyFile()
             }.map {
                 it.apply {
                     FileUtils.write(
@@ -174,9 +226,13 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
             }.map {
                 convertPathToTomcatVariable(it.absolutePath)
             }.onFailure {
-                throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
-                        "TOMCAT-HTTPS-ERROR-0016",
-                        "The private key could not be created."), it)
+                if (it is ExpectedException) {
+                    throw it
+                } else {
+                    throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
+                            "TOMCAT-HTTPS-ERROR-0016",
+                            "The private key could not be created."), it)
+                }
             }.get()
 
     /**
@@ -185,10 +241,7 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
      */
     fun createPublicCert() =
             Try {
-                FileUtilsImpl.getUniqueFilename(
-                        File(tomcatLocation, "conf").absolutePath,
-                        organisation,
-                        "crt")
+                getPublicKeyFile()
             }.map {
                 it.apply{FileUtils.write(
                         this,
@@ -266,8 +319,12 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                                 throw IllegalArgumentException("public key can not be null")
                             }
                         },
-                        getEnvironmentVar("Private_Key_Password", ""),
+                        getEnvironmentVar("Password", ""),
                         getEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
+                        getEnvironmentVar("PrivateKeyFilename", ""),
+                        getEnvironmentVar("PublicKeyFilename", ""),
+                        getEnvironmentVar("KeystoreFilename", ""),
+                        getEnvironmentVar("KeystoreAlias", ""),
                         getEnvironmentVar("Port", "8443").apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("port can not be null")

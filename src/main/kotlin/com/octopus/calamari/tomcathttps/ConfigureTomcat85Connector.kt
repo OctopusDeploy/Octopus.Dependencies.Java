@@ -108,7 +108,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                         value = options.keystorePassword
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keyAlias").apply {
-                        value = KEYSTORE_ALIAS
+                        value = options.fixedKeystoreAlias
                     })
                 }
             }
@@ -120,18 +120,31 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
             node.apply {
                 cleanUpOldAttributes(this)
             }.apply {
-                attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply {
-                    nodeValue = options.createPrivateKey()
-                })
-                attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply {
-                    nodeValue = options.createPublicCert()
-                })
-                options.openSSLPassword.forEach {
-                    attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyPassword").apply {
-                        nodeValue = it
+                if (options.implementation == TomcatHttpsImplementation.APR) {
+                    attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply {
+                        nodeValue = options.createPrivateKey()
+                    })
+                    attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply {
+                        nodeValue = options.createPublicCert()
+                    })
+                    options.openSSLPassword.forEach {
+                        attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyPassword").apply {
+                            nodeValue = it
+                        })
+                    }
+                    attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = "RSA" })
+                } else {
+                    attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystoreFile").apply {
+                        value = options.createKeystore()
+                    })
+                    attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystorePassword").apply {
+                        value = options.keystorePassword
+                    })
+                    attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeyAlias").apply {
+                        value = options.fixedKeystoreAlias
                     })
                 }
-                attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = "RSA" })
+
             }
 
     /**

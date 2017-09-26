@@ -33,6 +33,11 @@ class Tomcat85ArquillianNIOMultiple(testClass: Class<*>?) : BaseArquillian(testC
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
                 TomcatHttpsImplementation.NIO,
                 "secondhost",
-                false))
+                false,
+                "",
+                "",
+                "",
+                "",
+                "blah"))
     }
 }
