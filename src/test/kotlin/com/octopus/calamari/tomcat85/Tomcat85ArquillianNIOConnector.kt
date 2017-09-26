@@ -22,14 +22,10 @@ class Tomcat85ArquillianNIOConnector(testClass: Class<*>?) : BaseArquillian(test
 
         addNIOConnectorCertConfig(SERVER_XML, "default")
 
-        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+        TomcatHttpsConfig.configureHttps(createOptions(
                 TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                "Catalina",
-                FileUtils.readFileToString(File(Tomcat85ArquillianNIOConnector::class.java.getResource("/octopus.key").file), "UTF-8"),
-                FileUtils.readFileToString(File(Tomcat85ArquillianNIOConnector::class.java.getResource("/octopus.crt").file), "UTF-8"),
+                TOMCAT_VERSION,
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                HTTPS_PORT,
                 TomcatHttpsImplementation.NIO,
                 "default",
                 false))

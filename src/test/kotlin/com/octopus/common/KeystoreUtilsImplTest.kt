@@ -1,5 +1,6 @@
 package com.octopus.common
 
+import com.octopus.calamari.utils.impl.KeyUtilsImpl
 import com.octopus.calamari.utils.impl.KeystoreUtilsImpl
 import org.junit.Test
 
@@ -63,11 +64,11 @@ const val EXAMPLE_PKCS8 = "-----BEGIN PRIVATE KEY-----\n" +
 class KeystoreUtilsImplTest {
     @Test
     fun testPKCS1() {
-        KeystoreUtilsImpl.createKey(EXAMPLE_PKCS1).get()
+        KeyUtilsImpl.createKey(EXAMPLE_PKCS1).get()
     }
 
     @Test
     fun testPKCS8() {
-        KeystoreUtilsImpl.createKey(EXAMPLE_PKCS8).get()
+        KeyUtilsImpl.createKey(EXAMPLE_PKCS8).get()
     }
 }

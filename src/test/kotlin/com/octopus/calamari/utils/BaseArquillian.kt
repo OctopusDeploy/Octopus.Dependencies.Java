@@ -1,9 +1,12 @@
 package com.octopus.calamari.utils
 
+import com.octopus.calamari.tomcat7.TOMCAT_VERSION
 import com.octopus.calamari.tomcathttps.AttributeDatabase
 import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation
+import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.collections4.iterators.NodeListIterator
+import org.apache.commons.io.FileUtils
 import org.jboss.arquillian.junit.Arquillian
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
@@ -92,4 +95,24 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
             }.apply {
                 XMLUtilsImpl.saveXML(xmlFile, this)
             }.run { }
+
+    fun createOptions(tomcatVersionInfo: String,
+                      tomcatVersion: String,
+                      subject: String,
+                      implementation: TomcatHttpsImplementation,
+                      hostName: String = "",
+                      defaultHost: Boolean = false,
+                      password: String = "") =
+            TomcatHttpsOptions(
+                    tomcatVersionInfo,
+                    "target" + File.separator + "config" + File.separator + tomcatVersion,
+                    "Catalina",
+                    FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
+                    FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                    password,
+                    subject,
+                    HTTPS_PORT,
+                    implementation,
+                    hostName,
+                    defaultHost)
 }

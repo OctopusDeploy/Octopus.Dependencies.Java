@@ -25,14 +25,10 @@ class Tomcat85ArquillianAPRInvalidOverwrite(testClass: Class<*>?) : BaseArquilli
         /*
             Configure with NIO first to make sure we transform between implementations correctly
          */
-        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+        TomcatHttpsConfig.configureHttps(createOptions(
                 TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                "Catalina",
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                TOMCAT_VERSION,
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                HTTPS_PORT,
                 TomcatHttpsImplementation.NIO,
                 "somehost",
                 false))
@@ -45,14 +41,10 @@ class Tomcat85ArquillianAPRInvalidOverwrite(testClass: Class<*>?) : BaseArquilli
             after the protocol swap.
          */
         Try {
-            TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+            TomcatHttpsConfig.configureHttps(createOptions(
                     TOMCAT_VERSION_INFO,
-                    "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                    "Catalina",
-                    FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                    FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                    TOMCAT_VERSION,
                     "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                    HTTPS_PORT,
                     TomcatHttpsImplementation.APR,
                     "somehost",
                     true))

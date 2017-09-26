@@ -16,29 +16,17 @@ class Tomcat7ArquillianNIO(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {
         removeConnector(SERVER_XML, HTTPS_PORT)
 
-        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+        TomcatHttpsConfig.configureHttps(createOptions(
                 TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                "Catalina",
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                TOMCAT_VERSION,
                 "O=ACME Pty Ltd,ST=Some-State,C=AU",
-                HTTPS_PORT,
-                TomcatHttpsImplementation.NIO,
-                "",
-                false))
+                TomcatHttpsImplementation.NIO))
 
-        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+        TomcatHttpsConfig.configureHttps(createOptions(
                 TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                "Catalina",
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                TOMCAT_VERSION,
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                HTTPS_PORT,
-                TomcatHttpsImplementation.NIO,
-                "",
-                false))
+                TomcatHttpsImplementation.NIO))
 
         addConnectorAttributes(SERVER_XML)
     }

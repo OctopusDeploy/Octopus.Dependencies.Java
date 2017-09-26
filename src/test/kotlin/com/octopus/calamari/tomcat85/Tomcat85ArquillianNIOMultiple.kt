@@ -16,28 +16,21 @@ class Tomcat85ArquillianNIOMultiple(testClass: Class<*>?) : BaseArquillian(testC
     init {
         removeConnector(SERVER_XML, HTTPS_PORT)
 
-        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+        TomcatHttpsConfig.configureHttps(createOptions(
                 TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                "Catalina",
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                TOMCAT_VERSION,
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                HTTPS_PORT,
                 TomcatHttpsImplementation.NIO,
                 "firsthost",
-                true))
+                true,
+                "mypassword"))
 
         addConnectorAttributes(SERVER_XML)
 
-        TomcatHttpsConfig.configureHttps(TomcatHttpsOptions(
+        TomcatHttpsConfig.configureHttps(createOptions(
                 TOMCAT_VERSION_INFO,
-                "target" + File.separator + "config" + File.separator + TOMCAT_VERSION,
-                "Catalina",
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                TOMCAT_VERSION,
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
-                HTTPS_PORT,
                 TomcatHttpsImplementation.NIO,
                 "secondhost",
                 false))

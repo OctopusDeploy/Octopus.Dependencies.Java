@@ -105,7 +105,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                         value = options.createKeystore()
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keystorePass").apply {
-                        value = KEYSTORE_PASSWORD
+                        value = options.keystorePassword
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keyAlias").apply {
                         value = KEYSTORE_ALIAS
@@ -126,6 +126,11 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                 attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply {
                     nodeValue = options.createPublicCert()
                 })
+                options.openSSLPassword.forEach {
+                    attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyPassword").apply {
+                        nodeValue = it
+                    })
+                }
                 attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = "RSA" })
             }
 

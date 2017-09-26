@@ -19,8 +19,8 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
                 attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
                     value = options.implementation.className.get()
                 })
-                configureBIOAndNIO(options, this)
                 configureCommonIO(options, this)
+                configureBIOAndNIO(options, this)
             }.run { Unit }
 
 
@@ -31,8 +31,8 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
                 attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
                     nodeValue = options.implementation.className.get()
                 })
-                configureBIOAndNIO(options, this)
                 configureCommonIO(options, this)
+                configureBIOAndNIO(options, this)
             }.run { Unit }
 
 
@@ -40,30 +40,37 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
             node.apply {
                 validateProtocolSwap(node, options)
             }.apply {
-                attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
-                    nodeValue = options.implementation.className.get()
-                })
-                attributes.setNamedItem(node.ownerDocument.createAttribute("SSLCertificateKeyFile").apply {
-                    nodeValue = options.createPrivateKey()
-                })
-                attributes.setNamedItem(node.ownerDocument.createAttribute("SSLCertificateFile").apply {
-                    nodeValue = options.createPublicCert()
-                })
+                configureCommonIO(options, this)
                 Try { attributes.removeNamedItem("keystoreFile") }
                 Try { attributes.removeNamedItem("keystorePass") }
                 Try { attributes.removeNamedItem("keyAlias") }
-                configureCommonIO(options, this)
+            }.apply {
+                attributes.setNamedItem(ownerDocument.createAttribute("protocol").apply {
+                    nodeValue = options.implementation.className.get()
+                })
+                attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateKeyFile").apply {
+                    nodeValue = options.createPrivateKey()
+                })
+                attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateFile").apply {
+                    nodeValue = options.createPublicCert()
+                })
+                options.openSSLPassword.forEach {
+                    attributes.setNamedItem(ownerDocument.createAttribute("SSLPassword").apply {
+                        nodeValue = it
+                    })
+                }
+
             }.run { Unit }
 
     private fun configureBIOAndNIO(options: TomcatHttpsOptions, node: Node) =
             node.apply {
-                attributes.setNamedItem(node.ownerDocument.createAttribute("keystoreFile").apply {
+                attributes.setNamedItem(ownerDocument.createAttribute("keystoreFile").apply {
                     value = options.createKeystore()
                 })
-                attributes.setNamedItem(node.ownerDocument.createAttribute("keystorePass").apply {
-                    value = KEYSTORE_PASSWORD
+                attributes.setNamedItem(ownerDocument.createAttribute("keystorePass").apply {
+                    value = options.keystorePassword
                 })
-                attributes.setNamedItem(node.ownerDocument.createAttribute("keyAlias").apply {
+                attributes.setNamedItem(ownerDocument.createAttribute("keyAlias").apply {
                     value = KEYSTORE_ALIAS
                 })
                 if (attributes != null) {

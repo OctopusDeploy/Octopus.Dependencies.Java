@@ -8,6 +8,7 @@ import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.Version
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.FileUtilsImpl
+import com.octopus.calamari.utils.impl.KeyUtilsImpl
 import com.octopus.calamari.utils.impl.KeystoreUtilsImpl
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
@@ -37,15 +38,16 @@ const val DEFAULT_HOST_NAME = "_default_"
 /**
  * Options that relate to Tomcat HTTPS configuration
  */
-data class TomcatHttpsOptions(val tomcatVersion: String = "",
+data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                               val tomcatLocation: String = "",
                               val service: String = "",
-                              val privateKey: String = "",
-                              val publicKey: String = "",
-                              val publicKeySubject: String = "",
+                              private val privateKey: String = "",
+                              private val publicKey: String = "",
+                              private val privateKeyPassword:String = "",
+                              private val publicKeySubject: String = "",
                               val port: Int = -1,
                               val implementation: TomcatHttpsImplementation = TomcatHttpsImplementation.NONE,
-                              val hostName: String = "",
+                              private val hostName: String = "",
                               val default: Boolean = false,
                               private val alreadyDumped: Boolean = false) {
 
@@ -53,6 +55,8 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
     val fixedHostname = if (StringUtils.isEmpty(hostName)) DEFAULT_HOST_NAME else hostName
     val isDefaultHostname = fixedHostname == DEFAULT_HOST_NAME
     val serverXmlFile = "$tomcatLocation${File.separator}conf${File.separator}server.xml"
+    val keystorePassword = if (StringUtils.isBlank(privateKeyPassword)) KEYSTORE_PASSWORD else privateKeyPassword
+    val openSSLPassword = if (StringUtils.isBlank(privateKeyPassword)) Option.None else Option.Some(privateKeyPassword)
 
     /**
      * Attempts to get the organisation from a x500 string
@@ -123,7 +127,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                         needs to be the same as the keystore password itself.
                         Tomcat does not support mismatched keys.
                      */
-                    Option.Some(KEYSTORE_PASSWORD)).map { keystore ->
+                    Option.Some(keystorePassword)).map { keystore ->
                 FileUtilsImpl.getUniqueFilename(
                         File(tomcatLocation, "conf").absolutePath,
                         organisation,
@@ -135,7 +139,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                                     This needs to match the password used to save
                                     the key above.
                                  */
-                                KEYSTORE_PASSWORD.toCharArray())
+                                keystorePassword.toCharArray())
                     }
                 }.run {
                     convertPathToTomcatVariable(this.absolutePath)
@@ -160,7 +164,11 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                 it.apply {
                     FileUtils.write(
                             it,
-                            privateKey,
+                            openSSLPassword.map {
+                                KeyUtilsImpl.addPasswordToPEM(privateKey, it)
+                                        .onFailure { throw it }
+                                        .get()
+                            }.getOrElse { privateKey },
                             StandardCharsets.US_ASCII)
                 }
             }.map {
@@ -258,6 +266,7 @@ data class TomcatHttpsOptions(val tomcatVersion: String = "",
                                 throw IllegalArgumentException("public key can not be null")
                             }
                         },
+                        getEnvironmentVar("Private_Key_Password", ""),
                         getEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
                         getEnvironmentVar("Port", "8443").apply {
                             if (StringUtils.isBlank(this)) {
