@@ -44,6 +44,7 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
                 Try { attributes.removeNamedItem("keystoreFile") }
                 Try { attributes.removeNamedItem("keystorePass") }
                 Try { attributes.removeNamedItem("keyAlias") }
+                Try { attributes.removeNamedItem("SSLPassword") }
             }.apply {
                 attributes.setNamedItem(ownerDocument.createAttribute("protocol").apply {
                     nodeValue = options.implementation.className.get()

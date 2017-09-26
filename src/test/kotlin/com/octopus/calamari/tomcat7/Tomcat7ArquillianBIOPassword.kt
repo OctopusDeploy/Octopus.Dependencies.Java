@@ -24,7 +24,8 @@ class Tomcat7ArquillianBIOPassword(testClass: Class<*>?) : BaseArquillian(testCl
                 TOMCAT_VERSION,
                 "O=Internet Widgits Pty Ltd,ST=Some-State,C=AU",
                 TomcatHttpsImplementation.BIO,
-
+                "",
+                false,
                 "customPass1234"))
 
         addConnectorAttributes(SERVER_XML)
