@@ -76,11 +76,12 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
                 })
                 if (attributes != null) {
                     /*
-                        SSL specific attributes are not valid for JSSE
+                        SSL specific attributes are not valid for JSSE (SSLEnabled is the exception)
                         https://tomcat.apache.org/tomcat-7.0-doc/config/http.html#SSL_Support_-_APR/Native
                      */
                     (0 until attributes.length)
                             .filter { StringUtils.startsWith(attributes.item(it)?.nodeName, "SSL") }
+                            .filter { attributes.item(it)?.nodeName != "SSLEnabled"}
                             .forEach { attributes.removeNamedItem(attributes.item(it).nodeName) }
                 }
             }
@@ -98,6 +99,5 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
                 Try { attributes.removeNamedItem("keyPass") }
                 Try { attributes.removeNamedItem("keystoreProvider") }
                 Try { attributes.removeNamedItem("keystoreType") }
-                Try { attributes.removeNamedItem("SSLPassword") }
             }
 }
