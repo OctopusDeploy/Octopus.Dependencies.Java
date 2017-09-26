@@ -100,6 +100,11 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                     attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateFile").apply {
                         nodeValue = options.createPublicCert()
                     })
+                    options.openSSLPassword.forEach {
+                        attributes.setNamedItem(ownerDocument.createAttribute("SSLPassword").apply {
+                            nodeValue = it
+                        })
+                    }
                 } else {
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keystoreFile").apply {
                         value = options.createKeystore()
