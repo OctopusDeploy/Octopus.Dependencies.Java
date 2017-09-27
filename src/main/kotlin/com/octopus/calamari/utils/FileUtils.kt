@@ -1,5 +1,8 @@
 package com.octopus.calamari.utils
 
+import com.octopus.calamari.exception.CreateFileException
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
+import org.funktionale.tries.Try
 import java.io.File
 
 interface FileUtils {
@@ -21,4 +24,10 @@ interface FileUtils {
      * Add a file to a zip file
      */
     fun addToZipFile(sourceFile: String, destination: File, folderInZip: String)
+
+    /**
+     * @param The file to check
+     * @return The File that represents the new file
+     */
+    fun validateFileParentDirectory(file:String):File
 }

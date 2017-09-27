@@ -3,34 +3,25 @@ package com.octopus.calamari.tomcathttps
 import com.octopus.calamari.exception.CreateFileException
 import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.InvalidOptionsException
-import com.octopus.calamari.exception.KeystoreCreationFailedException
 import com.octopus.calamari.exception.tomcat.VersionMatchNotSuccessfulException
+import com.octopus.calamari.utils.CERTIFICATE_FILE_NAME
+import com.octopus.calamari.utils.CertificateDataClass
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.Version
-import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
-import com.octopus.calamari.utils.impl.FileUtilsImpl
-import com.octopus.calamari.utils.impl.KeyUtilsImpl
-import com.octopus.calamari.utils.impl.KeystoreUtilsImpl
+import com.octopus.calamari.utils.impl.*
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.funktionale.option.Option
-import org.funktionale.option.firstOption
 import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
 import java.io.File
-import java.io.FileOutputStream
 import java.lang.IllegalArgumentException
 import java.nio.charset.StandardCharsets
-import java.util.*
 import java.util.logging.Logger
 import java.util.regex.Pattern
-import javax.naming.ldap.LdapName
 
-const val KEYSTORE_ALIAS = "octopus"
-const val KEYSTORE_PASSWORD = "changeit"
-const val CERTIFICATE_FILE_NAME = "octopus"
-const val FILENAME_REPLACE_RE = "[^A-Za-z0-9_.]"
-const val FILENAME_REPLACE_STRING = "_"
+const val TOMCAT_DEFAULT_KEYSTORE_ALIAS = "octopus"
+const val TOMCAT_DEFAULT_KEYSTORE_PASSWORD = "changeit"
 /**
  * An empty hostname is equivalent to this host name
  */
@@ -39,45 +30,31 @@ const val DEFAULT_HOST_NAME = "_default_"
 /**
  * Options that relate to Tomcat HTTPS configuration
  */
-data class TomcatHttpsOptions(private val tomcatVersion: String = "",
+data class TomcatHttpsOptions(override val privateKey: String = "",
+                              override val publicKey: String = "",
+                              override val privateKeyPassword:String = "",
+                              override val publicKeySubject: String = "",
+                              val privateKeyName: String = "",
+                              val publicKeyName: String = "",
+                              override val keystoreName: String = "",
+                              override val keystoreAlias: String = "",
+                              private val tomcatVersion: String = "",
                               val tomcatLocation: String = "",
                               val service: String = "",
-                              private val privateKey: String = "",
-                              private val publicKey: String = "",
-                              private val privateKeyPassword:String = "",
-                              private val publicKeySubject: String = "",
-                              private val privateKeyName: String = "",
-                              private val publicKeyName: String = "",
-                              private val keystoreName: String = "",
-                              private val keystoreAlias: String = "",
                               val port: Int = -1,
                               val implementation: TomcatHttpsImplementation = TomcatHttpsImplementation.NONE,
                               private val hostName: String = "",
                               val default: Boolean = false,
-                              private val alreadyDumped: Boolean = false) {
+                              private val alreadyDumped: Boolean = false) : CertificateDataClass {
+
+    override val fixedKeystoreAlias = if (StringUtils.isBlank(keystoreAlias)) TOMCAT_DEFAULT_KEYSTORE_ALIAS else keystoreAlias
+    override val fixedPrivateKeyPassword = if (StringUtils.isBlank(privateKeyPassword)) TOMCAT_DEFAULT_KEYSTORE_PASSWORD else privateKeyPassword
 
     val logger: Logger = Logger.getLogger("")
     val fixedHostname = if (StringUtils.isEmpty(hostName)) DEFAULT_HOST_NAME else hostName
     val isDefaultHostname = fixedHostname == DEFAULT_HOST_NAME
     val serverXmlFile = "$tomcatLocation${File.separator}conf${File.separator}server.xml"
-    val keystorePassword = if (StringUtils.isBlank(privateKeyPassword)) KEYSTORE_PASSWORD else privateKeyPassword
     val openSSLPassword = if (StringUtils.isBlank(privateKeyPassword)) Option.None else Option.Some(privateKeyPassword)
-    val fixedKeystoreAlias = if (StringUtils.isBlank(keystoreAlias)) KEYSTORE_ALIAS else keystoreAlias
-
-    /**
-     * Attempts to get the organisation from a x500 string
-     */
-    private val organisation: String
-        get() =
-            Try {
-                LdapName(publicKeySubject).rdns.filter {
-                    it.type == "O"
-                }.map {
-                    Objects.toString(it.value)
-                }.firstOption().getOrElse {
-                    CERTIFICATE_FILE_NAME
-                }.replace(Regex(FILENAME_REPLACE_RE), FILENAME_REPLACE_STRING).trim()
-            }.getOrElse { CERTIFICATE_FILE_NAME }
     private val serverPattern: Pattern = Pattern.compile("Server number:\\s+(?<major>\\d+)\\.(?<minor>\\d+)")
 
     init {
@@ -118,65 +95,16 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
             }
 
     /**
-     * Constructs a Java keystore with the public and private keys inside the
-     * Tomcat config folder, and returns the path that can be used in the server.xml file
-     * @return The filename that references the keystore relative to the Tomcat installation
-     */
-    fun createKeystore() =
-            KeystoreUtilsImpl.createKeystore(
-                    fixedKeystoreAlias,
-                    publicKey,
-                    privateKey,
-                    Option.None,
-                    /*
-                        The password assigned to the key inside the keystore
-                        needs to be the same as the keystore password itself.
-                        Tomcat does not support mismatched keys.
-                     */
-                    Option.Some(keystorePassword)).map { keystore ->
-                getKeystoreFile().apply {
-                    FileOutputStream(this).use {
-                        keystore.store(
-                                it,
-                                /*
-                                    This needs to match the password used to save
-                                    the key above.
-                                 */
-                                keystorePassword.toCharArray())
-                    }
-                }.run {
-                    convertPathToTomcatVariable(this.absolutePath)
-                }
-            }.onFailure {
-                throw KeystoreCreationFailedException(ErrorMessageBuilderImpl.buildErrorMessage(
-                        "TOMCAT-HTTPS-ERROR-0015",
-                        "Failed to create the keystore file."), it)
-            }.get()
-
-    private fun getKeyDirectory(file:String) =
-            Try {
-                File(file)
-            }.map {
-                it.apply {
-                    if (!it.parentFile.exists() || !it.parentFile.isDirectory) {
-                        throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
-                                "TOMCAT-HTTPS-ERROR-0019",
-                                "The path \"$file\" does not reference a directory that exists"))
-                    }
-                }
-            }.onFailure { throw it }.get()
-
-    /**
      * @return Either a unique file in the Tomcat conf folder, or the name that was supplied by the user
      */
-    private fun getKeystoreFile():File =
+    private fun getKeystoreFile(): File =
             if (StringUtils.isBlank(keystoreName)) {
                 FileUtilsImpl.getUniqueFilename(
                         File(tomcatLocation, "conf").absolutePath,
                         organisation,
                         "keystore")
             } else {
-                getKeyDirectory(keystoreName)
+                FileUtilsImpl.validateFileParentDirectory(keystoreName)
             }
 
     /**
@@ -189,7 +117,7 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                         organisation,
                         "key")
             } else {
-                getKeyDirectory(privateKeyName)
+                FileUtilsImpl.validateFileParentDirectory(privateKeyName)
             }
 
     /**
@@ -202,8 +130,13 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                         organisation,
                         "crt")
             } else {
-                getKeyDirectory(publicKeyName)
+                FileUtilsImpl.validateFileParentDirectory(publicKeyName)
             }
+
+    override fun createKeystore() =
+            KeystoreUtilsImpl.saveKeystore(this, getKeystoreFile()).map {
+                convertPathToTomcatVariable(it.absolutePath)
+            }.get()
 
     /**
      * Creates a private PEM key file in the Tomcat conf dir
@@ -298,17 +231,6 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
          */
         fun fromEnvironmentVars(): TomcatHttpsOptions =
                 TomcatHttpsOptions(
-                        getEnvironmentVar("Version", "").apply {
-                            if (StringUtils.isBlank(this)) {
-                                throw IllegalArgumentException("version can not be null")
-                            }
-                        },
-                        getEnvironmentVar("Location", "").trim().apply {
-                            if (StringUtils.isBlank(this)) {
-                                throw IllegalArgumentException("location can not be null")
-                            }
-                        },
-                        getEnvironmentVar("Service", ""),
                         getEnvironmentVar("Private_Key", "").apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("private key can not be null")
@@ -325,6 +247,17 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                         getEnvironmentVar("PublicKeyFilename", "").trim(),
                         getEnvironmentVar("KeystoreFilename", "").trim(),
                         getEnvironmentVar("KeystoreAlias", "").trim(),
+                        getEnvironmentVar("Version", "").apply {
+                            if (StringUtils.isBlank(this)) {
+                                throw IllegalArgumentException("version can not be null")
+                            }
+                        },
+                        getEnvironmentVar("Location", "").trim().apply {
+                            if (StringUtils.isBlank(this)) {
+                                throw IllegalArgumentException("location can not be null")
+                            }
+                        },
+                        getEnvironmentVar("Service", ""),
                         getEnvironmentVar("Port", "8443").apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("port can not be null")
@@ -351,6 +284,7 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
     fun toSantisisedString(): String {
         return this.copy(
                 privateKey = "******",
+                privateKeyPassword = "******",
                 alreadyDumped = true).toString()
     }
 }

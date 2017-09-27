@@ -128,9 +128,6 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                       keyStoreName: String = "",
                       keyStoreAlias: String = "") =
             TomcatHttpsOptions(
-                    tomcatVersionInfo,
-                    "target" + File.separator + "config" + File.separator + tomcatVersion,
-                    "Catalina",
                     FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     password,
@@ -139,6 +136,9 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                     publicKeyName,
                     keyStoreName,
                     keyStoreAlias,
+                    tomcatVersionInfo,
+                    "target" + File.separator + "config" + File.separator + tomcatVersion,
+                    "Catalina",
                     HTTPS_PORT,
                     implementation,
                     hostName,

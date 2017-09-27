@@ -69,7 +69,7 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
                     value = options.createKeystore()
                 })
                 attributes.setNamedItem(ownerDocument.createAttribute("keystorePass").apply {
-                    value = options.keystorePassword
+                    value = options.fixedPrivateKeyPassword
                 })
                 attributes.setNamedItem(ownerDocument.createAttribute("keyAlias").apply {
                     value = options.fixedKeystoreAlias

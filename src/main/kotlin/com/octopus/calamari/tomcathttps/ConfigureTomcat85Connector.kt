@@ -110,7 +110,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                         value = options.createKeystore()
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keystorePass").apply {
-                        value = options.keystorePassword
+                        value = options.fixedPrivateKeyPassword
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keyAlias").apply {
                         value = options.fixedKeystoreAlias
@@ -143,7 +143,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                         value = options.createKeystore()
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystorePassword").apply {
-                        value = options.keystorePassword
+                        value = options.fixedPrivateKeyPassword
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeyAlias").apply {
                         value = options.fixedKeystoreAlias

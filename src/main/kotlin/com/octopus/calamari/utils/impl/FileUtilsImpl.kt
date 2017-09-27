@@ -19,9 +19,9 @@ object FileUtilsImpl : FileUtils {
 
     private fun createZipParameters(rootFolder: String) =
             ZipParameters().apply{
-                setCompressionMethod(Zip4jConstants.COMP_DEFLATE)
-                setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL)
-                setRootFolderInZip(rootFolder)
+                compressionMethod = Zip4jConstants.COMP_DEFLATE
+                compressionLevel = Zip4jConstants.DEFLATE_LEVEL_NORMAL
+                rootFolderInZip = rootFolder
             }
 
     override fun backupFile(location: String) =
@@ -72,5 +72,18 @@ object FileUtilsImpl : FileUtils {
                     throw it
                 }.get()
             }
+
+    override fun validateFileParentDirectory(file:String) =
+            Try {
+                File(file)
+            }.map {
+                it.apply {
+                    if (!it.parentFile.exists() || !it.parentFile.isDirectory) {
+                        throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                "TOMCAT-HTTPS-ERROR-0019",
+                                "The path \"$file\" does not reference a directory that exists"))
+                    }
+                }
+            }.onFailure { throw it }.get()
 
 }
