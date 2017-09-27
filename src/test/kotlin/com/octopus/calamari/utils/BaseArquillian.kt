@@ -78,6 +78,26 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                 XMLUtilsImpl.saveXML(xmlFile, this)
             }.run { }
 
+    fun addAPRConnectorCertConfig(xmlFile: String):Unit =
+            File(xmlFile).run {
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
+            }.apply {
+                XMLUtilsImpl.createOrReturnElement(this.documentElement.getElementsByTagName("Service").item(0),
+                        "Connector",
+                        mapOf(Pair("port", "$HTTPS_PORT"))).get().apply {
+                    attributes.setNamedItem(ownerDocument.createAttribute("protocol")
+                            .apply { nodeValue = TomcatHttpsImplementation.APR.className.get() })
+                    attributes.setNamedItem(ownerDocument.createAttribute(CERTIFICATE_KEY_FILE)
+                            .apply { nodeValue = CERTIFICATE_KEY_FILE_VALUE })
+                    /*
+                        Add an empty text node to simulate a line break
+                     */
+                    appendChild(ownerDocument.createTextNode("\n"))
+                }
+            }.apply {
+                XMLUtilsImpl.saveXML(xmlFile, this)
+            }.run { }
+
     /**
      * Deletes the <Connector> element with the matching port
      */
