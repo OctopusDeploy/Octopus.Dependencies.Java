@@ -32,7 +32,9 @@ class StandaloneElytronHttpsConfigurator : WildflyHttpsConfigurator {
                              */
                             this.runCommandExpectSuccess(
                                     "/subsystem=elytron/key-store=${KEYSTORE_NAME}:add(" +
-                                            "path=${options.createKeystore()},credential-reference={clear-text=${options.fixedPrivateKeyPassword}},type=JKS)",
+                                            "path=\"${options.createKeystore().run(options::escapeStringForCLICommand)}\", " +
+                                            "credential-reference={clear-text=\"${options.fixedPrivateKeyPassword.run(options::escapeStringForCLICommand)}\"}, " +
+                                            "type=JKS)",
                                     "Adding the Elytron key store",
                                     "WILDFLY-HTTPS-ERROR-0009",
                                     "There was an error adding the Elytron key store.")
@@ -41,12 +43,14 @@ class StandaloneElytronHttpsConfigurator : WildflyHttpsConfigurator {
                                 Configure the keystore
                              */
                             this.runCommandExpectSuccess(
-                                    "/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(name=path, value=${options.createKeystore()})",
+                                    "/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(name=path, " +
+                                            "value=\"${options.createKeystore().run(options::escapeStringForCLICommand)}\")",
                                     "Configuring the Elytron key store path",
                                     "WILDFLY-HTTPS-ERROR-0010",
                                     "There was an error configuring the Elytron keystore path.")
                             this.runCommandExpectSuccess(
-                                    "/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(name=credential-reference, value={clear-text=${options.fixedPrivateKeyPassword}})",
+                                    "/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(name=credential-reference, " +
+                                            "value={clear-text=\"${options.fixedPrivateKeyPassword.run(options::escapeStringForCLICommand)}\"})",
                                     "Configuring the Elytron key store credentials",
                                     "WILDFLY-HTTPS-ERROR-0010",
                                     "There was an error configuring the Elytron keystore credentials.")
@@ -114,14 +118,21 @@ class StandaloneElytronHttpsConfigurator : WildflyHttpsConfigurator {
                         }
                     }
         }.apply {
-            /*
-            this.enterBatchMode()
-            this.runCommandExpectSuccess(
-                    "/subsystem=undertow/server=default-server/https-listener=https:undefine-attribute(name=security-realm)",
-                    "Removing the legacy security realm",
-                    "WILDFLY-HTTPS-ERROR-0005",
-                    "There was an error removing the legacy security realm."
-            )
+            this.runCommand(
+                    "/subsystem=undertow/server=default-server/https-listener=https:read-attribute(name=security-realm)",
+                    "Reading existing security name")
+                    .onSuccess {
+                        this.enterBatchMode()
+                        if (it.isSuccess) {
+                            this.runCommandExpectSuccess(
+                                    "/subsystem=undertow/server=default-server/https-listener=https:undefine-attribute(name=security-realm)",
+                                    "Removing the legacy security realm",
+                                    "WILDFLY-HTTPS-ERROR-0005",
+                                    "There was an error removing the legacy security realm."
+                            )
+                        }
+                    }
+
             this.runCommandExpectSuccess(
                     "/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context,value=${SERVER_SECURITY_CONTEXT_NAME})",
                     "Adding the Elytron security context",
@@ -131,7 +142,6 @@ class StandaloneElytronHttpsConfigurator : WildflyHttpsConfigurator {
             this.runBatch(
                     "WILDFLY-HTTPS-ERROR-0007",
                     "There was an error with the batched operation to remove the legacy security realm and add the Elytron security context.")
-                    */
         }.apply {
             this.runCommandExpectSuccess(
                     "reload",

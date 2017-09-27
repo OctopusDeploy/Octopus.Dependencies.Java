@@ -41,6 +41,10 @@ data class WildflyHttpsOptions(override val controller: String = "",
         }
     }
 
+    fun escapeStringForCLICommand(input:String) =
+        input.replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+
     override fun createKeystore(): String =
             KeystoreUtilsImpl.saveKeystore(
                     this, getKeystoreFile()).get().absolutePath
