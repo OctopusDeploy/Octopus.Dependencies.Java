@@ -4,8 +4,8 @@ import com.octopus.calamari.exception.CreateFileException
 import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.exception.tomcat.VersionMatchNotSuccessfulException
-import com.octopus.calamari.utils.CERTIFICATE_FILE_NAME
-import com.octopus.calamari.utils.CertificateDataClass
+import com.octopus.calamari.options.CERTIFICATE_FILE_NAME
+import com.octopus.calamari.options.CertificateDataClass
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.Version
 import com.octopus.calamari.utils.impl.*
@@ -34,8 +34,8 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                               override val publicKey: String = "",
                               override val privateKeyPassword:String = "",
                               override val publicKeySubject: String = "",
-                              val privateKeyName: String = "",
-                              val publicKeyName: String = "",
+                              private val privateKeyName: String = "",
+                              private val publicKeyName: String = "",
                               override val keystoreName: String = "",
                               override val keystoreAlias: String = "",
                               private val tomcatVersion: String = "",

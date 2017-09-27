@@ -6,6 +6,7 @@ import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
+import com.octopus.calamari.wildfly.WildflyService
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -32,6 +33,6 @@ object WildflyHttpsConfig {
     }
 
     fun configureHttps(options: WildflyHttpsOptions) {
-
+        WildflyService().login(options)
     }
 }

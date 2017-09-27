@@ -1,7 +1,7 @@
 package com.octopus.calamari.utils.impl
 
 import com.octopus.calamari.exception.KeystoreCreationFailedException
-import com.octopus.calamari.utils.CertificateDataClass
+import com.octopus.calamari.options.CertificateDataClass
 import com.octopus.calamari.utils.KeystoreUtils
 import org.funktionale.option.Option
 import org.funktionale.option.getOrElse

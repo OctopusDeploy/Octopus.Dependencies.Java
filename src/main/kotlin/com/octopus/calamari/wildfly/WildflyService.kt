@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions.checkState
 import com.octopus.calamari.exception.wildfly.CommandNotSuccessfulException
 import com.octopus.calamari.exception.wildfly.LoginFailException
 import com.octopus.calamari.exception.wildfly.LoginTimeoutException
+import com.octopus.calamari.options.WildflyDataClass
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.funktionale.tries.Try
@@ -35,7 +36,7 @@ class WildflyService {
             return jbossCli?.commandContext?.isDomainMode ?: false
         }
 
-    fun login(options: WildflyOptions): WildflyService {
+    fun login(options: WildflyDataClass): WildflyService {
         synchronized(jbossCli) {
             /*
                 There are cases where the login will stall. If the wildfly-elytron package is not

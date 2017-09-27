@@ -1,5 +1,6 @@
 package com.octopus.calamari.utils
 
+import com.octopus.calamari.options.CertificateDataClass
 import org.funktionale.option.Option
 import org.funktionale.tries.Try
 import java.io.File

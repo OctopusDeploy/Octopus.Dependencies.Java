@@ -1,4 +1,4 @@
-package com.octopus.calamari.utils
+package com.octopus.calamari.options
 
 import org.funktionale.option.firstOption
 import org.funktionale.option.getOrElse
