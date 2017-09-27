@@ -27,6 +27,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
                                override val publicKeySubject: String = "",
                                override val keystoreName: String = "",
                                override val keystoreAlias: String = "",
+                               val profiles: String = "",
                                private val alreadyDumped: Boolean = false) : CertificateDataClass, WildflyDataClass {
 
     override val fixedKeystoreAlias = if (StringUtils.isBlank(keystoreAlias)) WILDFLY_DEFAULT_KEYSTORE_ALIAS else keystoreAlias
@@ -40,15 +41,6 @@ data class WildflyHttpsOptions(override val controller: String = "",
             logger.info(this.toSantisisedString())
         }
     }
-
-    /**
-     * Escapes a string so it can be included in a CLI command
-     * @param input The string to escape
-     * @return An escaped string that can be added into a CLI command string
-     */
-    fun escapeStringForCLICommand(input:String) =
-        input.replace("\\", "\\\\")
-            .replace("\"", "\\\"")
 
     override fun createKeystore(): String =
             KeystoreUtilsImpl.saveKeystore(

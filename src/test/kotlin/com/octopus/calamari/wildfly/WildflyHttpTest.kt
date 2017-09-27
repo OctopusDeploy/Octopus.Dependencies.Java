@@ -26,9 +26,7 @@ class WildflyHttpTest : WildflyTestBase() {
             }.map {
                 it.entity.content
             }.map {
-                IOUtils.toString(it, Charsets.UTF_8).apply {
-                    println(this)
-                }
+                IOUtils.toString(it, Charsets.UTF_8)
             }
 
 
@@ -42,12 +40,56 @@ class WildflyHttpTest : WildflyTestBase() {
                 password = System.getProperty("password"),
                 protocol = System.getProperty("protocol"),
                 privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8")
+                publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                profiles = "default,ha"
         ).apply {
             WildflyHttpsConfig.configureHttps(this)
         }.apply {
             Assert.assertTrue(openHomepage(this).isSuccess())
         }.run {}
 
+    /**
+     * Test a fixed filename for the keystore
+     */
+    @Test
+    @RunAsClient
+    fun testWildflyCertificateDeployment2():Unit =
+            WildflyHttpsOptions(
+                    controller = "127.0.0.1",
+                    port = System.getProperty("port").toInt(),
+                    user = System.getProperty("username"),
+                    password = System.getProperty("password"),
+                    protocol = System.getProperty("protocol"),
+                    privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
+                    publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                    keystoreName = "target/wildfly.keystore",
+                    profiles = "default,ha"
+            ).apply {
+                WildflyHttpsConfig.configureHttps(this)
+            }.apply {
+                Assert.assertTrue(openHomepage(this).isSuccess())
+            }.run {}
 
+    /**
+     * Test a custom password
+     */
+    @Test
+    @RunAsClient
+    fun testWildflyCertificateDeployment3():Unit =
+            WildflyHttpsOptions(
+                    controller = "127.0.0.1",
+                    port = System.getProperty("port").toInt(),
+                    user = System.getProperty("username"),
+                    password = System.getProperty("password"),
+                    protocol = System.getProperty("protocol"),
+                    privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
+                    publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                    keystoreName = "target/wildfly.keystore",
+                    privateKeyPassword = "blah",
+                    profiles = "default,ha"
+            ).apply {
+                WildflyHttpsConfig.configureHttps(this)
+            }.apply {
+                Assert.assertTrue(openHomepage(this).isSuccess())
+            }.run {}
 }

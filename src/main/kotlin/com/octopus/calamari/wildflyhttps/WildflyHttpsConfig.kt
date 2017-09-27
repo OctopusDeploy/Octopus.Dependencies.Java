@@ -1,5 +1,6 @@
 package com.octopus.calamari.wildflyhttps
 
+import com.google.common.base.Splitter
 import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
@@ -49,9 +50,15 @@ object WildflyHttpsConfig {
                     .onSuccess {
                         if (it.isSuccess) {
                             if (isDomainMode) {
+                                Splitter.on(',')
+                                        .trimResults()
+                                        .omitEmptyStrings()
+                                        .split(options.profiles).forEach {
+                                    ElytronHttpsConfigurator(it).configureHttps(options, this)
+                                }
 
                             } else {
-                                StandaloneElytronHttpsConfigurator().configureHttps(options, this)
+                                ElytronHttpsConfigurator().configureHttps(options, this)
                             }
                         } else {
 
