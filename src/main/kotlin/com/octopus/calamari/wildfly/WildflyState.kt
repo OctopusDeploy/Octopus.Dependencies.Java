@@ -7,6 +7,7 @@ import com.octopus.calamari.exception.wildfly.LoginTimeoutException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
+import com.octopus.calamari.utils.impl.WildflyService
 import org.funktionale.tries.Try
 import java.util.logging.Level
 import java.util.logging.Logger

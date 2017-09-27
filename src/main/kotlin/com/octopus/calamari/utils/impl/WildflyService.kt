@@ -1,12 +1,10 @@
-package com.octopus.calamari.wildfly
+package com.octopus.calamari.utils.impl
 
 import com.google.common.base.Preconditions.checkState
 import com.octopus.calamari.exception.wildfly.CommandNotSuccessfulException
 import com.octopus.calamari.exception.wildfly.LoginFailException
 import com.octopus.calamari.exception.wildfly.LoginTimeoutException
 import com.octopus.calamari.options.WildflyDataClass
-import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
-import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
 import org.springframework.retry.RetryCallback
@@ -172,6 +170,35 @@ class WildflyService {
         }
     }
 
+    fun runCommandExpectSuccess(command:String, description:String, errorCode:String, errorMessage:String): Try<CLI.Result> {
+        synchronized(jbossCli) {
+            return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
+                checkState(connected.get(), "You must be connected before running commands")
+
+                try {
+                    logger.info("Attempt ${context.retryCount + 1} to $description.")
+
+                    val result = jbossCli.cmd(command)
+
+                    logger.info("Command: " + command)
+                    logger.info("Result as JSON: " + result?.response?.toJSONString(false))
+
+                    if (!result.isSuccess) {
+                        throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                errorCode, errorMessage))
+                    }
+
+                    result
+                } catch (ex: CommandNotSuccessfulException) {
+                    throw ex
+                } catch (ex:Exception) {
+                    throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
+                            errorCode, errorMessage), ex)
+                }
+            })}
+        }
+    }
+
     fun runCommandExpectSuccess(command:String, description:String, errorMessage:String): Try<CLI.Result> {
         synchronized(jbossCli) {
             return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
@@ -198,4 +225,23 @@ class WildflyService {
             })}
         }
     }
+
+    fun enterBatchMode() =
+            runCommandExpectSuccess(
+                    "batch",
+                    "Entering batch mode",
+                    "WILDFLY-ERROR-0001",
+                    "There was an error entering batch mode.")
+
+    fun runBatch() =
+            runBatch(
+                    "WILDFLY-ERROR-0002",
+                    "There was an error running the batch.")
+
+    fun runBatch(errorCode:String, errorMessage:String) =
+            runCommandExpectSuccess(
+                    "run-batch",
+                    "Running batch",
+                    errorCode,
+                    errorMessage)
 }

@@ -1,12 +1,10 @@
 package com.octopus.calamari.wildflyhttps
 
 import com.octopus.calamari.exception.ExpectedException
-import com.octopus.calamari.tomcathttps.TomcatHttpsConfig
-import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
-import com.octopus.calamari.wildfly.WildflyService
+import com.octopus.calamari.utils.impl.WildflyService
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -33,6 +31,32 @@ object WildflyHttpsConfig {
     }
 
     fun configureHttps(options: WildflyHttpsOptions) {
-        WildflyService().login(options)
+        WildflyService().apply {
+            login(options)
+        }.apply {
+            /*
+                Read the config dir from the server
+             */
+            runCommandExpectSuccess(
+                    "/path=jboss.server.config.dir:read-resource",
+                    "Reading config dir",
+                    "WILDFLY-HTTPS-ERROR-0015",
+                    "There was an error reading the app server config path.").onSuccess {
+                options.wildflyConfigDir = it.response.get("result").get("path").asString()
+            }
+        }.apply {
+            runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron")
+                    .onSuccess {
+                        if (it.isSuccess) {
+                            if (isDomainMode) {
+
+                            } else {
+                                StandaloneElytronHttpsConfigurator().configureHttps(options, this)
+                            }
+                        } else {
+
+                        }
+                    }
+        }
     }
 }
