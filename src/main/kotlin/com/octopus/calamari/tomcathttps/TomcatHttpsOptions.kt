@@ -303,7 +303,7 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                                 throw IllegalArgumentException("version can not be null")
                             }
                         },
-                        getEnvironmentVar("Location", "").apply {
+                        getEnvironmentVar("Location", "").trim().apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("location can not be null")
                             }
@@ -321,10 +321,10 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                         },
                         getEnvironmentVar("Password", ""),
                         getEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
-                        getEnvironmentVar("PrivateKeyFilename", ""),
-                        getEnvironmentVar("PublicKeyFilename", ""),
-                        getEnvironmentVar("KeystoreFilename", ""),
-                        getEnvironmentVar("KeystoreAlias", ""),
+                        getEnvironmentVar("PrivateKeyFilename", "").trim(),
+                        getEnvironmentVar("PublicKeyFilename", "").trim(),
+                        getEnvironmentVar("KeystoreFilename", "").trim(),
+                        getEnvironmentVar("KeystoreAlias", "").trim(),
                         getEnvironmentVar("Port", "8443").apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("port can not be null")
@@ -335,7 +335,7 @@ data class TomcatHttpsOptions(private val tomcatVersion: String = "",
                                     "Implementation",
                                     TomcatHttpsImplementation.NIO.toString()).toUpperCase())
                         }.getOrElse { TomcatHttpsImplementation.NIO },
-                        getEnvironmentVar("Hostname", ""),
+                        getEnvironmentVar("Hostname", "").trim(),
                         getEnvironmentVar("Default", "true").toBoolean())
 
 
