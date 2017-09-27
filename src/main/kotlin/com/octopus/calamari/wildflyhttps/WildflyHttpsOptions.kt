@@ -41,6 +41,11 @@ data class WildflyHttpsOptions(override val controller: String = "",
         }
     }
 
+    /**
+     * Escapes a string so it can be included in a CLI command
+     * @param input The string to escape
+     * @return An escaped string that can be added into a CLI command string
+     */
     fun escapeStringForCLICommand(input:String) =
         input.replace("\\", "\\\\")
             .replace("\"", "\\\"")
@@ -48,7 +53,6 @@ data class WildflyHttpsOptions(override val controller: String = "",
     override fun createKeystore(): String =
             KeystoreUtilsImpl.saveKeystore(
                     this, getKeystoreFile()).get().absolutePath
-
 
     private fun getKeystoreFile(): File =
             if (StringUtils.isBlank(keystoreName)) {
@@ -78,7 +82,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
             return WildflyHttpsOptions(
                     getEnvironmentVar("Controller", "localhost"),
                     getEnvironmentVar("Port", "9990").toInt(),
-                    getEnvironmentVar("Protocol", "http-remoting"),
+                    getEnvironmentVar("Protocol", "remote+http"),
                     getEnvironmentVar("User", "", false),
                     getEnvironmentVar("Password", "", false),
                     Try {

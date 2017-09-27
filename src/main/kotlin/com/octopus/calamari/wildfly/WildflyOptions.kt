@@ -65,7 +65,7 @@ data class WildflyOptions(
 
             val controller = getEnvironmentVar("Controller", "localhost")
             val port = getEnvironmentVar("Port", "9990")
-            val protocol = getEnvironmentVar("Protocol", "http-remoting")
+            val protocol = getEnvironmentVar("Protocol", "remote+http")
             val user = getEnvironmentVar("User", "", false)
             val password = getEnvironmentVar("Password", "", false)
             val application = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath"] ?: ""
