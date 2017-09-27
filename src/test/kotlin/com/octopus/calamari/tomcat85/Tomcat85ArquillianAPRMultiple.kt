@@ -11,6 +11,8 @@ import java.io.File
 /**
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted.
+ *
+ * This class is used to configure multiple APR hosts.
  */
 class Tomcat85ArquillianAPRMultiple(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {

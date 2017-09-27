@@ -11,6 +11,8 @@ import java.io.File
 /**
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted.
+ *
+ * This class is used to configure multiple NIO hosts.
  */
 class Tomcat85ArquillianNIOMultiple(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {

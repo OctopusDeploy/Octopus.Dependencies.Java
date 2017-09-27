@@ -8,6 +8,9 @@ import com.octopus.calamari.utils.HTTPS_PORT
 /**
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted.
+ *
+ * This class is used to configure a Tomcat instance with an APR <Connector> with
+ * no password.
  */
 class Tomcat85ArquillianAPRConnector(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {

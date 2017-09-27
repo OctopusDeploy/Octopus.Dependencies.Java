@@ -9,6 +9,9 @@ import org.funktionale.tries.Try
 /**
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted.
+ *
+ * This class is used to test saving certificate files to a fixed path that does
+ * not exist.
  */
 class Tomcat85ArquillianAPRFixedNameInvalid(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {

@@ -8,6 +8,8 @@ import com.octopus.calamari.utils.HTTPS_PORT
 /**
  * A custom implementation of the Arquillian BlockJUnit4ClassRunner which
  * configures the server.xml file before Tomcat is booted.
+ *
+ * This class is used to test saving certificate files to a fixed path.
  */
 class Tomcat85ArquillianAPRFixedName(testClass: Class<*>?) : BaseArquillian(testClass) {
     init {
