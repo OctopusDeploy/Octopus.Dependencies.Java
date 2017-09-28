@@ -1,4 +1,4 @@
-package com.octopus.calamari.https
+package com.octopus.calamari.keystore
 
 import com.octopus.calamari.exception.ExpectedException
 import com.octopus.calamari.utils.Constants

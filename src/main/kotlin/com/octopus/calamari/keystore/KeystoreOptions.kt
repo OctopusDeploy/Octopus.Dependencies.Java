@@ -1,4 +1,4 @@
-package com.octopus.calamari.https
+package com.octopus.calamari.keystore
 
 import com.octopus.calamari.options.CERTIFICATE_FILE_NAME
 import com.octopus.calamari.options.CertificateDataClass
