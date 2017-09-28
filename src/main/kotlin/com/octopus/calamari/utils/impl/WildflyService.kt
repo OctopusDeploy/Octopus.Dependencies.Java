@@ -233,11 +233,6 @@ class WildflyService {
                     "WILDFLY-ERROR-0001",
                     "There was an error entering batch mode.")
 
-    fun runBatch() =
-            runBatch(
-                    "WILDFLY-ERROR-0002",
-                    "There was an error running the batch.")
-
     fun runBatch(errorCode:String, errorMessage:String) =
             runCommandExpectSuccess(
                     "run-batch",

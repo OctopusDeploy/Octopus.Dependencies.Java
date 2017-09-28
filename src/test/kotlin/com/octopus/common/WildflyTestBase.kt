@@ -1,6 +1,7 @@
-package com.octopus.calamari.wildfly
+package com.octopus.common
 
 import com.octopus.calamari.utils.impl.WildflyService
+import com.octopus.calamari.wildfly.WildflyOptions
 import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
 import org.junit.Before

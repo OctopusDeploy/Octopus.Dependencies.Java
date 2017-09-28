@@ -1,8 +1,9 @@
-package com.octopus.calamari.wildfly
+package com.octopus.calamari.wildflystandalone
 
 import com.octopus.calamari.utils.HttpUtils
-import com.octopus.calamari.wildflyhttps.WildflyHttpsConfig
+import com.octopus.calamari.wildflyhttps.WildflyHttpsStandaloneConfig
 import com.octopus.calamari.wildflyhttps.WildflyHttpsOptions
+import com.octopus.common.WildflyTestBase
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.apache.http.client.fluent.Executor
@@ -40,10 +41,9 @@ class WildflyHttpTest : WildflyTestBase() {
                 password = System.getProperty("password"),
                 protocol = System.getProperty("protocol"),
                 privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                profiles = "default,ha"
+                publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8")
         ).apply {
-            WildflyHttpsConfig.configureHttps(this)
+            WildflyHttpsStandaloneConfig.configureHttps(this)
         }.apply {
             Assert.assertTrue(openHomepage(this).isSuccess())
         }.run {}
@@ -62,10 +62,9 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = "target/wildfly.keystore",
-                    profiles = "default,ha"
+                    keystoreName = "target/wildfly.keystore"
             ).apply {
-                WildflyHttpsConfig.configureHttps(this)
+                WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
                 Assert.assertTrue(openHomepage(this).isSuccess())
             }.run {}
@@ -85,10 +84,9 @@ class WildflyHttpTest : WildflyTestBase() {
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = "target/wildfly.keystore",
-                    privateKeyPassword = "blah",
-                    profiles = "default,ha"
+                    privateKeyPassword = "blah"
             ).apply {
-                WildflyHttpsConfig.configureHttps(this)
+                WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
                 Assert.assertTrue(openHomepage(this).isSuccess())
             }.run {}

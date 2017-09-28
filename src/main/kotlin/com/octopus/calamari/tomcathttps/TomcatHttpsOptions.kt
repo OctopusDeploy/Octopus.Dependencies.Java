@@ -19,9 +19,8 @@ import java.lang.IllegalArgumentException
 import java.nio.charset.StandardCharsets
 import java.util.logging.Logger
 import java.util.regex.Pattern
+import javax.naming.OperationNotSupportedException
 
-const val TOMCAT_DEFAULT_KEYSTORE_ALIAS = "octopus"
-const val TOMCAT_DEFAULT_KEYSTORE_PASSWORD = "changeit"
 /**
  * An empty hostname is equivalent to this host name
  */
@@ -47,8 +46,9 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                               val default: Boolean = false,
                               private val alreadyDumped: Boolean = false) : CertificateDataClass {
 
-    override val fixedKeystoreAlias = if (StringUtils.isBlank(keystoreAlias)) TOMCAT_DEFAULT_KEYSTORE_ALIAS else keystoreAlias
-    override val fixedPrivateKeyPassword = if (StringUtils.isBlank(privateKeyPassword)) TOMCAT_DEFAULT_KEYSTORE_PASSWORD else privateKeyPassword
+    override var defaultCertificateLocation: String
+        get () = File(tomcatLocation, "conf").absolutePath
+        set (value) = throw OperationNotSupportedException()
 
     val logger: Logger = Logger.getLogger("")
     val fixedHostname = if (StringUtils.isEmpty(hostName)) DEFAULT_HOST_NAME else hostName
@@ -97,23 +97,10 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
     /**
      * @return Either a unique file in the Tomcat conf folder, or the name that was supplied by the user
      */
-    private fun getKeystoreFile(): File =
-            if (StringUtils.isBlank(keystoreName)) {
-                FileUtilsImpl.getUniqueFilename(
-                        File(tomcatLocation, "conf").absolutePath,
-                        organisation,
-                        "keystore")
-            } else {
-                FileUtilsImpl.validateFileParentDirectory(keystoreName)
-            }
-
-    /**
-     * @return Either a unique file in the Tomcat conf folder, or the name that was supplied by the user
-     */
     private fun getPrivateKeyFile():File =
             if (StringUtils.isBlank(privateKeyName)) {
                 FileUtilsImpl.getUniqueFilename(
-                        File(tomcatLocation, "conf").absolutePath,
+                        defaultCertificateLocation,
                         organisation,
                         "key")
             } else {
@@ -126,7 +113,7 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
     private fun getPublicKeyFile():File =
             if (StringUtils.isBlank(publicKeyName)) {
                 FileUtilsImpl.getUniqueFilename(
-                        File(tomcatLocation, "conf").absolutePath,
+                        defaultCertificateLocation,
                         organisation,
                         "crt")
             } else {
@@ -134,9 +121,9 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
             }
 
     override fun createKeystore() =
-            KeystoreUtilsImpl.saveKeystore(this, getKeystoreFile()).map {
-                convertPathToTomcatVariable(it.absolutePath)
-            }.get()
+            super.createKeystore().run {
+                convertPathToTomcatVariable(this)
+            }
 
     /**
      * Creates a private PEM key file in the Tomcat conf dir

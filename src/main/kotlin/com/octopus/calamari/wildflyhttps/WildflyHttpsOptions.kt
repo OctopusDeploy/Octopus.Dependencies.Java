@@ -3,17 +3,10 @@ package com.octopus.calamari.wildflyhttps
 import com.octopus.calamari.options.CertificateDataClass
 import com.octopus.calamari.options.WildflyDataClass
 import com.octopus.calamari.utils.Constants
-import com.octopus.calamari.utils.impl.FileUtilsImpl
-import com.octopus.calamari.utils.impl.KeystoreUtilsImpl
 import com.octopus.calamari.wildfly.ServerType
-import com.octopus.calamari.wildfly.WildflyOptions
 import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
-import java.io.File
 import java.util.logging.Logger
-
-const val WILDFLY_DEFAULT_KEYSTORE_ALIAS = "octopus"
-const val WILDFLY_DEFAULT_KEYSTORE_PASSWORD = "changeit"
 
 data class WildflyHttpsOptions(override val controller: String = "",
                                override val port: Int = -1,
@@ -27,12 +20,11 @@ data class WildflyHttpsOptions(override val controller: String = "",
                                override val publicKeySubject: String = "",
                                override val keystoreName: String = "",
                                override val keystoreAlias: String = "",
+                               override var defaultCertificateLocation: String = "",
                                val profiles: String = "",
+                               val deployKeyStore: Boolean = true,
+                               val configureSSL: Boolean = true,
                                private val alreadyDumped: Boolean = false) : CertificateDataClass, WildflyDataClass {
-
-    override val fixedKeystoreAlias = if (StringUtils.isBlank(keystoreAlias)) WILDFLY_DEFAULT_KEYSTORE_ALIAS else keystoreAlias
-    override val fixedPrivateKeyPassword = if (StringUtils.isBlank(privateKeyPassword)) WILDFLY_DEFAULT_KEYSTORE_PASSWORD else privateKeyPassword
-    var wildflyConfigDir: String = ""
 
     val logger: Logger = Logger.getLogger("")
 
@@ -41,20 +33,6 @@ data class WildflyHttpsOptions(override val controller: String = "",
             logger.info(this.toSantisisedString())
         }
     }
-
-    override fun createKeystore(): String =
-            KeystoreUtilsImpl.saveKeystore(
-                    this, getKeystoreFile()).get().absolutePath
-
-    private fun getKeystoreFile(): File =
-            if (StringUtils.isBlank(keystoreName)) {
-                FileUtilsImpl.getUniqueFilename(
-                        File(wildflyConfigDir).absolutePath,
-                        organisation,
-                        "keystore")
-            } else {
-                FileUtilsImpl.validateFileParentDirectory(keystoreName)
-            }
 
     /**
      * Masks the password when dumping the string version of this object

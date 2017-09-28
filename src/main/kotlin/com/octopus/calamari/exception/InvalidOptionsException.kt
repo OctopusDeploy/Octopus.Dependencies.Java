@@ -1,7 +1,7 @@
 package com.octopus.calamari.exception
 
 /**
- * Represents an expected exception for an invalid conbination of options
+ * Represents an expected exception for an invalid combination of options
  */
 open class InvalidOptionsException : ExpectedException {
     constructor()

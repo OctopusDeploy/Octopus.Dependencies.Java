@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.75.9-SNAPSHOT</version>
+    <version>1.0.75.10-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -206,6 +206,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -250,6 +251,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflydomain/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -287,6 +289,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -324,6 +327,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflydomain/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -361,6 +365,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -398,6 +403,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflydomain/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -435,6 +441,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -472,6 +479,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflydomain/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -506,6 +514,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -540,6 +549,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflydomain/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -574,6 +584,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -608,6 +619,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflydomain/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
