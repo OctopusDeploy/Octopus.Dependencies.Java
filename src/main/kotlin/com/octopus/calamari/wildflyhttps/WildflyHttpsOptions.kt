@@ -28,7 +28,6 @@ data class WildflyHttpsOptions(override val controller: String = "",
                                override var defaultCertificateLocation: String = "",
                                val profiles: String = "",
                                val deployKeyStore: Boolean = true,
-                               val configureSSL: Boolean = true,
                                private val alreadyDumped: Boolean = false) : CertificateDataClass, WildflyDataClass {
 
     val logger: Logger = Logger.getLogger("")
@@ -58,13 +57,13 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     "The public key needs to be defined if deploying the keystore."))
         }
 
-        if (configureSSL && StringUtils.isBlank(controller)) {
+        if (StringUtils.isBlank(controller)) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0018",
                     "The controller needs to be defined if configuring a keystore."))
         }
 
-        if (configureSSL && port !in 1..65535) {
+        if (port !in 1..65535) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0018",
                     "The port needs to be defined if configuring a keystore."))
@@ -113,8 +112,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     getKeystoreEnvironmentVar("KeystoreAlias", ""),
                     "",
                     getEnvironmentVar("CertificateProfiles", ""),
-                    getEnvironmentVar("DeployCertificate", "true").toBoolean(),
-                    getEnvironmentVar("ConfigureCertificate", "true").toBoolean())
+                    getEnvironmentVar("DeployCertificate", "true").toBoolean())
 
         private fun getKeystoreEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Java_Certificate_$name"] ?: default).run {
