@@ -1,11 +1,16 @@
 package com.octopus.calamari.wildflyhttps
 
+import com.octopus.calamari.exception.InvalidOptionsException
+import com.octopus.calamari.options.CERTIFICATE_FILE_NAME
 import com.octopus.calamari.options.CertificateDataClass
 import com.octopus.calamari.options.WildflyDataClass
+import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.Constants
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.wildfly.ServerType
 import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
+import java.lang.IllegalArgumentException
 import java.util.logging.Logger
 
 data class WildflyHttpsOptions(override val controller: String = "",
@@ -34,6 +39,38 @@ data class WildflyHttpsOptions(override val controller: String = "",
         }
     }
 
+    fun validate() {
+        if (!deployKeyStore && StringUtils.isBlank(keystoreName)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0017",
+                    "Configuring a keystore requires that the keystore name be defined."))
+        }
+
+        if (deployKeyStore && StringUtils.isBlank(privateKey)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The private key needs to be defined if deploying the keystore."))
+        }
+
+        if (deployKeyStore && StringUtils.isBlank(publicKey)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The public key needs to be defined if deploying the keystore."))
+        }
+
+        if (configureSSL && StringUtils.isBlank(controller)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The controller needs to be defined if configuring a keystore."))
+        }
+
+        if (configureSSL && port !in 1..65535) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The port needs to be defined if configuring a keystore."))
+        }
+    }
+
     /**
      * Masks the password when dumping the string version of this object
      */
@@ -48,8 +85,8 @@ data class WildflyHttpsOptions(override val controller: String = "",
         /**
          * @return a new Options instance populated from the values in the environment variables
          */
-        fun fromEnvironmentVars(): WildflyHttpsOptions {
-            return WildflyHttpsOptions(
+        fun fromEnvironmentVars(): WildflyHttpsOptions =
+            WildflyHttpsOptions(
                     getEnvironmentVar("Controller", "localhost"),
                     getEnvironmentVar("Port", "9990").toInt(),
                     getEnvironmentVar("Protocol", "remote+http"),
@@ -59,9 +96,30 @@ data class WildflyHttpsOptions(override val controller: String = "",
                         ServerType.valueOf(getEnvironmentVar("ServerType", ServerType.NONE.toString()).toUpperCase())
                     }.getOrElse {
                         ServerType.NONE
-                    }
-            )
-        }
+                    },
+                    getKeystoreEnvironmentVar("Private_Key", "").apply {
+                        if (StringUtils.isBlank(this)) {
+                            throw IllegalArgumentException("private key can not be null")
+                        }
+                    },
+                    getKeystoreEnvironmentVar("Public_Key", "").apply {
+                        if (StringUtils.isBlank(this)) {
+                            throw IllegalArgumentException("public key can not be null")
+                        }
+                    },
+                    getKeystoreEnvironmentVar("Password", ""),
+                    getKeystoreEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
+                    getKeystoreEnvironmentVar("KeystoreFilename", ""),
+                    getKeystoreEnvironmentVar("KeystoreAlias", ""),
+                    "",
+                    getEnvironmentVar("CertificateProfiles", ""),
+                    getEnvironmentVar("DeployCertificate", "true").toBoolean(),
+                    getEnvironmentVar("ConfigureCertificate", "true").toBoolean())
+
+        private fun getKeystoreEnvironmentVar(name: String, default: String, trim: Boolean = true) =
+                (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Java_Certificate_$name"] ?: default).run {
+                    if (trim) this.trim() else this
+                }
 
         private fun getEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}WildFly_Deploy_$name"] ?: default).run {

@@ -218,28 +218,28 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
          */
         fun fromEnvironmentVars(): TomcatHttpsOptions =
                 TomcatHttpsOptions(
-                        getEnvironmentVar("Private_Key", "").apply {
+                        getKeystoreEnvironmentVar("Private_Key", "").apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("private key can not be null")
                             }
                         },
-                        getEnvironmentVar("Public_Key", "").apply {
+                        getKeystoreEnvironmentVar("Public_Key", "").apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("public key can not be null")
                             }
                         },
-                        getEnvironmentVar("Password", ""),
-                        getEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
-                        getEnvironmentVar("PrivateKeyFilename", "").trim(),
-                        getEnvironmentVar("PublicKeyFilename", "").trim(),
-                        getEnvironmentVar("KeystoreFilename", "").trim(),
-                        getEnvironmentVar("KeystoreAlias", "").trim(),
+                        getKeystoreEnvironmentVar("Password", ""),
+                        getKeystoreEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
+                        getEnvironmentVar("PrivateKeyFilename", ""),
+                        getEnvironmentVar("PublicKeyFilename", ""),
+                        getKeystoreEnvironmentVar("KeystoreFilename", ""),
+                        getKeystoreEnvironmentVar("KeystoreAlias", ""),
                         getEnvironmentVar("Version", "").apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("version can not be null")
                             }
                         },
-                        getEnvironmentVar("Location", "").trim().apply {
+                        getEnvironmentVar("Location", "").apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("location can not be null")
                             }
@@ -258,6 +258,11 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                         getEnvironmentVar("Hostname", "").trim(),
                         getEnvironmentVar("Default", "true").toBoolean())
 
+
+        private fun getKeystoreEnvironmentVar(name: String, default: String, trim: Boolean = true) =
+                (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Java_Certificate_$name"] ?: default).run {
+                    if (trim) this.trim() else this
+                }
 
         private fun getEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Tomcat_Certificate_$name"] ?: default).run {

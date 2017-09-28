@@ -7,6 +7,9 @@ import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import java.util.logging.Level
 import java.util.logging.Logger
 
+/**
+ * The entry point for the keystore deployment step
+ */
 object KeystoreConfig {
     val logger: Logger = Logger.getLogger("")
 
@@ -31,5 +34,6 @@ object KeystoreConfig {
 
     fun deployKeystore(options:KeystoreOptions) {
         options.createKeystore()
+        logger.info("Keystore was successfully deployed.")
     }
 }

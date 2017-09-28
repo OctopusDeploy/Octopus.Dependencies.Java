@@ -19,7 +19,11 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
         "/profile=\"${profile.run(StringUtilsImpl::escapeStringForCLICommand)}\""
 
     override fun configureHttps(options: WildflyHttpsOptions, service: WildflyService) {
-        deployKey(options).apply {
+        options.apply {
+            validate()
+        }.run{
+            deployKey(this)
+        }.apply {
             configureSSL(this, service)
         }
     }
@@ -91,12 +95,14 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                                         "There was an error adding the Elytron key manager.")
                             } else {
                                 this.runCommandExpectSuccess(
-                                        "$profilePrefix/subsystem=elytron/key-manager=${KEYMANAGER_NAME}:write-attribute(name=key-store, value=${KEYSTORE_NAME})",
+                                        "$profilePrefix/subsystem=elytron/key-manager=${KEYMANAGER_NAME}:write-attribute(" +
+                                                "name=key-store, value=${KEYSTORE_NAME})",
                                         "Configuring the Elytron key manager key store",
                                         "WILDFLY-HTTPS-ERROR-0012",
                                         "There was an error configuring the Elytron key manager key store.")
                                 this.runCommandExpectSuccess(
-                                        "$profilePrefix/subsystem=elytron/key-manager=${KEYMANAGER_NAME}:write-attribute(name=credential-reference, value={clear-text=${options.fixedPrivateKeyPassword}})",
+                                        "$profilePrefix/subsystem=elytron/key-manager=${KEYMANAGER_NAME}:write-attribute(" +
+                                                "name=credential-reference, value={clear-text=${options.fixedPrivateKeyPassword}})",
                                         "Configuring the Elytron key manager credential reference",
                                         "WILDFLY-HTTPS-ERROR-0012",
                                         "There was an error configuring the Elytron key manager credential reference.")
@@ -113,21 +119,17 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                             if (!it.isSuccess) {
                                 this.runCommandExpectSuccess(
                                         "$profilePrefix/subsystem=elytron/server-ssl-context=${SERVER_SECURITY_CONTEXT_NAME}:add(" +
-                                                "key-manager=${KEYMANAGER_NAME},protocols=[\"TLSv1.2\"])",
+                                                "key-manager=${KEYMANAGER_NAME})",
                                         "Adding the Elytron server ssl context",
                                         "WILDFLY-HTTPS-ERROR-0013",
                                         "There was an error adding the Elytron server ssl context.")
                             } else {
                                 this.runCommandExpectSuccess(
-                                        "$profilePrefix/subsystem=elytron/server-ssl-context=${SERVER_SECURITY_CONTEXT_NAME}:write-attribute(name=key-manager, value=${KEYMANAGER_NAME})",
+                                        "$profilePrefix/subsystem=elytron/server-ssl-context=${SERVER_SECURITY_CONTEXT_NAME}:write-attribute(" +
+                                                "name=key-manager, value=${KEYMANAGER_NAME})",
                                         "Configuring the Elytron server ssl context key manager",
                                         "WILDFLY-HTTPS-ERROR-0014",
                                         "There was an error configuring the Elytron server ssl context key manager.")
-                                this.runCommandExpectSuccess(
-                                        "$profilePrefix/subsystem=elytron/server-ssl-context=${SERVER_SECURITY_CONTEXT_NAME}:write-attribute(name=protocols, value=[\"TLSv1.2\"])",
-                                        "Configuring the Elytron server ssl context protocols",
-                                        "WILDFLY-HTTPS-ERROR-0014",
-                                        "There was an error configuring the Elytron server ssl context protocols.")
                             }
                         }
             }.apply {
