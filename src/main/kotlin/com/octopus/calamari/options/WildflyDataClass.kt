@@ -1,5 +1,6 @@
 package com.octopus.calamari.options
 
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.wildfly.ServerType
 import org.apache.commons.lang.StringUtils
 

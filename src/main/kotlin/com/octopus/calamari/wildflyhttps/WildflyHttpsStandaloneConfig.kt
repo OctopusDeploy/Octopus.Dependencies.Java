@@ -35,6 +35,8 @@ object WildflyHttpsStandaloneConfig {
         WildflyService().apply {
             login(options)
         }.apply {
+            options.checkForServerMismatch(this.isDomainMode)
+        }.apply {
             if (isDomainMode) {
                 throw DomainNotSupportedException(ErrorMessageBuilderImpl.buildErrorMessage(
                         "WILDFLY-HTTPS-ERROR-0016",

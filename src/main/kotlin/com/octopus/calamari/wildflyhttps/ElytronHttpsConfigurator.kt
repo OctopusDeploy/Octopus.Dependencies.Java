@@ -22,7 +22,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
         options.apply {
             validate()
         }.run {
-            deployKey(this)
+            deployKey(this, service)
         }.apply {
             configureSSL(this, service)
         }
@@ -167,8 +167,8 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
         }
     }
 
-    private fun deployKey(options: WildflyHttpsOptions): WildflyHttpsOptions =
-            if (options.deployKeyStore) {
+    private fun deployKey(options: WildflyHttpsOptions, service:WildflyService): WildflyHttpsOptions =
+            if (options.deployKeyStore && !service.isDomainMode) {
                 options.createKeystore().run {
                     options.copy(keystoreName = this)
                 }

@@ -39,19 +39,25 @@ data class WildflyHttpsOptions(override val controller: String = "",
     }
 
     fun validate() {
-        if (!deployKeyStore && StringUtils.isBlank(keystoreName)) {
+        if ((!deployKeyStore ||
+                serverType == ServerType.DOMAIN) &&
+                StringUtils.isBlank(keystoreName)) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0017",
                     "Configuring a keystore requires that the keystore name be defined."))
         }
 
-        if (deployKeyStore && StringUtils.isBlank(privateKey)) {
+        if (serverType == ServerType.STANDALONE &&
+                deployKeyStore &&
+                StringUtils.isBlank(privateKey)) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0018",
                     "The private key needs to be defined if deploying the keystore."))
         }
 
-        if (deployKeyStore && StringUtils.isBlank(publicKey)) {
+        if (serverType == ServerType.STANDALONE &&
+                deployKeyStore &&
+                StringUtils.isBlank(publicKey)) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0018",
                     "The public key needs to be defined if deploying the keystore."))
@@ -79,6 +85,24 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     privateKeyPassword = "******",
                     alreadyDumped = true).toString()
 
+    /**
+     * A helper function for warning about a mismatch between the UI settings and the
+     * server type
+     * @param isDomain true if the server is a domain server, and false if it is a standalone server
+     */
+    fun checkForServerMismatch(isDomain:Boolean) {
+        if (isDomain && serverType == ServerType.STANDALONE) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0019",
+                    "The server is running in domain mode, but the Octopus Deploy step " +
+                            "defined the server as a standalone server."))
+        } else if (!isDomain && serverType == ServerType.DOMAIN) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0019",
+                    "The server is running in standalone mode, but the Octopus Deploy step " +
+                            "defined the server as a domain server."))
+        }
+    }
 
     companion object Factory {
         /**
