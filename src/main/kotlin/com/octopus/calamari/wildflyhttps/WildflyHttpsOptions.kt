@@ -27,10 +27,12 @@ data class WildflyHttpsOptions(override val controller: String = "",
                                override val keystoreAlias: String = "",
                                override var defaultCertificateLocation: String = "",
                                val profiles: String = "",
+                               val relativeTo: String = "",
                                val deployKeyStore: Boolean = true,
                                private val alreadyDumped: Boolean = false) : CertificateDataClass, WildflyDataClass {
 
     val logger: Logger = Logger.getLogger("")
+    val fixedRelativeTo = if (relativeTo == "NONE") "" else relativeTo
 
     init {
         if (!this.alreadyDumped) {
@@ -136,6 +138,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     getKeystoreEnvironmentVar("KeystoreAlias", ""),
                     "",
                     getEnvironmentVar("CertificateProfiles", ""),
+                    getEnvironmentVar("CertificateRelativeTo", ""),
                     getEnvironmentVar("DeployCertificate", "true").toBoolean())
 
         private fun getKeystoreEnvironmentVar(name: String, default: String, trim: Boolean = true) =
