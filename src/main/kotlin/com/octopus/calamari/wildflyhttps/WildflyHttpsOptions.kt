@@ -32,7 +32,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
                                private val alreadyDumped: Boolean = false) : CertificateDataClass, WildflyDataClass {
 
     val logger: Logger = Logger.getLogger("")
-    val fixedRelativeTo = if (relativeTo == "NONE") "" else relativeTo
+    val fixedRelativeTo = if (relativeTo.equals("NONE", true)) "" else relativeTo
 
     init {
         if (!this.alreadyDumped) {
