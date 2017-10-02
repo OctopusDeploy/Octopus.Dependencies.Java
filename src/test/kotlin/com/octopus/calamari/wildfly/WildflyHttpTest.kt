@@ -1,4 +1,4 @@
-package com.octopus.calamari.wildflystandalone
+package com.octopus.calamari.wildfly
 
 import com.octopus.calamari.utils.HttpUtils
 import com.octopus.calamari.wildflyhttps.WildflyHttpsStandaloneConfig
@@ -41,7 +41,8 @@ class WildflyHttpTest : WildflyTestBase() {
                 password = System.getProperty("password"),
                 protocol = System.getProperty("protocol"),
                 privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8")
+                publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                profiles = "default"
         ).apply {
             WildflyHttpsStandaloneConfig.configureHttps(this)
         }.apply {
@@ -62,7 +63,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = "target/wildfly.keystore"
+                    keystoreName = "target/wildfly.keystore",
+                    profiles = "default"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -84,7 +86,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = "target/wildfly.keystore",
-                    privateKeyPassword = "blah"
+                    privateKeyPassword = "blah",
+                    profiles = "default"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {

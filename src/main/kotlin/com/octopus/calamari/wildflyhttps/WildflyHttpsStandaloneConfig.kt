@@ -49,10 +49,12 @@ object WildflyHttpsStandaloneConfig {
         }.apply {
             runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron")
                     .onSuccess {
-                        if (it.isSuccess) {
-                            ElytronHttpsConfigurator().configureHttps(options, this)
-                        } else {
-
+                        options.profileList.forEach { profile ->
+                            if (it.isSuccess) {
+                                ElytronHttpsConfigurator(profile).configureHttps(options, this)
+                            } else {
+                                LegacyHttpsConfigurator(profile).configureHttps(options, this)
+                            }
                         }
                     }
         }

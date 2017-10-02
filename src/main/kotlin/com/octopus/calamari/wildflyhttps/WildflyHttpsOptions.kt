@@ -1,5 +1,6 @@
 package com.octopus.calamari.wildflyhttps
 
+import com.google.common.base.Splitter
 import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.options.CERTIFICATE_FILE_NAME
 import com.octopus.calamari.options.CertificateDataClass
@@ -33,6 +34,10 @@ data class WildflyHttpsOptions(override val controller: String = "",
 
     val logger: Logger = Logger.getLogger("")
     val fixedRelativeTo = if (relativeTo.equals("NONE", true)) "" else relativeTo
+    val profileList = Splitter.on(',')
+            .trimResults()
+            .split(profiles)
+            .toList()
 
     init {
         if (!this.alreadyDumped) {
