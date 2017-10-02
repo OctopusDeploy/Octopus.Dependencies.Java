@@ -37,21 +37,14 @@ object WildflyHttpsStandaloneConfig {
         }.apply {
             options.checkForServerMismatch(this.isDomainMode)
         }.apply {
-            if (isDomainMode) {
-                throw DomainNotSupportedException(ErrorMessageBuilderImpl.buildErrorMessage(
-                        "WILDFLY-HTTPS-ERROR-0016",
-                        "This step does not support deploying to a domain controller."))
-            }
-        }.apply{
-            /*
-                Read the config dir from the standalone server
-            */
-            runCommandExpectSuccess(
-                    "/path=jboss.server.config.dir:read-resource",
-                    "Reading config dir",
-                    "WILDFLY-HTTPS-ERROR-0015",
-                    "There was an error reading the app server config path.").onSuccess {
-                options.defaultCertificateLocation = it.response.get("result").get("path").asString()
+            if (!isDomainMode) {
+                runCommandExpectSuccess(
+                        "/path=jboss.server.config.dir:read-resource",
+                        "Reading config dir",
+                        "WILDFLY-HTTPS-ERROR-0015",
+                        "There was an error reading the app server config path.").onSuccess {
+                    options.defaultCertificateLocation = it.response.get("result").get("path").asString()
+                }
             }
         }.apply {
             runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron")
