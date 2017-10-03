@@ -28,9 +28,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
     private fun configureSSL(options: WildflyHttpsOptions, service: WildflyService) {
         service.apply {
             takeSnapshot()
-            validateSocketBinding(options, this)
+            validateSocketBindings(options, this)
             createOrUpdateRealm(options, this)
-            addKeystoreToRealm(options, this)
             reloadServer(options, this)
             if (undertowEnabled(service)) {
                 getUndertowServers(options, this).forEach {
@@ -44,15 +43,64 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
     }
 
     /**
+     * Updates either the standalone realm, or the realm of every host
+     */
+    private fun createOrUpdateRealm(options: WildflyHttpsOptions, service: WildflyService) {
+        if (service.isDomainMode) {
+            getSlaveHosts(service).forEach {
+                createOrUpdateSecurityRealm(it, options, service)
+                addKeystoreToRealm(it, options, service)
+            }
+        } else {
+            createOrUpdateSecurityRealm(options, service)
+            addKeystoreToRealm(options, service)
+        }
+    }
+
+    /**
+     * A sanity check to ensure the socket binding that we are adding along side the
+     * certificate info exists.
+     */
+    private fun validateSocketBindings(options: WildflyHttpsOptions, service: WildflyService) {
+        if (service.isDomainMode) {
+            getSlaveHosts(service).forEach {
+                getSocketBindingForHost(it, service).also {
+                    validateSocketBinding(it, options, service)
+                }
+            }
+        } else {
+            getSocketBindingForStandalone(service).also {
+                validateSocketBinding(it, options, service)
+            }
+        }
+    }
+
+    /**
      * Create or update the security realm
      */
-    private fun createOrUpdateRealm(options: WildflyHttpsOptions, service: WildflyService) =
+    private fun createOrUpdateSecurityRealm(options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommand(
-                    "${getProfilePrefix(profile, service)}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
+                    "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                     "Checking for existing security realm").onSuccess {
                 if (!it.isSuccess) {
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
+                            "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
+                            "Adding the security realm",
+                            "WILDFLY-HTTPS-ERROR-0020",
+                            "There was an error adding the security realm.").onFailure { throw it }
+                }
+            }.onFailure { throw it }
+
+    /**
+     * Create or update the security realm
+     */
+    private fun createOrUpdateSecurityRealm(host:String, options: WildflyHttpsOptions, service: WildflyService) =
+            service.runCommand(
+                    "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
+                    "Checking for existing security realm").onSuccess {
+                if (!it.isSuccess) {
+                    service.runCommandExpectSuccess(
+                            "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
                             "Adding the security realm",
                             "WILDFLY-HTTPS-ERROR-0020",
                             "There was an error adding the security realm.").onFailure { throw it }
@@ -64,11 +112,11 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      */
     private fun addKeystoreToRealm(options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommand(
-                    "${getProfilePrefix(profile, service)}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
+                    "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
                     "Checking for existing ssl configuration").map {
                 if (!it.isSuccess) {
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
+                            "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
                                     "alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\"," +
                                     "keystore-path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\"," +
                                     "keystore-password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
@@ -77,20 +125,62 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                             "There was an error adding the keystore to the security realm.").onFailure { throw it }
                 } else {
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                            "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
                                     "name=alias, " +
                                     "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Configuring the security realm keystore alias",
                             "WILDFLY-HTTPS-ERROR-0022",
                             "There was an error configuring the security realm keystore alias.").onFailure { throw it }
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +                                    "name=keystore-path, " +
+                            "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +                                    "name=keystore-path, " +
                                     "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
                             "Configuring the security realm keystore alias",
                             "WILDFLY-HTTPS-ERROR-0022",
                             "There was an error configuring the security realm keystore path.").onFailure { throw it }
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                            "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                    "name=keystore-password, " +
+                                    "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                            "Configuring the security realm keystore alias",
+                            "WILDFLY-HTTPS-ERROR-0022",
+                            "There was an error configuring the security realm keystore password.").onFailure { throw it }
+                }
+            }.onFailure {
+                throw it
+            }.get()
+
+    /**
+     * Create or update the security realm server ssl identity
+     */
+    private fun addKeystoreToRealm(host:String, options: WildflyHttpsOptions, service: WildflyService) =
+            service.runCommand(
+                    "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
+                    "Checking for existing ssl configuration").map {
+                if (!it.isSuccess) {
+                    service.runCommandExpectSuccess(
+                            "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
+                                    "alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\"," +
+                                    "keystore-path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\"," +
+                                    "keystore-password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                            "Adding the keystore to the security realm",
+                            "WILDFLY-HTTPS-ERROR-0021",
+                            "There was an error adding the keystore to the security realm.").onFailure { throw it }
+                } else {
+                    service.runCommandExpectSuccess(
+                            "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                    "name=alias, " +
+                                    "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                            "Configuring the security realm keystore alias",
+                            "WILDFLY-HTTPS-ERROR-0022",
+                            "There was an error configuring the security realm keystore alias.").onFailure { throw it }
+                    service.runCommandExpectSuccess(
+                            "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +                                    "name=keystore-path, " +
+                                    "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
+                            "Configuring the security realm keystore alias",
+                            "WILDFLY-HTTPS-ERROR-0022",
+                            "There was an error configuring the security realm keystore path.").onFailure { throw it }
+                    service.runCommandExpectSuccess(
+                            "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
                                     "name=keystore-password, " +
                                     "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Configuring the security realm keystore alias",
@@ -135,6 +225,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
 
     /**
      * Configure the https listener in a server that doesn't use undertow
+     * See https://developer.jboss.org/thread/215614 for why we create the connector then the ssl configuration
      */
     private fun configureWebSSL(options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommand(
@@ -248,29 +339,30 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                 throw it
             }.get()
 
-    /**
-     * Throws an exception if the socket binding group does not have a https port defined, or if the interface
-     * bound to the
-     */
-    private fun validateSocketBinding(options: WildflyHttpsOptions, service: WildflyService) {
-        if (service.isDomainMode) {
-            validateSocketBindingForDomain(options, service)
-        } else {
-            getSocketBindingForStandalone(service).run {
-                validateSocketBindingForStandalone(this, options, service)
-            }
-        }
-    }
+    private fun getSocketBindingsForHost(host:String, socketGroup: String, options: WildflyHttpsOptions, service: WildflyService) =
+            service.runCommandExpectSuccess(
+                    "/host=${host}/server=*/socket-binding-group=*:read-resource",
+                    "Getting https socket binding",
+                    "WILDFLY-HTTPS-ERROR-0027",
+                    "Failed to get the https socket binding.").map {
+                it.response.get("result").get("interface").asString()
+            }.map {
+                val isUndefined = StringUtils.isBlank(it)
+                val isPublicPort = "public" == it
+                val defaultIsPublic = getDefaultInterface(socketGroup, service).run {
+                    "public" == this
+                }
 
-    private fun validateSocketBindingForDomain(options: WildflyHttpsOptions, service: WildflyService) {
-
-    }
+                if (isPublicPort || (isUndefined && defaultIsPublic)) {
+                    throw Exception("https socket binding was not for the public interface.")
+                }
+            }.onFailure { throw it }
 
     /**
      * Throws an exception if the socket binding group for the standalone server does not have a https port defined,
      * or if the interface is not a public one.
      */
-    private fun validateSocketBindingForStandalone(socketGroup: String, options: WildflyHttpsOptions, service: WildflyService) =
+    private fun validateSocketBinding(socketGroup: String, options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommandExpectSuccess(
                     "/socket-binding-group=${socketGroup}/socket-binding=https:read-resource",
                     "Getting https socket binding",
@@ -302,6 +394,62 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                 it.response.get("result").asList().map {
                     it.get("result").get("name").asString()
                 }.first()
+            }.onFailure {
+                throw it
+            }.get()
+
+    /**
+     * @return The socket binding for a given host
+     */
+    private fun getSocketBindingForHost(host:String, service: WildflyService) =
+            service.runCommandExpectSuccess(
+                    "/host=${host}/server=*/socket-binding-group=*:read-resource",
+                    "Getting socket binding for host ${host}",
+                    "WILDFLY-HTTPS-ERROR-0031",
+                    "Failed to get socket binding for host ${host}.").map {
+                it.response.get("result").asList().map {
+                    it.get("result").get("name").asString()
+                }.first()
+            }.onFailure {
+                throw it
+            }.get()
+
+    /**
+     * @return a list of the master hosts
+     */
+    private fun getMasterHosts(service: WildflyService) =
+            service.runCommandExpectSuccess(
+                    "/host=*:read-resource",
+                    "Getting hosts",
+                    "WILDFLY-HTTPS-ERROR-0032",
+                    "Failed to get hosts.").map {
+                it.response.get("result").asList()
+            }.map {
+                it.filter {
+                    it.get("result").get("master").asBoolean()
+                }.map {
+                    it.get("result").get("name").asString()
+                }.toList()
+            }.onFailure {
+                throw it
+            }.get()
+
+    /**
+     * @return a list of the slave hosts
+     */
+    private fun getSlaveHosts(service: WildflyService) =
+            service.runCommandExpectSuccess(
+                    "/host=*:read-resource",
+                    "Getting hosts",
+                    "WILDFLY-HTTPS-ERROR-0032",
+                    "Failed to get hosts.").map {
+                it.response.get("result").asList()
+            }.map {
+                it.filter {
+                    !it.get("result").get("master").asBoolean()
+                }.map {
+                    it.get("result").get("name").asString()
+                }.toList()
             }.onFailure {
                 throw it
             }.get()
