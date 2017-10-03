@@ -1,4 +1,4 @@
-package com.octopus.calamari.wildfly
+package com.octopus.calamari.wildflystandalone
 
 import com.octopus.calamari.utils.HttpUtils
 import com.octopus.calamari.wildflyhttps.WildflyHttpsStandaloneConfig

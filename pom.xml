@@ -206,6 +206,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -288,6 +289,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -363,6 +365,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -438,6 +441,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -510,6 +514,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
@@ -579,6 +584,7 @@
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <includes>
                                 <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
                             </includes>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useManifestOnlyJar>false</useManifestOnlyJar>
