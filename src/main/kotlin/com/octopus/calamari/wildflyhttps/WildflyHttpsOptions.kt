@@ -54,7 +54,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     "WILDFLY-HTTPS-ERROR-0017",
                     "Configuring a keystore requires that the keystore name be defined."))
         }
-        
+
         if (serverType == ServerType.STANDALONE &&
                 deployKeyStore &&
                 StringUtils.isBlank(privateKey)) {

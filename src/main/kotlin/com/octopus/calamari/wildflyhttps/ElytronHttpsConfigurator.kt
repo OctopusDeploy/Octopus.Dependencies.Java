@@ -26,13 +26,29 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
     }
 
     private fun configureSSL(options: WildflyHttpsOptions, service: WildflyService) {
-        service.apply {
-            takeSnapshot()
-            createOrUpdateKeystore(options, this)
-            createOrUpdateKeyManager(options, this)
-            createOrUpdateSSL(options, this)
-            assignSecurityRealm(options, this)
-            reloadServer(options, this)
+        getSlaveHosts(options, service).apply {
+            /*
+                These functions update either the standalone profile, or the named profile in a domain,
+                to enable the certificate in the web subsystem. The implication of not processing this
+                if the profile is blank is that it is possible to configure just the specific domain host(s)
+                with the certificate information, and not configure the shared profile.
+             */
+            if (!service.isDomainMode || StringUtils.isNotBlank(profile)) {
+                takeSnapshotFacade(this, service)
+                validateSocketBindingsFacade(this, options, service)
+                createOrUpdateKeystore(options, service)
+                createOrUpdateKeyManager(options, service)
+                createOrUpdateSSL(options, service)
+                getUndertowServers(profile, options, service).forEach {
+                    assignSecurityRealm(it, options, service)
+                }
+
+                /*
+                    One final reload ensures the HTTPS interface is ready
+                    to use.
+                */
+                reloadServersFacade(this, options, service)
+            }
         }
     }
 
@@ -151,17 +167,17 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                 }
             }
 
-    private fun assignSecurityRealm(options: WildflyHttpsOptions, service: WildflyService) =
+    private fun assignSecurityRealm(undertowServer:String, options: WildflyHttpsOptions, service: WildflyService) =
             service.apply {
                 runCommand(
-                        "${getProfilePrefix(profile, service)}/subsystem=undertow/server=default-server/https-listener=https:read-attribute(name=security-realm)",
+                        "${getProfilePrefix(profile, service)}/subsystem=undertow/server=$undertowServer/https-listener=https:read-attribute(name=security-realm)",
                         "Reading existing security name").onFailure {
                     throw it
                 }.onSuccess {
                     service.enterBatchMode()
                     if (it.isSuccess) {
                         service.runCommandExpectSuccess(
-                                "${getProfilePrefix(profile, service)}/subsystem=undertow/server=default-server/https-listener=https:undefine-attribute(name=security-realm)",
+                                "${getProfilePrefix(profile, service)}/subsystem=undertow/server=$undertowServer/https-listener=https:undefine-attribute(name=security-realm)",
                                 "Removing the legacy security realm",
                                 "WILDFLY-HTTPS-ERROR-0005",
                                 "There was an error removing the legacy security realm."
@@ -170,7 +186,8 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                 }
             }.apply {
                 runCommandExpectSuccess(
-                        "${getProfilePrefix(profile, service)}/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context,value=${SERVER_SECURITY_CONTEXT_NAME})",
+                        "${getProfilePrefix(profile, service)}/subsystem=undertow/server=$undertowServer/https-listener=https:write-attribute(" +
+                                "name=ssl-context,value=${SERVER_SECURITY_CONTEXT_NAME})",
                         "Adding the Elytron security context",
                         "WILDFLY-HTTPS-ERROR-0006",
                         "There was an error adding the Elytron security context."
