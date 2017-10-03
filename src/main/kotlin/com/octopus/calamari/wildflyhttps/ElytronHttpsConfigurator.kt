@@ -51,7 +51,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                      */
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:add(" +
-                                    "path=\"${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
+                                    "path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\", " +
                                     "${if (StringUtils.isNotBlank(options.fixedRelativeTo)) "relative-to=${options.fixedRelativeTo}, " else ""}" +
                                     "credential-reference={clear-text=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\"}, " +
                                     "type=JKS)",
@@ -64,7 +64,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                      */
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(name=path, " +
-                                    "value=\"${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                    "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
                             "Configuring the Elytron key store path",
                             "WILDFLY-HTTPS-ERROR-0010",
                             "There was an error configuring the Elytron keystore path.").onFailure { throw it }
