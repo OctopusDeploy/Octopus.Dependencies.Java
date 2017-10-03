@@ -39,22 +39,24 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                 reloadServersFacade(this, options, service)
 
                 /*
-                    These functions update either the standalone
-                    profile, or the named profile in a domain.
+                    These functions update either the standalone profile, or the named profile in a domain,
+                    to enable the certificate in the web subsystem.
                  */
-                if (undertowEnabled(service)) {
-                    getUndertowServers(options, service).forEach {
-                        configureUndertowSocketBinding(it, options, service)
+                if (!service.isDomainMode || StringUtils.isNotBlank(profile)) {
+                    if (undertowEnabled(service)) {
+                        getUndertowServers(options, service).forEach {
+                            configureUndertowSocketBinding(it, options, service)
+                        }
+                    } else {
+                        configureWebSSL(options, service)
                     }
-                } else {
-                    configureWebSSL(options, service)
-                }
 
-                /*
-                    One final reload ensures the HTTPS interface is ready
-                    to use.
-                */
-                reloadServersFacade(this, options, service)
+                    /*
+                        One final reload ensures the HTTPS interface is ready
+                        to use.
+                    */
+                    reloadServersFacade(this, options, service)
+                }
             }
 
     /**
