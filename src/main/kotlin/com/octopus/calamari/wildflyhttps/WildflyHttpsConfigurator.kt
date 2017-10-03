@@ -31,6 +31,14 @@ interface WildflyHttpsConfigurator {
                     "There was an error reloading the server."
             )
 
+    fun reloadServer(host:String, options: WildflyHttpsOptions, service: WildflyService) =
+            service.runCommandExpectSuccess(
+                    "/host=${host}:reload",
+                    "Reloading the server",
+                    "WILDFLY-HTTPS-ERROR-0008",
+                    "There was an error reloading the server."
+            )
+
     fun getProfilePrefix(profile: String, service: WildflyService) =
             if (service.isDomainMode)
                 "/profile=\"${profile.run(StringUtilsImpl::escapeStringForCLICommand)}\""

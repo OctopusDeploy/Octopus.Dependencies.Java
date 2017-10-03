@@ -30,7 +30,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
             takeSnapshot()
             validateSocketBindings(options, this)
             createOrUpdateRealm(options, this)
-            reloadServer(options, this)
+            reloadServers(options, service)
             if (undertowEnabled(service)) {
                 getUndertowServers(options, this).forEach {
                     configureUndertowSocketBinding(it, options, this)
@@ -38,9 +38,18 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
             } else {
                 configureWebSSL(options, this)
             }
-            reloadServer(options, this)
+            reloadServers(options, service)
         }
     }
+
+    private fun reloadServers(options: WildflyHttpsOptions, service:WildflyService) =
+            if (service.isDomainMode) {
+                getSlaveHosts(service).forEach {
+                    reloadServer(it, options, service)
+                }
+            } else {
+                reloadServer(options, service)
+            }
 
     /**
      * Updates either the standalone realm, or the realm of every host
