@@ -7,6 +7,10 @@ import org.apache.commons.lang.StringUtils
 
 const val OCTOPUS_REALM = "OctopusHTTPS"
 
+/**
+ * A service for configuring app servers that don't support Elytron (i.e. servers before wildfly 11
+ * or EAP 7)
+ */
 class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsConfigurator {
 
     override fun configureHttps(options: WildflyHttpsOptions, service: WildflyService) {
