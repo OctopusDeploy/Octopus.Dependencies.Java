@@ -12,7 +12,7 @@ import java.io.File
 
 @RunWith(Arquillian::class)
 class WildflyHttpTest : WildflyTestBase() {
-    
+
     @Test
     @RunAsClient
     fun testWildflyCertificateDeployment():Unit =
