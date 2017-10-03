@@ -50,7 +50,6 @@
         </configuration>
     </container>
 
-
     <container qualifier="wildfly-9.0.2.Final">
         <configuration>
             <property name="chameleonTarget">wildfly:9.0.2.Final:managed</property>

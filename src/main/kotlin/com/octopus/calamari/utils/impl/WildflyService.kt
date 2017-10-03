@@ -153,6 +153,15 @@ class WildflyService {
                     "There was an error taking a snapshot of the current configuration"))
     }
 
+    fun takeSnapshot(host:String): Try<CLI.Result>  {
+        return runCommandExpectSuccess(
+                "/host=$host:take-snapshot",
+                "take configuration snapshot",
+                ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-DEPLOY-ERROR-0001",
+                        "There was an error taking a snapshot of the current configuration"))
+    }
+
     fun runCommand(command:String, description:String): Try<CLI.Result> {
         synchronized(jbossCli) {
             return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
@@ -182,6 +191,7 @@ class WildflyService {
 
                     logger.info("Command: " + command)
                     logger.info("Result as JSON: " + result?.response?.toJSONString(false))
+                    println("Result as JSON: " + result?.response?.toJSONString(false))
 
                     if (!result.isSuccess) {
                         throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
