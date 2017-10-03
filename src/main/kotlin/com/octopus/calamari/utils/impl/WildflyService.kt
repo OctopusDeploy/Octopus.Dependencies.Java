@@ -182,6 +182,7 @@ class WildflyService {
 
                     logger.info("Command: " + command)
                     logger.info("Result as JSON: " + result?.response?.toJSONString(false))
+                    println("Result as JSON: " + result?.response?.toJSONString(false))
 
                     if (!result.isSuccess) {
                         throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
