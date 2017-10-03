@@ -54,6 +54,13 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     "Configuring a keystore requires that the keystore name be defined."))
         }
 
+        if (serverType == ServerType.DOMAIN &&
+                StringUtils.isBlank(profiles)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "Configuring a certificate in a domain requires at least one profile to be defined."))
+        }
+
         if (serverType == ServerType.STANDALONE &&
                 deployKeyStore &&
                 StringUtils.isBlank(privateKey)) {

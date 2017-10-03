@@ -237,7 +237,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                     "socket-binding=https, " +
                                     "scheme=https, " +
                                     "secure=true, " +
-                                    "protocol=TLSv1)",
+                                    "protocol=HTTP/1.1)",
                             "Configuring the https connector in web subsystem",
                             "WILDFLY-HTTPS-ERROR-0029",
                             "There was an error adding a new https connector in the web subsystem.").onFailure { throw it }
@@ -421,8 +421,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
             service.runCommandExpectSuccess(
                     "/host=*:read-resource",
                     "Getting hosts",
-                    "WILDFLY-HTTPS-ERROR-0032",
-                    "Failed to get hosts.").map {
+                    "WILDFLY-HTTPS-ERROR-0033",
+                    "Failed to get master hosts.").map {
                 it.response.get("result").asList()
             }.map {
                 it.filter {
@@ -442,7 +442,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                     "/host=*:read-resource",
                     "Getting hosts",
                     "WILDFLY-HTTPS-ERROR-0032",
-                    "Failed to get hosts.").map {
+                    "Failed to get slave hosts.").map {
                 it.response.get("result").asList()
             }.map {
                 it.filter {
