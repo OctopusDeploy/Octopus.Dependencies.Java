@@ -63,7 +63,8 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                         Configure the keystore
                      */
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(name=path, " +
+                            "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(" +
+                                    "name=path, " +
                                     "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
                             "Configuring the Elytron key store path",
                             "WILDFLY-HTTPS-ERROR-0010",
@@ -75,15 +76,20 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                             "WILDFLY-HTTPS-ERROR-0010",
                             "There was an error configuring the Elytron keystore credentials.").onFailure { throw it }
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(name=type, value=JKS)",
+                            "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(" +
+                                    "name=type, value=JKS)",
                             "Configuring the Elytron key store type",
                             "WILDFLY-HTTPS-ERROR-0010",
                             "There was an error configuring the Elytron keystore type.").onFailure { throw it }
-                    service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(name=relative-to, value=${options.fixedRelativeTo})",
-                            "Configuring the Elytron key store type",
-                            "WILDFLY-HTTPS-ERROR-0010",
-                            "There was an error configuring the Elytron keystore relative to path.").onFailure { throw it }
+
+                    if (StringUtils.isNotBlank(options.fixedRelativeTo)) {
+                        service.runCommandExpectSuccess(
+                                "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(" +
+                                        "name=relative-to, value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Configuring the Elytron key store type",
+                                "WILDFLY-HTTPS-ERROR-0010",
+                                "There was an error configuring the Elytron keystore relative to path.").onFailure { throw it }
+                    }
                 }
             }
 
