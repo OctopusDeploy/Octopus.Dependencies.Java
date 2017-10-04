@@ -33,7 +33,15 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                     make up the domain.
                  */
                 takeSnapshotFacade(this, service)
-                createOrUpdateRealmFacade(this, options, service)
+
+                /*
+                    Undertow refers to the security realm. The legacy web subsystem references
+                    the keystore directly, so if we are not on a system with undertow, don't
+                    add the realm.
+                 */
+                if (undertowEnabled(service)) {
+                    createOrUpdateRealmFacade(this, options, service)
+                }
 
                 /*
                     These functions update either the standalone profile, or the named profile in a domain,
@@ -223,8 +231,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                     "name=ssl, " +
                                     "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
                                     "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                    "relative-to=\"${options.relativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                    "certificate-key-file=\"${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                    "certificate-key-file=\"\${${options.relativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" +
+                                    "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Configuring the https connector ssl configuration in web subsystem",
                             "WILDFLY-HTTPS-ERROR-0029",
                             "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
@@ -238,7 +246,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                             "name=ssl, " +
                                             "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
                                             "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                            "certificate-key-file=\"${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                            "certificate-key-file=\"\${${options.relativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" +
+                                            "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                     "Configuring the https connector ssl configuration in web subsystem",
                                     "WILDFLY-HTTPS-ERROR-0029",
                                     "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
