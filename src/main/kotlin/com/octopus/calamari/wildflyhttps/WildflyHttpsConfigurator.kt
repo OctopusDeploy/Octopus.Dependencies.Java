@@ -200,7 +200,7 @@ interface WildflyHttpsConfigurator {
                     "WILDFLY-HTTPS-ERROR-0031",
                     "Failed to get socket binding for host ${host}.").map {
                 it.response.get("result").asList().map {
-                    it.get("result").get("name").asString()
+                    it.asString()
                 }.toList()
             }.onFailure {
                 throw it
