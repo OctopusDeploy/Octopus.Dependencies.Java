@@ -262,10 +262,10 @@ interface WildflyHttpsConfigurator {
     fun reloadServersFacade(hosts: List<String>, options: WildflyHttpsOptions, service: WildflyService) {
         if (service.isDomainMode) {
             hosts.forEach {
-                reloadServer(it, options, service)
+                reloadServer(it, options, service).onFailure { throw it }
             }
         } else {
-            reloadServer(options, service)
+            reloadServer(options, service).onFailure { throw it }
         }
     }
 
@@ -276,9 +276,9 @@ interface WildflyHttpsConfigurator {
     fun takeSnapshotFacade(hosts: List<String>, service: WildflyService) {
         if (service.isDomainMode) {
             hosts.forEach {
-                service.takeSnapshot(it)
+                service.takeSnapshot(it).onFailure { throw it }
             }
         }
-        service.takeSnapshot()
+        service.takeSnapshot().onFailure { throw it }
     }
 }

@@ -1,7 +1,6 @@
 package com.octopus.calamari.wildflyhttps
 
 import com.octopus.calamari.exception.ExpectedException
-import com.octopus.calamari.exception.wildfly.DomainNotSupportedException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
@@ -44,6 +43,8 @@ object WildflyHttpsStandaloneConfig {
                         "WILDFLY-HTTPS-ERROR-0015",
                         "There was an error reading the app server config path.").onSuccess {
                     options.defaultCertificateLocation = it.response.get("result").get("path").asString()
+                }.onFailure {
+                    throw it
                 }
             }
         }.apply {
@@ -56,7 +57,7 @@ object WildflyHttpsStandaloneConfig {
                                 LegacyHttpsConfigurator(profile).configureHttps(options, this)
                             }
                         }
-                    }
+                    }.onFailure { throw it }
         }
     }
 }

@@ -34,7 +34,6 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                  */
                 takeSnapshotFacade(this, service)
                 createOrUpdateRealmFacade(this, options, service)
-                reloadServersFacade(this, options, service)
 
                 /*
                     These functions update either the standalone profile, or the named profile in a domain,
