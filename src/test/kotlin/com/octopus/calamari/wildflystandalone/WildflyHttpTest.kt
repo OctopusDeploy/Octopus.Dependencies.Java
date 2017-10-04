@@ -42,8 +42,7 @@ class WildflyHttpTest : WildflyTestBase() {
                 protocol = System.getProperty("protocol"),
                 privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                 publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                profiles = "default",
-                ignoreHostQueryFailure = true
+                profiles = "default"
         ).apply {
             WildflyHttpsStandaloneConfig.configureHttps(this)
         }.apply {
@@ -65,8 +64,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = "target/wildfly.keystore",
-                    profiles = "default",
-                    ignoreHostQueryFailure = true
+                    profiles = "default"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -89,8 +87,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = "target/wildfly.keystore",
                     privateKeyPassword = "blah",
-                    profiles = "default",
-                    ignoreHostQueryFailure = true
+                    profiles = "default"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {

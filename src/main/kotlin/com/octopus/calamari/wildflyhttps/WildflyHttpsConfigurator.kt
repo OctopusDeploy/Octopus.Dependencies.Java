@@ -57,8 +57,8 @@ interface WildflyHttpsConfigurator {
                 service.runCommandExpectSuccess(
                         ":read-children-names(child-type=host)",
                         "Getting hosts",
-                        "WILDFLY-HTTPS-ERROR-0032",
-                        "Failed to get slave hosts.").map {
+                        "WILDFLY-HTTPS-ERROR-0033",
+                        "Failed to get master hosts.").map {
                     it.response.get("result").asList()
                 }.map {
                     it.map {
@@ -67,9 +67,9 @@ interface WildflyHttpsConfigurator {
                         service.runCommandExpectSuccess(
                                 "/host=\"${it.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                                 "Getting host details",
-                                "WILDFLY-HTTPS-ERROR-0032",
-                                "Failed to get slave hosts.").map {
-                            it.response.get("result").get("master").asBoolean()
+                                "WILDFLY-HTTPS-ERROR-0033",
+                                "Failed to get master host details.").map {
+                            !it.response.get("result").get("master").asBoolean()
                         }.onFailure {
                             throw it
                         }.get()
@@ -100,7 +100,7 @@ interface WildflyHttpsConfigurator {
                                 "/host=\"${it.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                                 "Getting host details",
                                 "WILDFLY-HTTPS-ERROR-0032",
-                                "Failed to get slave hosts.").map {
+                                "Failed to get slave host details.").map {
                             !it.response.get("result").get("master").asBoolean()
                         }.onFailure {
                             throw it
