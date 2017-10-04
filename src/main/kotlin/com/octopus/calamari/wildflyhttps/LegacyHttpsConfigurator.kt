@@ -223,6 +223,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                     "name=ssl, " +
                                     "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
                                     "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
+                                    "relative-to=\"${options.relativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
                                     "certificate-key-file=\"${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Configuring the https connector ssl configuration in web subsystem",
                             "WILDFLY-HTTPS-ERROR-0029",
@@ -256,6 +257,13 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                     "Configuring the existing https connector ssl configuration key password",
                                     "WILDFLY-HTTPS-ERROR-0030",
                                     "There was an error configuring the existing https connector ssl configuration key password.").onFailure { throw it }
+                            service.runCommandExpectSuccess(
+                                    "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
+                                            "name=relative-to, " +
+                                            "value=\"${options.relativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                    "Configuring the existing https connector ssl configuration relative to value",
+                                    "WILDFLY-HTTPS-ERROR-0030",
+                                    "There was an error configuring the existing https connector ssl configuration relative to value.").onFailure { throw it }
                             service.runCommandExpectSuccess(
                                     "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
                                             "name=certificate-key-file, " +
