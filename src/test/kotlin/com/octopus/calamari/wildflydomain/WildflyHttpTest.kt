@@ -26,8 +26,7 @@ class WildflyHttpTest : WildflyTestBase() {
                 publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                 profiles = "default",
                 relativeTo = "jboss.server.config.dir",
-                keystoreName = "octopus.keystore",
-                ignoreHostQueryFailure = true
+                keystoreName = "octopus.keystore"
         ).apply {
             WildflyHttpsStandaloneConfig.configureHttps(this)
         }.run {}

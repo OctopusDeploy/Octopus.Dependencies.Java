@@ -30,7 +30,6 @@ data class WildflyHttpsOptions(override val controller: String = "",
                                private val profiles: String = "",
                                val relativeTo: String = "",
                                val deployKeyStore: Boolean = true,
-                               val ignoreHostQueryFailure: Boolean = false,
                                private val alreadyDumped: Boolean = false) : CertificateDataClass, WildflyDataClass {
 
     val logger: Logger = Logger.getLogger("")

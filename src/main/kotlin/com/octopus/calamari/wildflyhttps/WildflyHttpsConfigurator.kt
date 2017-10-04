@@ -55,32 +55,25 @@ interface WildflyHttpsConfigurator {
     fun getMasterHosts(options: WildflyHttpsOptions, service: WildflyService) =
             if (service.isDomainMode) {
                 service.runCommandExpectSuccess(
-                        "/host=*:read-resource",
+                        ":read-children-names(child-type=host)",
                         "Getting hosts",
-                        "WILDFLY-HTTPS-ERROR-0033",
-                        "Failed to get master hosts.").map {
+                        "WILDFLY-HTTPS-ERROR-0032",
+                        "Failed to get slave hosts.").map {
                     it.response.get("result").asList()
                 }.map {
-                    it.filter {
-                        it.get("result").get("master").asBoolean()
-                    }.map {
-                        it.get("result").get("name").asString()
-                    }.toList()
-                }.rescue {
-                    /*
-                    Arquillian tests don't have any hosts. If ignoreHostQueryFailure
-                    has been set to true, we treat any failure as an empty set of
-                    hosts.
-                 */
-                    if (options.ignoreHostQueryFailure) {
-                        Try {
-                            listOf<String>()
-                        }
-                    } else {
-                        Try {
+                    it.map {
+                        it.asString()
+                    }.filter {
+                        service.runCommandExpectSuccess(
+                                "/host=\"${it.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
+                                "Getting host details",
+                                "WILDFLY-HTTPS-ERROR-0032",
+                                "Failed to get slave hosts.").map {
+                            it.response.get("result").get("master").asBoolean()
+                        }.onFailure {
                             throw it
-                        }
-                    }
+                        }.get()
+                    }.toList()
                 }.onFailure {
                     throw it
                 }.get()
@@ -94,32 +87,25 @@ interface WildflyHttpsConfigurator {
     fun getSlaveHosts(options: WildflyHttpsOptions, service: WildflyService) =
             if (service.isDomainMode) {
                 service.runCommandExpectSuccess(
-                        "/host=*:read-resource",
+                        ":read-children-names(child-type=host)",
                         "Getting hosts",
                         "WILDFLY-HTTPS-ERROR-0032",
                         "Failed to get slave hosts.").map {
                     it.response.get("result").asList()
                 }.map {
-                    it.filter {
-                        !it.get("result").get("master").asBoolean()
-                    }.map {
-                        it.get("result").get("name").asString()
-                    }.toList()
-                }.rescue {
-                    /*
-                    Arquillian tests don't have any hosts. If ignoreHostQueryFailure
-                    has been set to true, we treat any failure as an empty set of
-                    hosts.
-                 */
-                    if (options.ignoreHostQueryFailure) {
-                        Try {
-                            listOf<String>()
-                        }
-                    } else {
-                        Try {
+                    it.map {
+                        it.asString()
+                    }.filter {
+                        service.runCommandExpectSuccess(
+                                "/host=\"${it.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
+                                "Getting host details",
+                                "WILDFLY-HTTPS-ERROR-0032",
+                                "Failed to get slave hosts.").map {
+                            !it.response.get("result").get("master").asBoolean()
+                        }.onFailure {
                             throw it
-                        }
-                    }
+                        }.get()
+                    }.toList()
                 }.onFailure {
                     throw it
                 }.get()
