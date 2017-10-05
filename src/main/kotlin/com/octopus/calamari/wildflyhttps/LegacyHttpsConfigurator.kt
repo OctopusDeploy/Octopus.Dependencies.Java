@@ -126,7 +126,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                             "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
                                     "alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\"," +
                                     "keystore-path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\"," +
-                                    (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "relative-to=${options.fixedRelativeTo}, " else "") +
+                                    (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "keystore-relative-to=${options.fixedRelativeTo}, " else "") +
                                             "keystore-password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Adding the keystore to the security realm",
                             "WILDFLY-HTTPS-ERROR-0021",
@@ -135,7 +135,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                     if (StringUtils.isNotBlank(options.fixedRelativeTo)) {
                         service.runCommandExpectSuccess(
                                 "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=relative-to, value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                        "name=keystore-relative-to, " +
+                                        "value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                 "Configuring the security realm relative to attribute",
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm relative to attribute.").onFailure { throw it }
@@ -171,14 +172,14 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      */
     private fun addKeystoreToRealm(host: String, options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommand(
-                    "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
+                    "/host=$host/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
                     "Checking for existing ssl configuration").map {
                 if (!it.isSuccess) {
                     service.runCommandExpectSuccess(
-                            "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
+                            "/host=$host/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
                                     "alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\"," +
                                     "keystore-path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\"," +
-                                    (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "relative-to=${options.fixedRelativeTo}, " else "") +
+                                    (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "keystore-relative-to=${options.fixedRelativeTo}, " else "") +
                                     "keystore-password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Adding the keystore to the security realm",
                             "WILDFLY-HTTPS-ERROR-0021",
@@ -186,27 +187,28 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                 } else {
                     if (StringUtils.isNotBlank(options.fixedRelativeTo)) {
                         service.runCommandExpectSuccess(
-                                "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=relative-to, value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "/host=$host/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                        "name=keystore-relative-to, " +
+                                        "value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                 "Configuring the security realm relative to attribute",
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm relative to attribute.").onFailure { throw it }
                     }
                     service.runCommandExpectSuccess(
-                            "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                            "/host=$host/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
                                     "name=alias, " +
                                     "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Configuring the security realm keystore alias",
                             "WILDFLY-HTTPS-ERROR-0022",
                             "There was an error configuring the security realm keystore alias.").onFailure { throw it }
                     service.runCommandExpectSuccess(
-                            "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" + "name=keystore-path, " +
+                            "/host=$host/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" + "name=keystore-path, " +
                                     "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
                             "Configuring the security realm keystore alias",
                             "WILDFLY-HTTPS-ERROR-0022",
                             "There was an error configuring the security realm keystore path.").onFailure { throw it }
                     service.runCommandExpectSuccess(
-                            "/host=${host}/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                            "/host=$host/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
                                     "name=keystore-password, " +
                                     "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Configuring the security realm keystore alias",
