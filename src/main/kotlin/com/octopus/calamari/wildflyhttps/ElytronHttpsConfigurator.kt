@@ -102,7 +102,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                         service.runCommandExpectSuccess(
                                 "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:write-attribute(" +
                                         "name=relative-to, value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the Elytron key store type",
+                                "Configuring the Elytron relative to path",
                                 "WILDFLY-HTTPS-ERROR-0010",
                                 "There was an error configuring the Elytron keystore relative to path.").onFailure { throw it }
                     }
