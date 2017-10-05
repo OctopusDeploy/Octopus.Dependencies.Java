@@ -268,13 +268,6 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                     "There was an error configuring the existing https connector ssl configuration key password.").onFailure { throw it }
                             service.runCommandExpectSuccess(
                                     "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
-                                            "name=relative-to, " +
-                                            "value=\"${options.relativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                    "Configuring the existing https connector ssl configuration relative to value",
-                                    "WILDFLY-HTTPS-ERROR-0030",
-                                    "There was an error configuring the existing https connector ssl configuration relative to value.").onFailure { throw it }
-                            service.runCommandExpectSuccess(
-                                    "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
                                             "name=certificate-key-file, " +
                                             "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
                                     "Configuring the existing https connector ssl configuration keystore filename",
