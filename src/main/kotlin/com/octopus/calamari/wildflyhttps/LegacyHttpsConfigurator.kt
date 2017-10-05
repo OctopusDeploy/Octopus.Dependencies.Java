@@ -217,6 +217,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                     "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:read-resource",
                     "Checking for existing https connector").onSuccess {
                 if (!it.isSuccess) {
+                    service.enterBatchMode()
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:add(" +
                                     "socket-binding=$HTTPS_SOCKET_BINDING, " +
@@ -236,6 +237,9 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                             "Configuring the https connector ssl configuration in web subsystem",
                             "WILDFLY-HTTPS-ERROR-0029",
                             "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
+                    service.runBatch(
+                            "WILDFLY-HTTPS-ERROR-0036",
+                            "Failed to save legacy web subsystem https connector as a batch operation.")
                 } else {
                     service.runCommand(
                             "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:read-resource",
