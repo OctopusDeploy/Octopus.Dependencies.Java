@@ -140,6 +140,13 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 "Configuring the security realm relative to attribute",
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm relative to attribute.").onFailure { throw it }
+                    } else {
+                        service.runCommandExpectSuccess(
+                                "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:undefine-attribute(" +
+                                        "name=keystore-relative-to)",
+                                "Removing the security realm relative to attribute",
+                                "WILDFLY-HTTPS-ERROR-0022",
+                                "There was an error removing the security realm relative to attribute.").onFailure { throw it }
                     }
                     service.runCommandExpectSuccess(
                             "/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
@@ -193,6 +200,13 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 "Configuring the security realm relative to attribute",
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm relative to attribute.").onFailure { throw it }
+                    } else {
+                        service.runCommandExpectSuccess(
+                                "/host=$host/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:undefine-attribute(" +
+                                        "name=keystore-relative-to)",
+                                "Removing the security realm relative to attribute",
+                                "WILDFLY-HTTPS-ERROR-0022",
+                                "There was an error removing the security realm relative to attribute.").onFailure { throw it }
                     }
                     service.runCommandExpectSuccess(
                             "/host=$host/core-service=management/security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
