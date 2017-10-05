@@ -9,6 +9,7 @@ import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
 import org.springframework.retry.RetryCallback
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.logging.Level
 import java.util.logging.Logger
 
 const val LOGIN_LIMIT = 1000 * 60 * 2L
@@ -58,8 +59,10 @@ class WildflyService {
                             options.fixedPassword?.toCharArray())
 
                     connected.set(true)
-                })}
-                .onFailure { exceptionThrown.set(true) }
+                })}.onFailure {
+                    logger.log(Level.INFO, "Login failed", it)
+                    exceptionThrown.set(true)
+                }
             })
 
             thread.setDaemon(true)

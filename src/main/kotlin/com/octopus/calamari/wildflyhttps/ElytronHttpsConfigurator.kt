@@ -68,7 +68,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=${KEYSTORE_NAME}:add(" +
                                     "path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\", " +
-                                    "${if (StringUtils.isNotBlank(options.fixedRelativeTo)) "relative-to=${options.fixedRelativeTo}, " else ""}" +
+                                    if (StringUtils.isNotBlank(options.fixedRelativeTo)) "relative-to=${options.fixedRelativeTo}, " else "" +
                                     "credential-reference={clear-text=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\"}, " +
                                     "type=JKS)",
                             "Adding the Elytron key store",
