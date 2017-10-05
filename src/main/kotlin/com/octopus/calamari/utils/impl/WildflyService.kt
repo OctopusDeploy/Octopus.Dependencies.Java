@@ -208,6 +208,35 @@ class WildflyService {
         }
     }
 
+    fun runCommandExpectSuccessAndNotNull(command:String, description:String, errorCode:String, errorMessage:String): Try<CLI.Result> {
+        synchronized(jbossCli) {
+            return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
+                checkState(connected.get(), "You must be connected before running commands")
+
+                try {
+                    logger.info("Attempt ${context.retryCount + 1} to $description.")
+
+                    val result = jbossCli.cmd(command)
+
+                    logger.info("Command: " + command)
+                    logger.info("Result as JSON: " + result?.response?.toJSONString(false))
+
+                    if (!result.isSuccess || result.response.get("result") == null) {
+                        throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                errorCode, errorMessage))
+                    }
+
+                    result
+                } catch (ex: CommandNotSuccessfulException) {
+                    throw ex
+                } catch (ex:Exception) {
+                    throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
+                            errorCode, errorMessage), ex)
+                }
+            })}
+        }
+    }
+
     fun runCommandExpectSuccess(command:String, description:String, errorMessage:String): Try<CLI.Result> {
         synchronized(jbossCli) {
             return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
