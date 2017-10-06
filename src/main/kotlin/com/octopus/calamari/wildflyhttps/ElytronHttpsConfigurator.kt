@@ -131,20 +131,20 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                                     "key-store=${KEYSTORE_NAME},credential-reference={clear-text=${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}})",
                             "Adding the Elytron key manager",
                             "WILDFLY-HTTPS-ERROR-0011",
-                            "There was an error adding the Elytron key manager.")
+                            "There was an error adding the Elytron key manager.").onFailure { throw it }
                 } else {
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=elytron/key-manager=${KEYMANAGER_NAME}:write-attribute(" +
                                     "name=key-store, value=${KEYSTORE_NAME})",
                             "Configuring the Elytron key manager key store",
                             "WILDFLY-HTTPS-ERROR-0012",
-                            "There was an error configuring the Elytron key manager key store.")
+                            "There was an error configuring the Elytron key manager key store.").onFailure { throw it }
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=elytron/key-manager=${KEYMANAGER_NAME}:write-attribute(" +
                                     "name=credential-reference, value={clear-text=${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}})",
                             "Configuring the Elytron key manager credential reference",
                             "WILDFLY-HTTPS-ERROR-0012",
-                            "There was an error configuring the Elytron key manager credential reference.")
+                            "There was an error configuring the Elytron key manager credential reference.").onFailure { throw it }
                 }
             }
 
@@ -163,14 +163,14 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                                     "key-manager=${KEYMANAGER_NAME})",
                             "Adding the Elytron server ssl context",
                             "WILDFLY-HTTPS-ERROR-0013",
-                            "There was an error adding the Elytron server ssl context.")
+                            "There was an error adding the Elytron server ssl context.").onFailure { throw it }
                 } else {
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=elytron/server-ssl-context=${SERVER_SECURITY_CONTEXT_NAME}:write-attribute(" +
                                     "name=key-manager, value=${KEYMANAGER_NAME})",
                             "Configuring the Elytron server ssl context key manager",
                             "WILDFLY-HTTPS-ERROR-0014",
-                            "There was an error configuring the Elytron server ssl context key manager.")
+                            "There was an error configuring the Elytron server ssl context key manager.").onFailure { throw it }
                 }
             }
 
@@ -181,14 +181,14 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                         "Reading existing security name").onFailure {
                     throw it
                 }.onSuccess {
-                    service.enterBatchMode()
+                    service.enterBatchMode().onFailure { throw it }
                     if (it.isSuccess) {
                         service.runCommandExpectSuccess(
                                 "${getProfilePrefix(profile, service)}/subsystem=undertow/server=$undertowServer/https-listener=https:undefine-attribute(name=security-realm)",
                                 "Removing the legacy security realm",
                                 "WILDFLY-HTTPS-ERROR-0005",
                                 "There was an error removing the legacy security realm."
-                        )
+                        ).onFailure { throw it }
                     }
                 }
             }.apply {
@@ -198,10 +198,10 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                         "Adding the Elytron security context",
                         "WILDFLY-HTTPS-ERROR-0006",
                         "There was an error adding the Elytron security context."
-                )
+                ).onFailure { throw it }
                 runBatch(
                         "WILDFLY-HTTPS-ERROR-0007",
-                        "There was an error with the batched operation to remove the legacy security realm and add the Elytron security context.")
+                        "There was an error with the batched operation to remove the legacy security realm and add the Elytron security context.").onFailure { throw it }
             }
 
 }

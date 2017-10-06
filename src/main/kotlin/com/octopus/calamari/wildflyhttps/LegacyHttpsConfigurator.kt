@@ -275,7 +275,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                             "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
                     service.runBatch(
                             "WILDFLY-HTTPS-ERROR-0036",
-                            "Failed to save legacy web subsystem https connector as a batch operation.")
+                            "Failed to save legacy web subsystem https connector as a batch operation.").onFailure { throw it }
                 } else {
                     service.runCommand(
                             "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:read-resource",
