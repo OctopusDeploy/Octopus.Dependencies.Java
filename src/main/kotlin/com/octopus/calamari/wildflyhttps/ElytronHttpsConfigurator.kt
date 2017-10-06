@@ -128,7 +128,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                 if (!it.isSuccess) {
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=elytron/key-manager=${KEYMANAGER_NAME}:add(" +
-                                    "key-store=${KEYSTORE_NAME},credential-reference={clear-text=${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}})",
+                                    "key-store=${KEYSTORE_NAME},credential-reference={clear-text=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\"})",
                             "Adding the Elytron key manager",
                             "WILDFLY-HTTPS-ERROR-0011",
                             "There was an error adding the Elytron key manager.").onFailure { throw it }
@@ -141,7 +141,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                             "There was an error configuring the Elytron key manager key store.").onFailure { throw it }
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=elytron/key-manager=${KEYMANAGER_NAME}:write-attribute(" +
-                                    "name=credential-reference, value={clear-text=${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}})",
+                                    "name=credential-reference, value={clear-text=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\"})",
                             "Configuring the Elytron key manager credential reference",
                             "WILDFLY-HTTPS-ERROR-0012",
                             "There was an error configuring the Elytron key manager credential reference.").onFailure { throw it }
