@@ -65,7 +65,7 @@ interface WildflyHttpsConfigurator {
                     }.filter {
                         service.runCommandExpectSuccessAndNotNull(
                                 "/host=\"${it.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
-                                "Getting host details",
+                                "Getting host details looking for masters",
                                 "WILDFLY-HTTPS-ERROR-0033",
                                 "Failed to get master host details.").map {
                             !it.response.get("result").get("master").asBoolean()
@@ -97,7 +97,7 @@ interface WildflyHttpsConfigurator {
                     }.filter {
                         service.runCommandExpectSuccessAndNotNull(
                                 "/host=\"${it.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
-                                "Getting host details",
+                                "Getting host details looking for slaves",
                                 "WILDFLY-HTTPS-ERROR-0032",
                                 "Failed to get slave host details.").map {
                             !it.response.get("result").get("master").asBoolean()
