@@ -53,7 +53,7 @@ interface WildflyHttpsConfigurator {
      */
     fun getMasterHosts(options: WildflyHttpsOptions, service: WildflyService) =
             if (service.isDomainMode) {
-                service.runCommandExpectSuccessAndNotNull(
+                service.runCommandExpectSuccessAndDefinedResult(
                         ":read-children-names(child-type=host)",
                         "Getting hosts",
                         "WILDFLY-HTTPS-ERROR-0033",
@@ -63,7 +63,7 @@ interface WildflyHttpsConfigurator {
                     it.map {
                         it.asString()
                     }.filter {
-                        service.runCommandExpectSuccessAndNotNull(
+                        service.runCommandExpectSuccessAndDefinedResult(
                                 "/host=\"${it.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                                 "Getting host details looking for masters",
                                 "WILDFLY-HTTPS-ERROR-0033",
@@ -85,7 +85,7 @@ interface WildflyHttpsConfigurator {
      */
     fun getSlaveHosts(options: WildflyHttpsOptions, service: WildflyService) =
             if (service.isDomainMode) {
-                service.runCommandExpectSuccessAndNotNull(
+                service.runCommandExpectSuccessAndDefinedResult(
                         ":read-children-names(child-type=host)",
                         "Getting hosts",
                         "WILDFLY-HTTPS-ERROR-0032",
@@ -95,7 +95,7 @@ interface WildflyHttpsConfigurator {
                     it.map {
                         it.asString()
                     }.filter {
-                        service.runCommandExpectSuccessAndNotNull(
+                        service.runCommandExpectSuccessAndDefinedResult(
                                 "/host=\"${it.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                                 "Getting host details looking for slaves",
                                 "WILDFLY-HTTPS-ERROR-0032",
@@ -117,7 +117,7 @@ interface WildflyHttpsConfigurator {
      */
     fun getServers(host:String, options: WildflyHttpsOptions, service: WildflyService) =
             if (service.isDomainMode) {
-                service.runCommandExpectSuccessAndNotNull(
+                service.runCommandExpectSuccessAndDefinedResult(
                         "/host=$host:read-children-names(child-type=server)",
                         "Getting servers",
                         "WILDFLY-HTTPS-ERROR-0035",
@@ -138,7 +138,7 @@ interface WildflyHttpsConfigurator {
      * @return the default interface for a gievn socket binding group
      */
     private fun getDefaultInterface(socketGroup: String, service: WildflyService) =
-            service.runCommandExpectSuccessAndNotNull(
+            service.runCommandExpectSuccessAndDefinedResult(
                     "/socket-binding-group=$socketGroup:read-resource",
                     "Getting default interface",
                     "WILDFLY-HTTPS-ERROR-0026",
@@ -153,7 +153,7 @@ interface WildflyHttpsConfigurator {
      * or if the interface is not a public one.
      */
     fun validateSocketBinding(socketGroup: String, options: WildflyHttpsOptions, service: WildflyService) =
-            service.runCommandExpectSuccessAndNotNull(
+            service.runCommandExpectSuccessAndDefinedResult(
                     "/socket-binding-group=$socketGroup/socket-binding=\"$HTTPS_SOCKET_BINDING\":read-resource",
                     "Getting https socket binding",
                     "WILDFLY-HTTPS-ERROR-0027",
@@ -176,7 +176,7 @@ interface WildflyHttpsConfigurator {
      * @return The socket binding group for a standalone server
      */
     fun getSocketBindingForStandalone(service: WildflyService):String =
-            service.runCommandExpectSuccessAndNotNull(
+            service.runCommandExpectSuccessAndDefinedResult(
                     ":read-children-names(child-type=socket-binding-group)",
                     "Getting socket binding for standalone",
                     "WILDFLY-HTTPS-ERROR-0028",
@@ -194,7 +194,7 @@ interface WildflyHttpsConfigurator {
      * @return The socket binding for a given host
      */
     fun getSocketBindingForHost(host: String, server:String, service: WildflyService) =
-            service.runCommandExpectSuccessAndNotNull(
+            service.runCommandExpectSuccessAndDefinedResult(
                     "/host=$host/server=$server/:read-children-names(child-type=socket-binding-group)",
                     "Getting socket binding for host ${host}",
                     "WILDFLY-HTTPS-ERROR-0031",
@@ -210,7 +210,7 @@ interface WildflyHttpsConfigurator {
      * @return A collection of the Undertow server names
      */
     fun getUndertowServers(profile:String, options: WildflyHttpsOptions, service: WildflyService) =
-            service.runCommandExpectSuccessAndNotNull(
+            service.runCommandExpectSuccessAndDefinedResult(
                     "${getProfilePrefix(profile, service)}/subsystem=undertow/server=*:read-resource",
                     "Getting the current undertow servers",
                     "WILDFLY-HTTPS-ERROR-0023",
