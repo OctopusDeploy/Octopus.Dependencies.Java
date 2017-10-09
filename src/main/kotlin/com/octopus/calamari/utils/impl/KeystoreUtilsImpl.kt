@@ -50,23 +50,20 @@ object KeystoreUtilsImpl : KeystoreUtils {
                         "Failed to create the keystore file."), it)
             }
 
-                override fun generateKeystore(alias: String,
-                                              publicCertificate: String,
-                                              privateKey: String,
-                                              sourcePrivateKeyPassword: Option<String>,
-                                              destPrivateKeyPassword: Option<String>): Try<KeyStore> =
-                        Try {
-                            KeyStore.getInstance("JKS").apply {
-                                load(null, null)
-                            }.apply {
-                                setKeyEntry(alias,
-                                        KeyUtilsImpl.createKey(privateKey, sourcePrivateKeyPassword).get(),
-                                        destPrivateKeyPassword.getOrElse { "" }.toCharArray(),
-                                        KeyUtilsImpl.createCertificateChain(publicCertificate)
-                                                .get().toTypedArray())
-                            }
-                        }
+    override fun generateKeystore(alias: String,
+                                  publicCertificate: String,
+                                  privateKey: String,
+                                  sourcePrivateKeyPassword: Option<String>,
+                                  destPrivateKeyPassword: Option<String>): Try<KeyStore> =
+            Try {
+                KeyStore.getInstance("JKS").apply {
+                    load(null, null)
+                }.apply {
+                    setKeyEntry(alias,
+                            KeyUtilsImpl.createKey(privateKey, sourcePrivateKeyPassword).get(),
+                            destPrivateKeyPassword.getOrElse { "" }.toCharArray(),
+                            KeyUtilsImpl.createCertificateChain(publicCertificate)
+                                    .get().toTypedArray())
+                }
             }
-
-
 }
