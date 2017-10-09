@@ -326,12 +326,15 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      */
     private fun configureUndertowSocketBinding(undertowServer: String, options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommand(
-                    "${getProfilePrefix(profile, service)}/subsystem=undertow/server=${undertowServer}/https-listener=https:read-resource",
+                    "${getProfilePrefix(profile, service)}/subsystem=undertow/server=$undertowServer/https-listener=https:read-resource",
                     "Checking for existing ssl configuration").onSuccess {
 
                 if (!it.isSuccess) {
+                    println(it.response.toJSONString(false))
+
+
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=undertow/server=${undertowServer}/https-listener=https:add(" +
+                            "${getProfilePrefix(profile, service)}/subsystem=undertow/server=$undertowServer/https-listener=https:add(" +
                                     "socket-binding=\"$HTTPS_SOCKET_BINDING\", " +
                                     "security-realm=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Configuring the https listener in undertow",
@@ -339,14 +342,14 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                             "There was an error adding a new https listener in undertow.").onFailure { throw it }
                 } else {
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=undertow/server=${undertowServer}/https-listener=https:write-attribute(" +
+                            "${getProfilePrefix(profile, service)}/subsystem=undertow/server=$undertowServer/https-listener=https:write-attribute(" +
                                     "name=socket-binding, " +
                                     "value=\"$HTTPS_SOCKET_BINDING\")",
                             "Configuring the existing security realm keystore alias",
                             "WILDFLY-HTTPS-ERROR-0025",
                             "There was an error configuring the https listener socket binding.").onFailure { throw it }
                     service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=undertow/server=${undertowServer}/https-listener=https:write-attribute(" +
+                            "${getProfilePrefix(profile, service)}/subsystem=undertow/server=$undertowServer/https-listener=https:write-attribute(" +
                                     "name=security-realm, " +
                                     "value=\"${OCTOPUS_REALM.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Configuring the existing security realm keystore alias",
