@@ -34,27 +34,38 @@ object KeystoreUtilsImpl : KeystoreUtils {
                                 options.fixedPrivateKeyPassword.toCharArray())
                     }
                 }
+            }.map {
+                destination.apply {
+                    /*
+                        The store operation may not fail, even if permissions prevent
+                        the file from being created. So we do an additional check here.
+                     */
+                    if (!(destination.exists() && destination.isFile)) {
+                        throw Exception("File was not created")
+                    }
+                }
             }.onFailure {
                 throw KeystoreCreationFailedException(ErrorMessageBuilderImpl.buildErrorMessage(
                         "JAVA-HTTPS-ERROR-0005",
                         "Failed to create the keystore file."), it)
             }
 
-    override fun generateKeystore(alias: String,
-                                  publicCertificate: String,
-                                  privateKey: String,
-                                  sourcePrivateKeyPassword: Option<String>,
-                                  destPrivateKeyPassword: Option<String>): Try<KeyStore> =
-            Try {
-                KeyStore.getInstance("JKS").apply {
-                    load(null, null)
-                }.apply {
-                    setKeyEntry(alias,
-                            KeyUtilsImpl.createKey(privateKey, sourcePrivateKeyPassword).get(),
-                            destPrivateKeyPassword.getOrElse { "" }.toCharArray(),
-                            KeyUtilsImpl.createCertificateChain(publicCertificate)
-                                    .get().toTypedArray())
-                }
+                override fun generateKeystore(alias: String,
+                                              publicCertificate: String,
+                                              privateKey: String,
+                                              sourcePrivateKeyPassword: Option<String>,
+                                              destPrivateKeyPassword: Option<String>): Try<KeyStore> =
+                        Try {
+                            KeyStore.getInstance("JKS").apply {
+                                load(null, null)
+                            }.apply {
+                                setKeyEntry(alias,
+                                        KeyUtilsImpl.createKey(privateKey, sourcePrivateKeyPassword).get(),
+                                        destPrivateKeyPassword.getOrElse { "" }.toCharArray(),
+                                        KeyUtilsImpl.createCertificateChain(publicCertificate)
+                                                .get().toTypedArray())
+                            }
+                        }
             }
 
 
