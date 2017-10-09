@@ -4,10 +4,12 @@ import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.FileUtilsImpl
 import com.octopus.calamari.utils.impl.KeystoreUtilsImpl
+import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.lang.StringUtils
 import org.funktionale.option.firstOption
 import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
+import org.springframework.retry.RetryCallback
 import java.io.File
 import java.util.*
 import javax.naming.ldap.LdapName
@@ -58,8 +60,10 @@ interface CertificateDataClass {
      * @return Create the keystore file and returns the path
      */
     fun createKeystore():String =
-            KeystoreUtilsImpl.saveKeystore(
-                    this, getKeystoreFile()).get().absolutePath
+            RetryServiceImpl.createRetry().execute(RetryCallback<String, Throwable> { context ->
+                KeystoreUtilsImpl.saveKeystore(
+                        this, getKeystoreFile()).get().absolutePath
+            })
 
     private fun getKeystoreFile(): File =
             if (StringUtils.isBlank(keystoreName)) {
