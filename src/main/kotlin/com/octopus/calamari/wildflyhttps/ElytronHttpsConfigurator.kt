@@ -21,7 +21,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
         }.apply {
             configureSSL(this, service)
         }.apply {
-            LoggingServiceImpl.printInfo { logger.info("Certificate deployed successfully for profile $profile.") }
+            LoggingServiceImpl.printInfo { logger.info("Certificate deployed successfully for ${if (service.isDomainMode) "profile $profile." else "standalone profile."}") }
         }
     }
 
