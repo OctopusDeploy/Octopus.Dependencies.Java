@@ -337,9 +337,6 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                     "Checking for existing ssl configuration").onSuccess {
 
                 if (!it.isSuccess) {
-                    println(it.response.toJSONString(false))
-
-
                     service.runCommandExpectSuccess(
                             "${getProfilePrefix(profile, service)}/subsystem=undertow/server=$undertowServer/https-listener=https:add(" +
                                     "socket-binding=\"$HTTPS_SOCKET_BINDING\", " +
