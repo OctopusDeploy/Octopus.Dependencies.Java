@@ -15,7 +15,6 @@ import java.net.URLDecoder
  * Tests of the wildfly service
  */
 @RunWith(Arquillian::class)
-@Ignore
 class WildflyServiceTest : WildflyTestBase() {
     @Test
     @RunAsClient
