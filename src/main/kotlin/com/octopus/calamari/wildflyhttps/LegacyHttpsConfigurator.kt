@@ -110,11 +110,11 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      */
     private fun createOrUpdateSecurityRealm(host: String, options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommand(
-                    "/host=${host}/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
+                    "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                     "Checking for existing security realm").onSuccess {
                 if (!it.isSuccess) {
                     service.runCommandExpectSuccess(
-                            "/host=${host}/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
+                            "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
                             "Adding the security realm",
                             "WILDFLY-HTTPS-ERROR-0020",
                             "There was an error adding the security realm.").onFailure { throw it }
@@ -186,11 +186,11 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      */
     private fun addKeystoreToRealm(host: String, options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommand(
-                    "/host=$host/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
+                    "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
                     "Checking for existing ssl configuration").map {
                 if (!it.isSuccess) {
                     service.runCommandExpectSuccess(
-                            "/host=$host/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
+                            "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
                                     "alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\"," +
                                     "keystore-path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\"," +
                                     (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "keystore-relative-to=${options.fixedRelativeTo}, " else "") +
@@ -201,7 +201,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                 } else {
                     if (StringUtils.isNotBlank(options.fixedRelativeTo)) {
                         service.runCommandExpectSuccess(
-                                "/host=$host/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
                                         "name=keystore-relative-to, " +
                                         "value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                 "Configuring the security realm relative to attribute",
@@ -209,7 +209,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 "There was an error configuring the security realm relative to attribute.").onFailure { throw it }
                     } else {
                         service.runCommandExpectSuccess(
-                                "/host=$host/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:undefine-attribute(" +
+                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:undefine-attribute(" +
                                         "name=keystore-relative-to)",
                                 "Removing the security realm relative to attribute",
                                 "WILDFLY-HTTPS-ERROR-0022",

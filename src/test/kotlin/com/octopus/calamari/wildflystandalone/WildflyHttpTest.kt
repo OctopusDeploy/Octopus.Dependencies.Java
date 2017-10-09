@@ -134,10 +134,10 @@ class WildflyHttpTest : WildflyTestBase() {
                     keystoreName = "target/wildfly.keystore",
                     privateKeyPassword = "blah",
                     profiles = "default",
-                    elytronKeymanagerName = "keymanager\"",
-                    elytronKeystoreName = "keystore\"",
-                    elytronSSLContextName = "sslthingy\"",
-                    wildflySecurityManagerRealmName = "httpsrealm\""
+                    elytronKeymanagerName = "keymanager\\\"",
+                    elytronKeystoreName = "keystore\\\"",
+                    elytronSSLContextName = "sslthingy\\\"",
+                    wildflySecurityManagerRealmName = "httpsrealm\\\""
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
