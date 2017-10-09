@@ -61,8 +61,11 @@ interface CertificateDataClass {
      */
     fun createKeystore():String =
             RetryServiceImpl.createRetry().execute(RetryCallback<String, Throwable> { context ->
-                KeystoreUtilsImpl.saveKeystore(
-                        this, getKeystoreFile()).get().absolutePath
+                KeystoreUtilsImpl.saveKeystore(this, getKeystoreFile()).map {
+                    it.absolutePath
+                }.onFailure {
+                    throw it
+                }.get()
             })
 
     private fun getKeystoreFile(): File =

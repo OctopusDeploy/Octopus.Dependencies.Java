@@ -40,7 +40,7 @@ object KeystoreUtilsImpl : KeystoreUtils {
                         The store operation may not fail, even if permissions prevent
                         the file from being created. So we do an additional check here.
                      */
-                    if (!(destination.exists() && destination.isFile)) {
+                    if (!(exists() && isFile)) {
                         throw Exception("File was not created")
                     }
                 }
