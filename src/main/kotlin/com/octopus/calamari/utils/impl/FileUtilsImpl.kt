@@ -78,7 +78,7 @@ object FileUtilsImpl : FileUtils {
                 File(file)
             }.map {
                 it.apply {
-                    if (!it.parentFile.exists() || !it.parentFile.isDirectory) {
+                    if (it.parentFile != null && (!it.parentFile.exists() || !it.parentFile.isDirectory)) {
                         throw CreateFileException(ErrorMessageBuilderImpl.buildErrorMessage(
                                 "TOMCAT-HTTPS-ERROR-0019",
                                 "The path \"$file\" does not reference a directory that exists"))
