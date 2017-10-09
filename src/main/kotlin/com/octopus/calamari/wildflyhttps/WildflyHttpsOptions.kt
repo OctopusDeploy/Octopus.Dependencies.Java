@@ -35,11 +35,11 @@ data class WildflyHttpsOptions(override val controller: String = "",
                                private val profiles: String = "",
                                val relativeTo: String = "",
                                val deployKeyStore: Boolean = true,
-                               val httpsPortBindingName: String = "",
-                               val wildflySecurityManagerRealmName: String = "",
-                               val elytronKeystoreName: String = "",
-                               val elytronKeymanagerName: String = "",
-                               val elytronSSLContextName: String = "",
+                               val httpsPortBindingName: String = HTTPS_SOCKET_BINDING,
+                               val wildflySecurityManagerRealmName: String = OCTOPUS_REALM,
+                               val elytronKeystoreName: String = KEYSTORE_NAME,
+                               val elytronKeymanagerName: String = KEYMANAGER_NAME,
+                               val elytronSSLContextName: String = SERVER_SECURITY_CONTEXT_NAME,
                                private val alreadyDumped: Boolean = false) : CertificateDataClass, WildflyDataClass {
 
     val logger: Logger = Logger.getLogger("")
@@ -90,6 +90,36 @@ data class WildflyHttpsOptions(override val controller: String = "",
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0018",
                     "The port needs to be defined if configuring a keystore."))
+        }
+
+        if (StringUtils.isBlank(httpsPortBindingName)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The port binding name can not be blank."))
+        }
+
+        if (StringUtils.isBlank(wildflySecurityManagerRealmName)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The security realm name can not be blank."))
+        }
+
+        if (StringUtils.isBlank(elytronKeystoreName)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The Elytron keystore name can not be blank."))
+        }
+
+        if (StringUtils.isBlank(elytronKeymanagerName)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The Elytron keymanager name can not be blank."))
+        }
+
+        if (StringUtils.isBlank(elytronSSLContextName)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The Elytron ssl context name can not be blank."))
         }
     }
 
