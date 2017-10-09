@@ -4,8 +4,6 @@ import com.octopus.calamari.utils.impl.StringUtilsImpl
 import com.octopus.calamari.utils.impl.WildflyService
 import org.apache.commons.lang.StringUtils
 
-const val HTTPS_SOCKET_BINDING = "https"
-
 /**
  * Defines a service for configuring Wildfly HTTPS
  */
@@ -142,7 +140,7 @@ interface WildflyHttpsConfigurator {
                     "/socket-binding-group=$socketGroup:read-resource",
                     "Getting default interface",
                     "WILDFLY-HTTPS-ERROR-0026",
-                    "Failed to get the default interface for socket group ${socketGroup}.").map {
+                    "Failed to get the default interface for socket group $socketGroup.").map {
                 it.response.get("result").get("default-interface").asString()
             }.onFailure {
                 throw it
@@ -154,7 +152,7 @@ interface WildflyHttpsConfigurator {
      */
     fun validateSocketBinding(socketGroup: String, options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommandExpectSuccessAndDefinedResult(
-                    "/socket-binding-group=$socketGroup/socket-binding=\"$HTTPS_SOCKET_BINDING\":read-resource",
+                    "/socket-binding-group=$socketGroup/socket-binding=\"${options.httpsPortBindingName}\":read-resource",
                     "Getting https socket binding",
                     "WILDFLY-HTTPS-ERROR-0027",
                     "Failed to get the https socket binding.").map {
@@ -196,9 +194,9 @@ interface WildflyHttpsConfigurator {
     fun getSocketBindingForHost(host: String, server:String, service: WildflyService) =
             service.runCommandExpectSuccessAndDefinedResult(
                     "/host=$host/server=$server/:read-children-names(child-type=socket-binding-group)",
-                    "Getting socket binding for host ${host}",
+                    "Getting socket binding for host $host",
                     "WILDFLY-HTTPS-ERROR-0031",
-                    "Failed to get socket binding for host ${host}.").map {
+                    "Failed to get socket binding for host $host.").map {
                 it.response.get("result").asList().map {
                     it.asString()
                 }.toList()

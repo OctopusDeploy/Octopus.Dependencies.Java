@@ -5,7 +5,6 @@ import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.options.CERTIFICATE_FILE_NAME
 import com.octopus.calamari.options.CertificateDataClass
 import com.octopus.calamari.options.WildflyDataClass
-import com.octopus.calamari.tomcathttps.TomcatHttpsOptions
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.wildfly.ServerType
@@ -13,6 +12,12 @@ import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
 import java.lang.IllegalArgumentException
 import java.util.logging.Logger
+
+private const val KEYSTORE_NAME = "octopusHttpsKS"
+private const val KEYMANAGER_NAME = "octopusHttpsKM"
+private const val SERVER_SECURITY_CONTEXT_NAME = "octopusHttpsSSC"
+private const val OCTOPUS_REALM = "OctopusHTTPS"
+private const val HTTPS_SOCKET_BINDING = "https"
 
 data class WildflyHttpsOptions(override val controller: String = "",
                                override val port: Int = -1,
@@ -30,6 +35,11 @@ data class WildflyHttpsOptions(override val controller: String = "",
                                private val profiles: String = "",
                                val relativeTo: String = "",
                                val deployKeyStore: Boolean = true,
+                               val httpsPortBindingName: String = "",
+                               val wildflySecurityManagerRealmName: String = "",
+                               val elytronKeystoreName: String = "",
+                               val elytronKeymanagerName: String = "",
+                               val elytronSSLContextName: String = "",
                                private val alreadyDumped: Boolean = false) : CertificateDataClass, WildflyDataClass {
 
     val logger: Logger = Logger.getLogger("")
@@ -144,7 +154,12 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     "",
                     getEnvironmentVar("CertificateProfiles", ""),
                     getEnvironmentVar("CertificateRelativeTo", ""),
-                    getEnvironmentVar("DeployCertificate", "true").toBoolean())
+                    getEnvironmentVar("DeployCertificate", "true").toBoolean(),
+                    getEnvironmentVar("HTTPSPortBindingName", HTTPS_SOCKET_BINDING),
+                    getEnvironmentVar("SecurityRealmName", OCTOPUS_REALM),
+                    getEnvironmentVar("ElytronKeystoreName", KEYSTORE_NAME),
+                    getEnvironmentVar("ElytronKeymanagerName", KEYMANAGER_NAME),
+                    getEnvironmentVar("ElytronSSLContextName", SERVER_SECURITY_CONTEXT_NAME))
 
         private fun getKeystoreEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Java_Certificate_$name"] ?: default).run {
