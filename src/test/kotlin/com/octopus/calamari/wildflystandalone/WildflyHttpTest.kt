@@ -116,4 +116,31 @@ class WildflyHttpTest : WildflyTestBase() {
             }.apply {
                 Assert.assertTrue(openHomepage(this).isSuccess())
             }.run {}
+
+    /**
+     * Test custom entity names with special chars
+     */
+    @Test
+    @RunAsClient
+    fun testWildflyCertificateDeployment5():Unit =
+            WildflyHttpsOptions(
+                    controller = "127.0.0.1",
+                    port = System.getProperty("port").toInt(),
+                    user = System.getProperty("username"),
+                    password = System.getProperty("password"),
+                    protocol = System.getProperty("protocol"),
+                    privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
+                    publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                    keystoreName = "target/wildfly.keystore",
+                    privateKeyPassword = "blah",
+                    profiles = "default",
+                    elytronKeymanagerName = "keymanager\"",
+                    elytronKeystoreName = "keystore\"",
+                    elytronSSLContextName = "sslthingy\"",
+                    wildflySecurityManagerRealmName = "httpsrealm\""
+            ).apply {
+                WildflyHttpsStandaloneConfig.configureHttps(this)
+            }.apply {
+                Assert.assertTrue(openHomepage(this).isSuccess())
+            }.run {}
 }

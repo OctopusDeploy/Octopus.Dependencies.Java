@@ -34,7 +34,7 @@ interface WildflyHttpsConfigurator {
 
     fun reloadServer(host:String, options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommandExpectSuccess(
-                    "/host=$host:reload",
+                    "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\":reload",
                     "Reloading the server",
                     "WILDFLY-HTTPS-ERROR-0008",
                     "There was an error reloading the server."
@@ -45,6 +45,21 @@ interface WildflyHttpsConfigurator {
                 "/profile=\"${profile.run(StringUtilsImpl::escapeStringForCLICommand)}\""
             else
                 ""
+
+    fun validateProfile(profile:String, service: WildflyService):Boolean =
+            if (service.isDomainMode) {
+                service.runCommandExpectSuccessAndDefinedResult(
+                        getProfilePrefix(profile, service) + ":read-resource",
+                        "Verifying the profile name",
+                        "WILDFLY-HTTPS-ERROR-0037",
+                        "The profile $profile did not exist in the domain.").map {
+                    true
+                }.onFailure {
+                    throw it
+                }.get()
+            } else {
+                true
+            }
 
     /**
      * @return a list of the master hosts
@@ -116,7 +131,7 @@ interface WildflyHttpsConfigurator {
     fun getServers(host:String, options: WildflyHttpsOptions, service: WildflyService) =
             if (service.isDomainMode) {
                 service.runCommandExpectSuccessAndDefinedResult(
-                        "/host=$host:read-children-names(child-type=server)",
+                        "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-children-names(child-type=server)",
                         "Getting servers",
                         "WILDFLY-HTTPS-ERROR-0035",
                         "Failed to get servers for host $host").map {
@@ -152,7 +167,7 @@ interface WildflyHttpsConfigurator {
      */
     fun validateSocketBinding(socketGroup: String, options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommandExpectSuccessAndDefinedResult(
-                    "/socket-binding-group=$socketGroup/socket-binding=\"${options.httpsPortBindingName}\":read-resource",
+                    "/socket-binding-group=\"${socketGroup.run(StringUtilsImpl::escapeStringForCLICommand)}\"/socket-binding=\"${options.httpsPortBindingName}\":read-resource",
                     "Getting https socket binding",
                     "WILDFLY-HTTPS-ERROR-0027",
                     "Failed to get the https socket binding.").map {
@@ -193,7 +208,7 @@ interface WildflyHttpsConfigurator {
      */
     fun getSocketBindingForHost(host: String, server:String, service: WildflyService) =
             service.runCommandExpectSuccessAndDefinedResult(
-                    "/host=$host/server=$server/:read-children-names(child-type=socket-binding-group)",
+                    "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server=\"${server.run(StringUtilsImpl::escapeStringForCLICommand)}\"/:read-children-names(child-type=socket-binding-group)",
                     "Getting socket binding for host $host",
                     "WILDFLY-HTTPS-ERROR-0031",
                     "Failed to get socket binding for host $host.").map {
