@@ -164,11 +164,15 @@ data class WildflyHttpsOptions(override val controller: String = "",
         private fun getKeystoreEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Java_Certificate_$name"] ?: default).run {
                     if (trim) this.trim() else this
+                }.run {
+                    if (this.isNullOrEmpty()) default else this
                 }
 
         private fun getEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}WildFly_Deploy_$name"] ?: default).run {
                     if (trim) this.trim() else this
+                }.run {
+                    if (this.isNullOrEmpty()) default else this
                 }
     }
 }

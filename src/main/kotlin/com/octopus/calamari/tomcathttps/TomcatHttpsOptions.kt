@@ -262,11 +262,15 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
         private fun getKeystoreEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Java_Certificate_$name"] ?: default).run {
                     if (trim) this.trim() else this
+                }.run {
+                    if (this.isNullOrEmpty()) default else this
                 }
 
         private fun getEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Tomcat_Certificate_$name"] ?: default).run {
                     if (trim) this.trim() else this
+                }.run {
+                    if (this.isNullOrEmpty()) default else this
                 }
     }
 
