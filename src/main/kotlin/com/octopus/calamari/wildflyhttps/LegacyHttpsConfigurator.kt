@@ -41,6 +41,13 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                  */
                 if (undertowEnabled(service)) {
                     createOrUpdateRealmFacade(this, options, service)
+                    /*
+                        Reload to fix this issue:
+                        No SSL Context available from security realm 'OctopusHTTPS'.
+                        Either the realm is not configured for SSL, or the server has not been reloaded
+                        since the SSL config was added.
+                     */
+                    reloadServersFacade(this, options, service)
                 }
 
                 /*
