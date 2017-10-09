@@ -21,7 +21,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
         }.apply {
             configureSSL(this, service)
         }.apply {
-            LoggingServiceImpl.printInfo { logger.info("Certificate deployed successfully") }
+            LoggingServiceImpl.printInfo { logger.info("Certificate deployed successfully for profile $profile.") }
         }
     }
 
