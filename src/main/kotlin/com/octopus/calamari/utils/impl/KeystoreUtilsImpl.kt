@@ -41,7 +41,7 @@ object KeystoreUtilsImpl : KeystoreUtils {
                         the file from being created. So we do an additional check here.
                      */
                     if (!(exists() && isFile)) {
-                        throw Exception("File was not created")
+                        throw Exception("File was not created at ${this.absolutePath}")
                     }
                 }
             }.onFailure {

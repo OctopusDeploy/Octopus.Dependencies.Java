@@ -33,7 +33,8 @@ object KeystoreConfig {
     }
 
     fun deployKeystore(options:KeystoreOptions) {
-        options.createKeystore()
-        LoggingServiceImpl.printInfo { logger.info("Keystore was successfully deployed.") }
+        options.createKeystore().apply {
+            LoggingServiceImpl.printInfo { logger.info("Keystore was successfully deployed to \"$this\".") }
+        }
     }
 }
