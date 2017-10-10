@@ -1,15 +1,19 @@
 package com.octopus.calamari.wildflyhttps
 
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
+import com.octopus.calamari.utils.impl.RetryServiceImpl
 import com.octopus.calamari.utils.impl.StringUtilsImpl
 import com.octopus.calamari.utils.impl.WildflyService
 import org.apache.commons.lang.StringUtils
+import org.springframework.retry.RetryCallback
 
 /**
  * A service for configuring app servers that don't support Elytron (i.e. servers before wildfly 11
  * or EAP 7)
  */
 class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsConfigurator {
+
+    private val retry = RetryServiceImpl.createRetry()
 
     override fun configureHttps(options: WildflyHttpsOptions, service: WildflyService) {
         options.apply {
@@ -255,109 +259,113 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      * See https://developer.jboss.org/thread/215614 for why we create the connector then the ssl configuration
      */
     private fun configureWebSSL(options: WildflyHttpsOptions, service: WildflyService) =
-            service.runCommand(
-                    "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:read-resource",
-                    "Checking for existing https connector").onSuccess {
-                if (!it.isSuccess) {
-                    service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:add(" +
-                                    "socket-binding=\"${options.httpsPortBindingName.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                    "scheme=https, " +
-                                    "secure=true, " +
-                                    "protocol=HTTP/1.1)",
-                            "Configuring the https connector in web subsystem",
-                            "WILDFLY-HTTPS-ERROR-0029",
-                            "There was an error adding a new https connector in the web subsystem.").onFailure { throw it }
-                    service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:add(" +
-                                    "name=ssl, " +
-                                    "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                    "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                    "certificate-key-file=\"" +
-                                    (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
-                                    "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                            "Configuring the https connector ssl configuration in web subsystem",
-                            "WILDFLY-HTTPS-ERROR-0029",
-                            "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
-                    service.runBatch(
-                            "WILDFLY-HTTPS-ERROR-0036",
-                            "Failed to save legacy web subsystem https connector as a batch operation.").onFailure { throw it }
-                } else {
-                    service.runCommand(
-                            "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:read-resource",
-                            "Checking for existing https connector").onSuccess {
-                        if (!it.isSuccess) {
-                            service.runCommandExpectSuccess(
-                                    "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:add(" +
-                                            "name=ssl, " +
-                                            "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                            "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                            "certificate-key-file=\"" +
-                                            (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
-                                            "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                    "Configuring the https connector ssl configuration in web subsystem",
-                                    "WILDFLY-HTTPS-ERROR-0029",
-                                    "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
-                        } else {
-                            service.runCommandExpectSuccess(
-                                    "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
-                                            "name=key-alias, " +
-                                            "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                    "Configuring the existing https connector ssl configuration key alias",
-                                    "WILDFLY-HTTPS-ERROR-0030",
-                                    "There was an error configuring the existing https connector ssl configuration key alias.").onFailure { throw it }
-                            service.runCommandExpectSuccess(
-                                    "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
-                                            "name=password, " +
-                                            "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                    "Configuring the existing https connector ssl configuration key password",
-                                    "WILDFLY-HTTPS-ERROR-0030",
-                                    "There was an error configuring the existing https connector ssl configuration key password.").onFailure { throw it }
-                            service.runCommandExpectSuccess(
-                                    "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
-                                            "name=certificate-key-file, " +
-                                            "value=\"" +
-                                            (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
-                                            "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                    "Configuring the existing https connector ssl configuration keystore filename",
-                                    "WILDFLY-HTTPS-ERROR-0030",
-                                    "There was an error configuring the existing https connector ssl configuration keystore filename.").onFailure { throw it }
-                        }
-                    }.onFailure { throw it }
-                }
-            }.onFailure { throw it }
+            retry.execute(RetryCallback<Unit, Throwable> { context ->
+                service.runCommand(
+                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:read-resource",
+                        "Checking for existing https connector").onSuccess {
+                    if (!it.isSuccess) {
+                        service.runCommandExpectSuccess(
+                                "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:add(" +
+                                        "socket-binding=\"${options.httpsPortBindingName.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
+                                        "scheme=https, " +
+                                        "secure=true, " +
+                                        "protocol=HTTP/1.1)",
+                                "Configuring the https connector in web subsystem",
+                                "WILDFLY-HTTPS-ERROR-0029",
+                                "There was an error adding a new https connector in the web subsystem.").onFailure { throw it }
+                        service.runCommandExpectSuccess(
+                                "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:add(" +
+                                        "name=ssl, " +
+                                        "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
+                                        "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
+                                        "certificate-key-file=\"" +
+                                        (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
+                                        "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Configuring the https connector ssl configuration in web subsystem",
+                                "WILDFLY-HTTPS-ERROR-0029",
+                                "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
+                        service.runBatch(
+                                "WILDFLY-HTTPS-ERROR-0036",
+                                "Failed to save legacy web subsystem https connector as a batch operation.").onFailure { throw it }
+                    } else {
+                        service.runCommand(
+                                "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:read-resource",
+                                "Checking for existing https connector").onSuccess {
+                            if (!it.isSuccess) {
+                                service.runCommandExpectSuccess(
+                                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:add(" +
+                                                "name=ssl, " +
+                                                "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
+                                                "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
+                                                "certificate-key-file=\"" +
+                                                (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
+                                                "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                        "Configuring the https connector ssl configuration in web subsystem",
+                                        "WILDFLY-HTTPS-ERROR-0029",
+                                        "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
+                            } else {
+                                service.runCommandExpectSuccess(
+                                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
+                                                "name=key-alias, " +
+                                                "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                        "Configuring the existing https connector ssl configuration key alias",
+                                        "WILDFLY-HTTPS-ERROR-0030",
+                                        "There was an error configuring the existing https connector ssl configuration key alias.").onFailure { throw it }
+                                service.runCommandExpectSuccess(
+                                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
+                                                "name=password, " +
+                                                "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                        "Configuring the existing https connector ssl configuration key password",
+                                        "WILDFLY-HTTPS-ERROR-0030",
+                                        "There was an error configuring the existing https connector ssl configuration key password.").onFailure { throw it }
+                                service.runCommandExpectSuccess(
+                                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
+                                                "name=certificate-key-file, " +
+                                                "value=\"" +
+                                                (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
+                                                "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                        "Configuring the existing https connector ssl configuration keystore filename",
+                                        "WILDFLY-HTTPS-ERROR-0030",
+                                        "There was an error configuring the existing https connector ssl configuration keystore filename.").onFailure { throw it }
+                            }
+                        }.onFailure { throw it }
+                    }
+                }.onFailure { throw it }
+            })
 
     /**
      * Create or update the https listener
      */
     private fun configureUndertowSocketBinding(undertowServer: String, options: WildflyHttpsOptions, service: WildflyService) =
-            service.runCommand(
-                    "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:read-resource",
-                    "Checking for existing ssl configuration").onSuccess {
+            retry.execute(RetryCallback<Unit, Throwable> { context ->
+                service.runCommand(
+                        "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:read-resource",
+                        "Checking for existing ssl configuration").onSuccess {
 
-                if (!it.isSuccess) {
-                    service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:add(" +
-                                    "socket-binding=\"${options.httpsPortBindingName}\", " +
-                                    "security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                            "Configuring the https listener in undertow",
-                            "WILDFLY-HTTPS-ERROR-0024",
-                            "There was an error adding a new https listener in undertow.").onFailure { throw it }
-                } else {
-                    service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
-                                    "name=socket-binding, " +
-                                    "value=\"${options.httpsPortBindingName}\")",
-                            "Configuring the existing security realm keystore alias",
-                            "WILDFLY-HTTPS-ERROR-0025",
-                            "There was an error configuring the https listener socket binding.").onFailure { throw it }
-                    service.runCommandExpectSuccess(
-                            "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
-                                    "name=security-realm, " +
-                                    "value=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                            "Configuring the existing security realm keystore alias",
-                            "WILDFLY-HTTPS-ERROR-0025",
-                            "There was an error configuring the https listener security realm.").onFailure { throw it }
-                }
-            }.onFailure { throw it }
+                    if (!it.isSuccess) {
+                        service.runCommandExpectSuccess(
+                                "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:add(" +
+                                        "socket-binding=\"${options.httpsPortBindingName}\", " +
+                                        "security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Configuring the https listener in undertow",
+                                "WILDFLY-HTTPS-ERROR-0024",
+                                "There was an error adding a new https listener in undertow.").onFailure { throw it }
+                    } else {
+                        service.runCommandExpectSuccess(
+                                "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
+                                        "name=socket-binding, " +
+                                        "value=\"${options.httpsPortBindingName}\")",
+                                "Configuring the existing security realm keystore alias",
+                                "WILDFLY-HTTPS-ERROR-0025",
+                                "There was an error configuring the https listener socket binding.").onFailure { throw it }
+                        service.runCommandExpectSuccess(
+                                "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
+                                        "name=security-realm, " +
+                                        "value=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Configuring the existing security realm keystore alias",
+                                "WILDFLY-HTTPS-ERROR-0025",
+                                "There was an error configuring the https listener security realm.").onFailure { throw it }
+                    }
+                }.onFailure { throw it }
+            })
 }
