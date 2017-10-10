@@ -9,8 +9,11 @@ import org.funktionale.tries.Try
 import java.io.File
 import java.io.FileOutputStream
 import java.security.KeyStore
+import java.util.logging.Logger
 
 object KeystoreUtilsImpl : KeystoreUtils {
+    val logger: Logger = Logger.getLogger("")
+
     override fun saveKeystore(options: CertificateDataClass, destination: File): Try<File> =
             KeystoreUtilsImpl.generateKeystore(
                     options.fixedKeystoreAlias,
@@ -42,6 +45,8 @@ object KeystoreUtilsImpl : KeystoreUtils {
                      */
                     if (!(exists() && isFile)) {
                         throw Exception("File was not created at ${this.absolutePath}")
+                    } else {
+                        logger.info("Successfully created keystore at ${this.absolutePath}")
                     }
                 }
             }.onFailure {
