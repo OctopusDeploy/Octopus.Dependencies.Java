@@ -27,7 +27,7 @@ class WildflyService {
     private var connected = AtomicBoolean(false)
     private var exceptionThrown = AtomicBoolean(false)
 
-    val isDomainMode:Boolean
+    val isDomainMode: Boolean
         /**
          * @return true if the connection was made to a domain controller, and false otherwise
          */
@@ -46,20 +46,22 @@ class WildflyService {
                 timed out should any inputs like that be requested.
              */
             val thread = Thread(Runnable {
-                Try {retry.execute(RetryCallback<Unit, Throwable> { context ->
-                    checkState(!connected.get(), "You can not connect more than once")
+                Try {
+                    retry.execute(RetryCallback<Unit, Throwable> { context ->
+                        checkState(!connected.get(), "You can not connect more than once")
 
-                    logger.info("Attempt ${context.retryCount + 1} to connect.")
+                        logger.info("Attempt ${context.retryCount + 1} to connect.")
 
-                    jbossCli.connect(
-                            options.protocol,
-                            options.controller,
-                            options.port,
-                            options.fixedUsername,
-                            options.fixedPassword?.toCharArray())
+                        jbossCli.connect(
+                                options.protocol,
+                                options.controller,
+                                options.port,
+                                options.fixedUsername,
+                                options.fixedPassword?.toCharArray())
 
-                    connected.set(true)
-                })}.onFailure {
+                        connected.set(true)
+                    })
+                }.onFailure {
                     logger.log(Level.INFO, "Login failed", it)
                     exceptionThrown.set(true)
                 }
@@ -93,7 +95,7 @@ class WildflyService {
                 throw LoginFailException(ErrorMessageBuilderImpl.buildErrorMessage(
                         "WILDFLY-DEPLOY-ERROR-0009",
                         "There was an error logging into the management API. " +
-                        "Check that the username and password are correct."))
+                                "Check that the username and password are correct."))
             }
 
             /*
@@ -107,20 +109,22 @@ class WildflyService {
 
     fun logout(): WildflyService {
         synchronized(jbossCli) {
-            Try{ retry.execute(RetryCallback<Unit, Throwable> { context ->
-                checkState(connected.get(), "You must be connected to disconnect")
+            Try {
+                retry.execute(RetryCallback<Unit, Throwable> { context ->
+                    checkState(connected.get(), "You must be connected to disconnect")
 
-                logger.info("Attempt ${context.retryCount + 1} to disconnect.")
+                    logger.info("Attempt ${context.retryCount + 1} to disconnect.")
 
-                jbossCli.disconnect()
+                    jbossCli.disconnect()
 
-                connected.set(false)
-            })}
-            .onFailure {
-                throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
-                        "WILDFLY-DEPLOY-ERROR-0010",
-                        "There was an error logging out of the management API"))
+                    connected.set(false)
+                })
             }
+                    .onFailure {
+                        throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
+                                "WILDFLY-DEPLOY-ERROR-0010",
+                                "There was an error logging out of the management API"))
+                    }
 
             return this
         }
@@ -128,36 +132,38 @@ class WildflyService {
 
     fun shutdown(): WildflyService {
         synchronized(jbossCli) {
-            Try{retry.execute(RetryCallback<Unit, Throwable> { context ->
-                checkState(!connected.get(), "You must disconnect before terminating")
+            Try {
+                retry.execute(RetryCallback<Unit, Throwable> { context ->
+                    checkState(!connected.get(), "You must disconnect before terminating")
 
-                logger.info("Attempt ${context.retryCount + 1} to terminate.")
+                    logger.info("Attempt ${context.retryCount + 1} to terminate.")
 
-                jbossCli.terminate()
+                    jbossCli.terminate()
 
-                connected.set(false)
-            })}
-            .onFailure {
-                throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
-                        "WILDFLY-DEPLOY-ERROR-0011",
-                        "There was an error terminating the CLI object"))
+                    connected.set(false)
+                })
             }
+                    .onFailure {
+                        throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
+                                "WILDFLY-DEPLOY-ERROR-0011",
+                                "There was an error terminating the CLI object"))
+                    }
 
             return this
         }
     }
 
-    fun takeSnapshot(): Try<CLI.Result>  {
-        return runCommandExpectSuccess(
+    fun takeSnapshot(): Try<CLI.Result> {
+        return runCommandExpectSuccessWithRetry(
                 "/:take-snapshot",
                 "take configuration snapshot",
                 ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-DEPLOY-ERROR-0001",
-                    "There was an error taking a snapshot of the current configuration"))
+                        "WILDFLY-DEPLOY-ERROR-0001",
+                        "There was an error taking a snapshot of the current configuration"))
     }
 
-    fun takeSnapshot(host:String): Try<CLI.Result>  {
-        return runCommandExpectSuccess(
+    fun takeSnapshot(host: String): Try<CLI.Result> {
+        return runCommandExpectSuccessWithRetry(
                 "/host=\"${host.run(StringUtilsImpl::escapePathForCLICommand)}\":take-snapshot",
                 "take configuration snapshot",
                 ErrorMessageBuilderImpl.buildErrorMessage(
@@ -165,117 +171,153 @@ class WildflyService {
                         "There was an error taking a snapshot of the current configuration"))
     }
 
-    fun runCommand(command:String, description:String): Try<CLI.Result> {
-        synchronized(jbossCli) {
-            return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
-                checkState(connected.get(), "You must be connected before running commands")
-
-                logger.info("Attempt ${context.retryCount + 1} to $description.")
-
-                val result = jbossCli.cmd(command)
-
-                logger.info("Command: " + command)
-                logger.info("Result as JSON: " + result?.response?.toJSONString(false))
-
-                result
-            })}
-        }
-    }
-
-    fun runCommandExpectSuccess(command:String, description:String, errorCode:String, errorMessage:String): Try<CLI.Result> {
-        synchronized(jbossCli) {
-            return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
-                checkState(connected.get(), "You must be connected before running commands")
-
-                try {
-                    logger.info("Attempt ${context.retryCount + 1} to $description.")
+    fun runCommand(command: String, description: String): Try<CLI.Result> =
+            synchronized(jbossCli) {
+                Try {
+                    checkState(connected.get(), "You must be connected before running commands")
 
                     val result = jbossCli.cmd(command)
 
                     logger.info("Command: " + command)
                     logger.info("Result as JSON: " + result?.response?.toJSONString(false))
 
-                    if (!result.isSuccess) {
+                    result
+                }
+            }
+
+    fun runCommandWithRetry(command: String, description: String): Try<CLI.Result> {
+        synchronized(jbossCli) {
+            return Try {
+                retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
+                    runCommand(command, description).onFailure {
+                        throw it
+                    }.get()
+                })
+            }
+        }
+    }
+
+    fun runCommandExpectSuccess(command: String, description: String, errorCode: String, errorMessage: String): Try<CLI.Result> =
+            synchronized(jbossCli) {
+                Try {
+                    checkState(connected.get(), "You must be connected before running commands")
+
+                    try {
+                        val result = jbossCli.cmd(command)
+
+                        logger.info("Command: " + command)
+                        logger.info("Result as JSON: " + result?.response?.toJSONString(false))
+
+                        if (!result.isSuccess) {
+                            throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                    errorCode, errorMessage))
+                        }
+
+                        result
+                    } catch (ex: CommandNotSuccessfulException) {
+                        throw ex
+                    } catch (ex: Exception) {
                         throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
-                                errorCode, errorMessage))
+                                errorCode, errorMessage), ex)
                     }
-
-                    result
-                } catch (ex: CommandNotSuccessfulException) {
-                    throw ex
-                } catch (ex:Exception) {
-                    throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
-                            errorCode, errorMessage), ex)
                 }
-            })}
+            }
+
+    fun runCommandExpectSuccessWithRetry(command: String, description: String, errorCode: String, errorMessage: String): Try<CLI.Result> {
+        synchronized(jbossCli) {
+            return Try {
+                retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
+                    runCommandExpectSuccess(command, description, errorCode, errorMessage).onFailure {
+                        throw it
+                    }.get()
+                })
+            }
         }
     }
 
-    fun runCommandExpectSuccessAndDefinedResult(command:String, description:String, errorCode:String, errorMessage:String): Try<CLI.Result> {
-        synchronized(jbossCli) {
-            return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
-                checkState(connected.get(), "You must be connected before running commands")
+    fun runCommandExpectSuccessAndDefinedResult(command: String, description: String, errorCode: String, errorMessage: String): Try<CLI.Result> =
+            synchronized(jbossCli) {
+                Try {
+                    checkState(connected.get(), "You must be connected before running commands")
 
-                try {
-                    logger.info("Attempt ${context.retryCount + 1} to $description.")
+                    try {
+                        val result = jbossCli.cmd(command)
 
-                    val result = jbossCli.cmd(command)
+                        logger.info("Command: " + command)
+                        logger.info("Result as JSON: " + result?.response?.toJSONString(false))
 
-                    logger.info("Command: " + command)
-                    logger.info("Result as JSON: " + result?.response?.toJSONString(false))
+                        if (!result.isSuccess || !result.response.get("result").isDefined) {
+                            throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
+                                    errorCode, errorMessage))
+                        }
 
-                    if (!result.isSuccess || !result.response.get("result").isDefined) {
+                        result
+                    } catch (ex: CommandNotSuccessfulException) {
+                        throw ex
+                    } catch (ex: Exception) {
                         throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
-                                errorCode, errorMessage))
+                                errorCode, errorMessage), ex)
                     }
-
-                    result
-                } catch (ex: CommandNotSuccessfulException) {
-                    throw ex
-                } catch (ex:Exception) {
-                    throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
-                            errorCode, errorMessage), ex)
                 }
-            })}
+            }
+
+    fun runCommandExpectSuccessAndDefinedResultWithRetry(command: String, description: String, errorCode: String, errorMessage: String): Try<CLI.Result> {
+        synchronized(jbossCli) {
+            return Try {
+                retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
+                    runCommandExpectSuccessAndDefinedResult(command, description, errorCode, errorMessage).onFailure {
+                        throw it
+                    }.get()
+                })
+            }
         }
     }
 
-    fun runCommandExpectSuccess(command:String, description:String, errorMessage:String): Try<CLI.Result> {
-        synchronized(jbossCli) {
-            return Try{retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
-                checkState(connected.get(), "You must be connected before running commands")
+    fun runCommandExpectSuccess(command: String, description: String, errorMessage: String): Try<CLI.Result> =
+            synchronized(jbossCli) {
+                Try {
+                    checkState(connected.get(), "You must be connected before running commands")
 
-                try {
-                    logger.info("Attempt ${context.retryCount + 1} to $description.")
+                    try {
+                        val result = jbossCli.cmd(command)
 
-                    val result = jbossCli.cmd(command)
+                        logger.info("Command: " + command)
+                        logger.info("Result as JSON: " + result?.response?.toJSONString(false))
 
-                    logger.info("Command: " + command)
-                    logger.info("Result as JSON: " + result?.response?.toJSONString(false))
+                        if (!result.isSuccess) {
+                            throw CommandNotSuccessfulException(errorMessage)
+                        }
 
-                    if (!result.isSuccess) {
-                        throw CommandNotSuccessfulException(errorMessage)
+                        result
+                    } catch (ex: CommandNotSuccessfulException) {
+                        throw ex
+                    } catch (ex: Exception) {
+                        throw CommandNotSuccessfulException(errorMessage, ex)
                     }
-
-                    result
-                } catch (ex: CommandNotSuccessfulException) {
-                    throw ex
-                } catch (ex:Exception) {
-                    throw CommandNotSuccessfulException(errorMessage, ex)
                 }
-            })}
+            }
+
+    fun runCommandExpectSuccessWithRetry(command: String, description: String, errorMessage: String): Try<CLI.Result> {
+        synchronized(jbossCli) {
+            return Try {
+                retry.execute(RetryCallback<CLI.Result, Throwable> { context ->
+                    runCommandExpectSuccess(command, description, errorMessage).onFailure {
+                        throw it
+                    }.get()
+                })
+            }
         }
     }
 
     fun enterBatchMode() =
-            runCommandExpectSuccess(
+            runCommandExpectSuccessWithRetry(
                     "batch",
                     "Entering batch mode",
                     "WILDFLY-ERROR-0001",
                     "There was an error entering batch mode.")
 
-    fun runBatch(errorCode:String, errorMessage:String) =
-            runCommandExpectSuccess(
+    fun runBatch(errorCode: String, errorMessage: String) =
+            runCommandExpectSuccessWithRetry(
                     "run-batch",
                     "Running batch",
                     errorCode,

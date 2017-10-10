@@ -102,7 +102,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                         "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                         "Checking for existing security realm").onSuccess {
                     if (!it.isSuccess) {
-                        service.runCommandExpectSuccess(
+                        service.runCommandExpectSuccessWithRetry(
                                 "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
                                 "Adding the security realm",
                                 "WILDFLY-HTTPS-ERROR-0020",
@@ -120,7 +120,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                         "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                         "Checking for existing security realm").onSuccess {
                     if (!it.isSuccess) {
-                        service.runCommandExpectSuccess(
+                        service.runCommandExpectSuccessWithRetry(
                                 "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
                                 "Adding the security realm",
                                 "WILDFLY-HTTPS-ERROR-0020",
@@ -256,7 +256,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      * @return true if this server has the undertow extension enabled, and false otherwise
      */
     private fun undertowEnabled(service: WildflyService) =
-            service.runCommand("/extension=org.wildfly.extension.undertow:read-resource", "Checking for Undertow").map {
+            service.runCommandWithRetry("/extension=org.wildfly.extension.undertow:read-resource", "Checking for Undertow").map {
                 it.isSuccess
             }.onFailure {
                 throw it

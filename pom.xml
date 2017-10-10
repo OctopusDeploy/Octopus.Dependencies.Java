@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.75.46-SNAPSHOT</version>
+    <version>1.0.75.47-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
-        <kotlin.version>1.1.51</kotlin.version>
+        <kotlin.version>1.1.60-dev-277</kotlin.version>
         <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <eap.6.version>jboss-eap-6.4</eap.6.version>
@@ -42,6 +42,17 @@
         <tomcat.9.version>tomcat-9.0.0.M26</tomcat.9.version>
     </properties>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>kotlindev</id>
+            <name>kotlindev</name>
+            <url>https://dl.bintray.com/kotlin/kotlin-dev/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <repositories>
         <repository>
             <id>central</id>
@@ -52,6 +63,14 @@
             <id>redhat</id>
             <name>redhat</name>
             <url>https://maven.repository.redhat.com/ga/</url>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>kotlindev</id>
+            <name>kotlindev</name>
+            <url>https://dl.bintray.com/kotlin/kotlin-dev/</url>
         </repository>
     </repositories>
 

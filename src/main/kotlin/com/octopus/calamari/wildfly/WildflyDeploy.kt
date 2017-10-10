@@ -81,7 +81,7 @@ object WildflyDeploy {
              */
             Try { service.takeSnapshot() }
                     .flatMap {
-                        service.runCommandExpectSuccess(
+                        service.runCommandExpectSuccessWithRetry(
                                 "deploy --force ${if (!options.state) "--disabled" else ""} --name=${options.escapedPackageName} \"${options.application}\"",
                                 "deploy application to standalone WildFly/EAP instance",
                                 ErrorMessageBuilderImpl.buildErrorMessage(
@@ -90,7 +90,7 @@ object WildflyDeploy {
                     }
                     .map {
                         if (options.state) {
-                            service.runCommandExpectSuccess(
+                            service.runCommandExpectSuccessWithRetry(
                                     "deploy --name=${options.escapedPackageName}",
                                     "enable application in standalone WildFly/EAP instance",
                                     ErrorMessageBuilderImpl.buildErrorMessage(
@@ -113,7 +113,7 @@ object WildflyDeploy {
                         Push the new package up to the server, overwriting any exiting packages
                      */
                     .flatMap {
-                        service.runCommandExpectSuccess(
+                        service.runCommandExpectSuccessWithRetry(
                                 "deploy --force --name=${options.escapedPackageName} \"${options.application}\"",
                                 "deploy application ${options.application} as ${options.packageName}",
                                 ErrorMessageBuilderImpl.buildErrorMessage(
@@ -124,7 +124,7 @@ object WildflyDeploy {
                         Query the list of deployments
                      */
                     .flatMap {
-                        service.runCommandExpectSuccess(
+                        service.runCommandExpectSuccessWithRetry(
                                 ":read-children-names(child-type=deployment)",
                                 "query deployments",
                                 ErrorMessageBuilderImpl.buildErrorMessage(
@@ -142,12 +142,12 @@ object WildflyDeploy {
                                         "," +
                                         (options.disabledServerGroup))
                                 .forEach { serverGroup ->
-                                    service.runCommand(
+                                    service.runCommandWithRetry(
                                             "/server-group=$serverGroup/deployment=${options.escapedPackageName}:read-resource",
                                             "read package details ${options.packageName} for server group $serverGroup")
                                             .onSuccess {
                                                 if (!it.isSuccess) {
-                                                    service.runCommandExpectSuccess(
+                                                    service.runCommandExpectSuccessWithRetry(
                                                             "/server-group=$serverGroup/deployment=${options.escapedPackageName}:add",
                                                             "add package ${options.packageName} to server group $serverGroup",
                                                             ErrorMessageBuilderImpl.buildErrorMessage(
@@ -168,7 +168,7 @@ object WildflyDeploy {
                                 .omitEmptyStrings()
                                 .split(options.enabledServerGroup)
                                 .forEach { serverGroup ->
-                                    service.runCommandExpectSuccess(
+                                    service.runCommandExpectSuccessWithRetry(
                                             "/server-group=$serverGroup/deployment=${options.escapedPackageName}:deploy",
                                             "deploy the package ${options.packageName} to the server group $serverGroup",
                                             ErrorMessageBuilderImpl.buildErrorMessage(
@@ -186,7 +186,7 @@ object WildflyDeploy {
                                 .trimResults()
                                 .omitEmptyStrings()
                                 .split(options.disabledServerGroup).forEach { serverGroup ->
-                            service.runCommandExpectSuccess(
+                            service.runCommandExpectSuccessWithRetry(
                                     "/server-group=$serverGroup/deployment=${options.escapedPackageName}:undeploy",
                                     "undeploy the package ${options.packageName} from the server group $serverGroup",
                                     ErrorMessageBuilderImpl.buildErrorMessage(

@@ -68,7 +68,7 @@ object WildflyState {
                             .omitEmptyStrings()
                             .split(options.enabledServerGroup)
                             .forEach { serverGroup ->
-                                service.runCommandExpectSuccess(
+                                service.runCommandExpectSuccessWithRetry(
                                         "/server-group=$serverGroup/deployment=${options.packageName}:deploy",
                                         "deploy the package ${options.packageName} to the server group $serverGroup",
                                         ErrorMessageBuilderImpl.buildErrorMessage(
@@ -86,7 +86,7 @@ object WildflyState {
                             .trimResults()
                             .omitEmptyStrings()
                             .split(options.disabledServerGroup).forEach { serverGroup ->
-                        service.runCommandExpectSuccess(
+                        service.runCommandExpectSuccessWithRetry(
                                 "/server-group=$serverGroup/deployment=${options.packageName}:undeploy",
                                 "undeploy the package ${options.packageName} from the server group $serverGroup",
                                 ErrorMessageBuilderImpl.buildErrorMessage(
@@ -101,7 +101,7 @@ object WildflyState {
         } else {
             Try {service.takeSnapshot()}
                 .flatMap {
-                    service.runCommandExpectSuccess(
+                    service.runCommandExpectSuccessWithRetry(
                             "${if (options.state) "deploy" else "undeploy --keep-content"} --name=${options.packageName}",
                             "enable application in standalone WildFly/EAP instance",
                             ErrorMessageBuilderImpl.buildErrorMessage(

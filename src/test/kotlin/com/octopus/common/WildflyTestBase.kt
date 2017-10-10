@@ -21,6 +21,6 @@ open class WildflyTestBase {
     }
 
     fun runCmd(cmd:String): Try<CLI.Result> {
-        return wildflyService.runCommandExpectSuccess(cmd,"test verification", "test command failed")
+        return wildflyService.runCommandExpectSuccessWithRetry(cmd,"test verification", "test command failed")
     }
 }

@@ -47,7 +47,7 @@ object WildflyHttpsStandaloneConfig {
             options.checkForServerMismatch(this.isDomainMode)
         }.apply {
             if (!isDomainMode) {
-                runCommandExpectSuccess(
+                runCommandExpectSuccessWithRetry(
                         "/path=jboss.server.config.dir:read-resource",
                         "Reading config dir",
                         "WILDFLY-HTTPS-ERROR-0015",
@@ -58,7 +58,7 @@ object WildflyHttpsStandaloneConfig {
                 }
             }
         }.apply {
-            runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron")
+            runCommandWithRetry("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron")
                     .onSuccess {
                         options.profileList.forEach { profile ->
                             if (it.isSuccess) {
