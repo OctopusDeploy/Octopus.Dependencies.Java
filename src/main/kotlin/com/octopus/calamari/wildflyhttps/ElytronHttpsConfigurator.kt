@@ -67,6 +67,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                                     "path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\", " +
                                     (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "relative-to=${options.fixedRelativeTo}, " else "") +
                                     "credential-reference={clear-text=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\"}, " +
+                                    "alias-filter=\"NONE:+${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
                                     "type=JKS)",
                             "Adding the Elytron key store",
                             "WILDFLY-HTTPS-ERROR-0009",
@@ -94,6 +95,12 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                             "Configuring the Elytron key store type",
                             "WILDFLY-HTTPS-ERROR-0010",
                             "There was an error configuring the Elytron keystore type.").onFailure { throw it }
+                    service.runCommandExpectSuccess(
+                            "${getProfilePrefix(profile, service)}/subsystem=elytron/key-store=\"${options.elytronKeystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\":write-attribute(" +
+                                    "name=alias-filter, value=\"NONE:+${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                            "Configuring the Elytron key store alias filter",
+                            "WILDFLY-HTTPS-ERROR-0010",
+                            "There was an error configuring the Elytron key store alias filter.").onFailure { throw it }
 
                     if (StringUtils.isNotBlank(options.fixedRelativeTo)) {
                         service.runCommandExpectSuccess(
