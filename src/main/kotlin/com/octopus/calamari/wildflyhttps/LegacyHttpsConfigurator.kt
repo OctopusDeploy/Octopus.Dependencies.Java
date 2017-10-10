@@ -268,6 +268,14 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      */
     private fun configureWebSSL(options: WildflyHttpsOptions, service: WildflyService) =
             retry.execute(RetryCallback<Unit, Throwable> { context ->
+                /*
+                    If there was a failure, reload the server so we are looking
+                    at the latest data.
+                 */
+                if (context.retryCount != 0) {
+                    reloadServer(options, service)
+                }
+
                 service.runCommand(
                         "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:read-resource",
                         "Checking for existing https connector").onSuccess {
