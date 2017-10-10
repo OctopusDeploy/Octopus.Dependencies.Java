@@ -47,12 +47,17 @@ class WildflyHttpTest : WildflyTestBase() {
                 IOUtils.toString(it, Charsets.UTF_8)
             }
 
-    companion object {
-        @JvmStatic
-        @BeforeClass
-        fun cleanupTmp() {
-            FileUtils.deleteQuietly(File("target${File.pathSeparator}server${File.pathSeparator}wildfly-dist_10.1.0.Final${File.pathSeparator}wildfly-10.1.0.Final${File.pathSeparator}standalone${File.pathSeparator}tmp"))
-        }
+    private fun checkHttp(options: WildflyHttpsOptions) {
+        Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
+            println("Attempt ${context.retryCount} to connect to the app server")
+            if (!openHomepageHttp(options).isSuccess()) {
+                throw Exception("Failed to connect")
+            }
+            if (!openHomepage(options).isSuccess()) {
+                throw Exception("Failed to connect")
+            }
+            true
+        }))
     }
 
     @Test
@@ -69,16 +74,7 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
-                    println("Attempt ${context.retryCount} to connect to the app server")
-                    if (!openHomepageHttp(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    if (!openHomepage(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    true
-                }))
+                checkHttp(this)
             }.run {}
 
     /**
@@ -99,16 +95,7 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
-                    println("Attempt ${context.retryCount} to connect to the app server")
-                    if (!openHomepageHttp(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    if (!openHomepage(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    true
-                }))
+                checkHttp(this)
             }.run {}
 
     /**
@@ -130,16 +117,7 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
-                    println("Attempt ${context.retryCount} to connect to the app server")
-                    if (!openHomepageHttp(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    if (!openHomepage(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    true
-                }))
+                checkHttp(this)
             }.run {}
 
     /**
@@ -161,16 +139,7 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
-                    println("Attempt ${context.retryCount} to connect to the app server")
-                    if (!openHomepageHttp(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    if (!openHomepage(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    true
-                }))
+                checkHttp(this)
             }.run {}
 
     /**
@@ -196,15 +165,6 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
-                    println("Attempt ${context.retryCount} to connect to the app server")
-                    if (!openHomepageHttp(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    if (!openHomepage(this).isSuccess()) {
-                        throw Exception("Failed to connect")
-                    }
-                    true
-                }))
+                checkHttp(this)
             }.run {}
 }
