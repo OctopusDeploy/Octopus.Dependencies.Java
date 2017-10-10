@@ -110,7 +110,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = "target/wildfly.keystore",
                     privateKeyPassword = "blah",
-                    profiles = "default\"`'"
+                    profiles = "default"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {

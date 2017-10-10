@@ -158,7 +158,7 @@ class WildflyService {
 
     fun takeSnapshot(host:String): Try<CLI.Result>  {
         return runCommandExpectSuccess(
-                "/host=$host:take-snapshot",
+                "/host=\"${host.run(StringUtilsImpl::escapePathForCLICommand)}\":take-snapshot",
                 "take configuration snapshot",
                 ErrorMessageBuilderImpl.buildErrorMessage(
                         "WILDFLY-DEPLOY-ERROR-0001",

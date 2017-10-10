@@ -148,11 +148,11 @@ interface WildflyHttpsConfigurator {
             }
 
     /**
-     * @return the default interface for a gievn socket binding group
+     * @return the default interface for a given socket binding group
      */
     private fun getDefaultInterface(socketGroup: String, service: WildflyService) =
             service.runCommandExpectSuccessAndDefinedResult(
-                    "/socket-binding-group=$socketGroup:read-resource",
+                    "/socket-binding-group=\"${socketGroup.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                     "Getting default interface",
                     "WILDFLY-HTTPS-ERROR-0026",
                     "Failed to get the default interface for socket group $socketGroup.").map {
