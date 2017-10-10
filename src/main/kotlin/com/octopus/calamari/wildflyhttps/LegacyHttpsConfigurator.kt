@@ -97,152 +97,160 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      * Create or update the security realm
      */
     private fun createOrUpdateSecurityRealm(options: WildflyHttpsOptions, service: WildflyService) =
-            service.runCommand(
-                    "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
-                    "Checking for existing security realm").onSuccess {
-                if (!it.isSuccess) {
-                    service.runCommandExpectSuccess(
-                            "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
-                            "Adding the security realm",
-                            "WILDFLY-HTTPS-ERROR-0020",
-                            "There was an error adding the security realm.").onFailure { throw it }
-                }
-            }.onFailure { throw it }
+            retry.execute(RetryCallback<Unit, Throwable> { context ->
+                service.runCommand(
+                        "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
+                        "Checking for existing security realm").onSuccess {
+                    if (!it.isSuccess) {
+                        service.runCommandExpectSuccess(
+                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
+                                "Adding the security realm",
+                                "WILDFLY-HTTPS-ERROR-0020",
+                                "There was an error adding the security realm.").onFailure { throw it }
+                    }
+                }.onFailure { throw it }
+            })
 
     /**
      * Create or update the security realm
      */
     private fun createOrUpdateSecurityRealm(host: String, options: WildflyHttpsOptions, service: WildflyService) =
-            service.runCommand(
-                    "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
-                    "Checking for existing security realm").onSuccess {
-                if (!it.isSuccess) {
-                    service.runCommandExpectSuccess(
-                            "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
-                            "Adding the security realm",
-                            "WILDFLY-HTTPS-ERROR-0020",
-                            "There was an error adding the security realm.").onFailure { throw it }
-                }
-            }.onFailure { throw it }
+            retry.execute(RetryCallback<Unit, Throwable> { context ->
+                service.runCommand(
+                        "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
+                        "Checking for existing security realm").onSuccess {
+                    if (!it.isSuccess) {
+                        service.runCommandExpectSuccess(
+                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
+                                "Adding the security realm",
+                                "WILDFLY-HTTPS-ERROR-0020",
+                                "There was an error adding the security realm.").onFailure { throw it }
+                    }
+                }.onFailure { throw it }
+            })
 
     /**
      * Create or update the security realm server ssl identity
      */
     private fun addKeystoreToRealm(options: WildflyHttpsOptions, service: WildflyService) =
-            service.runCommand(
-                    "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
-                    "Checking for existing ssl configuration").map {
-                if (!it.isSuccess) {
-                    service.runCommandExpectSuccess(
-                            "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
-                                    "alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\"," +
-                                    "keystore-path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\"," +
-                                    (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "keystore-relative-to=${options.fixedRelativeTo}, " else "") +
-                                    "keystore-password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                            "Adding the keystore to the security realm",
-                            "WILDFLY-HTTPS-ERROR-0021",
-                            "There was an error adding the keystore to the security realm.").onFailure { throw it }
-                } else {
-                    if (StringUtils.isNotBlank(options.fixedRelativeTo)) {
+            retry.execute(RetryCallback<Unit, Throwable> { context ->
+                service.runCommand(
+                        "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
+                        "Checking for existing ssl configuration").map {
+                    if (!it.isSuccess) {
+                        service.runCommandExpectSuccess(
+                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
+                                        "alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\"," +
+                                        "keystore-path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\"," +
+                                        (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "keystore-relative-to=${options.fixedRelativeTo}, " else "") +
+                                        "keystore-password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Adding the keystore to the security realm",
+                                "WILDFLY-HTTPS-ERROR-0021",
+                                "There was an error adding the keystore to the security realm.").onFailure { throw it }
+                    } else {
+                        if (StringUtils.isNotBlank(options.fixedRelativeTo)) {
+                            service.runCommandExpectSuccess(
+                                    "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                            "name=keystore-relative-to, " +
+                                            "value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                    "Configuring the security realm relative to attribute",
+                                    "WILDFLY-HTTPS-ERROR-0022",
+                                    "There was an error configuring the security realm relative to attribute.").onFailure { throw it }
+                        } else {
+                            service.runCommandExpectSuccess(
+                                    "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:undefine-attribute(" +
+                                            "name=keystore-relative-to)",
+                                    "Removing the security realm relative to attribute",
+                                    "WILDFLY-HTTPS-ERROR-0022",
+                                    "There was an error removing the security realm relative to attribute.").onFailure { throw it }
+                        }
                         service.runCommandExpectSuccess(
                                 "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=keystore-relative-to, " +
-                                        "value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the security realm relative to attribute",
+                                        "name=alias, " +
+                                        "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Configuring the security realm keystore alias",
                                 "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error configuring the security realm relative to attribute.").onFailure { throw it }
-                    } else {
+                                "There was an error configuring the security realm keystore alias.").onFailure { throw it }
                         service.runCommandExpectSuccess(
-                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:undefine-attribute(" +
-                                        "name=keystore-relative-to)",
-                                "Removing the security realm relative to attribute",
+                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" + "name=keystore-path, " +
+                                        "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
+                                "Configuring the security realm keystore alias",
                                 "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error removing the security realm relative to attribute.").onFailure { throw it }
-                    }
-                    service.runCommandExpectSuccess(
-                            "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                    "name=alias, " +
-                                    "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                            "Configuring the security realm keystore alias",
-                            "WILDFLY-HTTPS-ERROR-0022",
-                            "There was an error configuring the security realm keystore alias.").onFailure { throw it }
-                    service.runCommandExpectSuccess(
-                            "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" + "name=keystore-path, " +
-                                    "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
-                            "Configuring the security realm keystore alias",
-                            "WILDFLY-HTTPS-ERROR-0022",
-                            "There was an error configuring the security realm keystore path.").onFailure { throw it }
-                    service.runCommandExpectSuccess(
-                            "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                    "name=keystore-password, " +
-                                    "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                            "Configuring the security realm keystore alias",
-                            "WILDFLY-HTTPS-ERROR-0022",
-                            "There was an error configuring the security realm keystore password.").onFailure { throw it }
+                                "There was an error configuring the security realm keystore path.").onFailure { throw it }
+                        service.runCommandExpectSuccess(
+                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                        "name=keystore-password, " +
+                                        "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Configuring the security realm keystore alias",
+                                "WILDFLY-HTTPS-ERROR-0022",
+                                "There was an error configuring the security realm keystore password.").onFailure { throw it }
 
+                    }
+                }.onFailure {
+                    throw it
                 }
-            }.onFailure {
-                throw it
-            }.get()
+            })
 
     /**
      * Create or update the security realm server ssl identity
      */
     private fun addKeystoreToRealm(host: String, options: WildflyHttpsOptions, service: WildflyService) =
-            service.runCommand(
-                    "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
-                    "Checking for existing ssl configuration").map {
-                if (!it.isSuccess) {
-                    service.runCommandExpectSuccess(
-                            "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
-                                    "alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\"," +
-                                    "keystore-path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\"," +
-                                    (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "keystore-relative-to=${options.fixedRelativeTo}, " else "") +
-                                    "keystore-password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                            "Adding the keystore to the security realm",
-                            "WILDFLY-HTTPS-ERROR-0021",
-                            "There was an error adding the keystore to the security realm.").onFailure { throw it }
-                } else {
-                    if (StringUtils.isNotBlank(options.fixedRelativeTo)) {
+            retry.execute(RetryCallback<Unit, Throwable> { context ->
+                service.runCommand(
+                        "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:read-resource",
+                        "Checking for existing ssl configuration").map {
+                    if (!it.isSuccess) {
+                        service.runCommandExpectSuccess(
+                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl/:add(" +
+                                        "alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\"," +
+                                        "keystore-path=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\"," +
+                                        (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "keystore-relative-to=${options.fixedRelativeTo}, " else "") +
+                                        "keystore-password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Adding the keystore to the security realm",
+                                "WILDFLY-HTTPS-ERROR-0021",
+                                "There was an error adding the keystore to the security realm.").onFailure { throw it }
+                    } else {
+                        if (StringUtils.isNotBlank(options.fixedRelativeTo)) {
+                            service.runCommandExpectSuccess(
+                                    "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                            "name=keystore-relative-to, " +
+                                            "value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                    "Configuring the security realm relative to attribute",
+                                    "WILDFLY-HTTPS-ERROR-0022",
+                                    "There was an error configuring the security realm relative to attribute.").onFailure { throw it }
+                        } else {
+                            service.runCommandExpectSuccess(
+                                    "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:undefine-attribute(" +
+                                            "name=keystore-relative-to)",
+                                    "Removing the security realm relative to attribute",
+                                    "WILDFLY-HTTPS-ERROR-0022",
+                                    "There was an error removing the security realm relative to attribute.").onFailure { throw it }
+                        }
                         service.runCommandExpectSuccess(
                                 "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=keystore-relative-to, " +
-                                        "value=\"${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the security realm relative to attribute",
+                                        "name=alias, " +
+                                        "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Configuring the security realm keystore alias",
                                 "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error configuring the security realm relative to attribute.").onFailure { throw it }
-                    } else {
+                                "There was an error configuring the security realm keystore alias.").onFailure { throw it }
                         service.runCommandExpectSuccess(
-                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:undefine-attribute(" +
-                                        "name=keystore-relative-to)",
-                                "Removing the security realm relative to attribute",
+                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" + "name=keystore-path, " +
+                                        "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
+                                "Configuring the security realm keystore alias",
                                 "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error removing the security realm relative to attribute.").onFailure { throw it }
+                                "There was an error configuring the security realm keystore path.").onFailure { throw it }
+                        service.runCommandExpectSuccess(
+                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                        "name=keystore-password, " +
+                                        "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
+                                "Configuring the security realm keystore alias",
+                                "WILDFLY-HTTPS-ERROR-0022",
+                                "There was an error configuring the security realm keystore password.").onFailure { throw it }
                     }
-                    service.runCommandExpectSuccess(
-                            "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                    "name=alias, " +
-                                    "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                            "Configuring the security realm keystore alias",
-                            "WILDFLY-HTTPS-ERROR-0022",
-                            "There was an error configuring the security realm keystore alias.").onFailure { throw it }
-                    service.runCommandExpectSuccess(
-                            "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" + "name=keystore-path, " +
-                                    "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
-                            "Configuring the security realm keystore alias",
-                            "WILDFLY-HTTPS-ERROR-0022",
-                            "There was an error configuring the security realm keystore path.").onFailure { throw it }
-                    service.runCommandExpectSuccess(
-                            "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                    "name=keystore-password, " +
-                                    "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                            "Configuring the security realm keystore alias",
-                            "WILDFLY-HTTPS-ERROR-0022",
-                            "There was an error configuring the security realm keystore password.").onFailure { throw it }
+                }.onFailure {
+                    throw it
                 }
-            }.onFailure {
-                throw it
-            }.get()
+            })
 
     /**
      * @return true if this server has the undertow extension enabled, and false otherwise
