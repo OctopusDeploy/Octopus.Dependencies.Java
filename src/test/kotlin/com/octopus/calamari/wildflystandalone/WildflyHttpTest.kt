@@ -1,6 +1,7 @@
 package com.octopus.calamari.wildflystandalone
 
 import com.octopus.calamari.utils.HttpUtils
+import com.octopus.calamari.utils.impl.RetryServiceImpl
 import com.octopus.calamari.wildflyhttps.WildflyHttpsStandaloneConfig
 import com.octopus.calamari.wildflyhttps.WildflyHttpsOptions
 import com.octopus.common.WildflyTestBase
@@ -9,16 +10,20 @@ import org.apache.commons.io.IOUtils
 import org.apache.http.client.fluent.Executor
 import org.apache.http.client.fluent.Request
 import org.funktionale.tries.Try
+import org.jboss.`as`.cli.scriptsupport.CLI
 import org.jboss.arquillian.container.test.api.RunAsClient
 import org.jboss.arquillian.junit.Arquillian
 import org.junit.Assert
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.springframework.retry.RetryCallback
 import java.io.File
 
 @RunWith(Arquillian::class)
 class WildflyHttpTest : WildflyTestBase() {
+
+    private val retry = RetryServiceImpl.createRetry()
 
     private fun openHomepage(options: WildflyHttpsOptions) =
             Try.Success(Executor.newInstance(HttpUtils.buildHttpClient())).map { executor ->
@@ -30,6 +35,25 @@ class WildflyHttpTest : WildflyTestBase() {
             }.map {
                 IOUtils.toString(it, Charsets.UTF_8)
             }
+
+    private fun openHomepageHttp(options: WildflyHttpsOptions) =
+            Try.Success(Executor.newInstance(HttpUtils.buildHttpClient())).map { executor ->
+                executor.execute(
+                        Request.Get("http://${options.controller}:8080"))
+                        .returnResponse()
+            }.map {
+                it.entity.content
+            }.map {
+                IOUtils.toString(it, Charsets.UTF_8)
+            }
+
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun cleanupTmp() {
+            FileUtils.deleteQuietly(File("target${File.pathSeparator}server${File.pathSeparator}wildfly-dist_10.1.0.Final${File.pathSeparator}wildfly-10.1.0.Final${File.pathSeparator}standalone${File.pathSeparator}tmp"))
+        }
+    }
 
     @Test
     @RunAsClient
@@ -45,7 +69,16 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(openHomepage(this).isSuccess())
+                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
+                    println("Attempt ${context.retryCount} to connect to the app server")
+                    if (!openHomepageHttp(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    if (!openHomepage(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    true
+                }))
             }.run {}
 
     /**
@@ -66,7 +99,16 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(openHomepage(this).isSuccess())
+                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
+                    println("Attempt ${context.retryCount} to connect to the app server")
+                    if (!openHomepageHttp(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    if (!openHomepage(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    true
+                }))
             }.run {}
 
     /**
@@ -88,7 +130,16 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(openHomepage(this).isSuccess())
+                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
+                    println("Attempt ${context.retryCount} to connect to the app server")
+                    if (!openHomepageHttp(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    if (!openHomepage(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    true
+                }))
             }.run {}
 
     /**
@@ -110,7 +161,16 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(openHomepage(this).isSuccess())
+                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
+                    println("Attempt ${context.retryCount} to connect to the app server")
+                    if (!openHomepageHttp(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    if (!openHomepage(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    true
+                }))
             }.run {}
 
     /**
@@ -136,6 +196,15 @@ class WildflyHttpTest : WildflyTestBase() {
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
-                Assert.assertTrue(openHomepage(this).isSuccess())
+                Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
+                    println("Attempt ${context.retryCount} to connect to the app server")
+                    if (!openHomepageHttp(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    if (!openHomepage(this).isSuccess()) {
+                        throw Exception("Failed to connect")
+                    }
+                    true
+                }))
             }.run {}
 }
