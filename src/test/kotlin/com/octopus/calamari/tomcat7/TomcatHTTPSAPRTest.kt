@@ -4,6 +4,7 @@ import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation.*
 import com.octopus.calamari.utils.BaseTomcatTest
 import com.octopus.calamari.utils.TomcatUtils
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
