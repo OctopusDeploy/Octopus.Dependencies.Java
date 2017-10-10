@@ -13,10 +13,10 @@ import org.funktionale.tries.Try
 import java.lang.IllegalArgumentException
 import java.util.logging.Logger
 
-private const val KEYSTORE_NAME = "octopusHttpsKS"
-private const val KEYMANAGER_NAME = "octopusHttpsKM"
-private const val SERVER_SECURITY_CONTEXT_NAME = "octopusHttpsSSC"
-private const val OCTOPUS_REALM = "OctopusHTTPS"
+private const val KEYSTORE_NAME = "OctopusHttpsKS"
+private const val KEYMANAGER_NAME = "OctopusHttpsKM"
+private const val SERVER_SECURITY_CONTEXT_NAME = "OctopusHttpsSSC"
+private const val OCTOPUS_REALM = "OctopusHttps"
 private const val HTTPS_SOCKET_BINDING = "https"
 
 data class WildflyHttpsOptions(override val controller: String = "",
