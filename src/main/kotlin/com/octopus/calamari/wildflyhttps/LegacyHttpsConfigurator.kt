@@ -102,7 +102,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                         "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                         "Checking for existing security realm").onSuccess {
                     if (!it.isSuccess) {
-                        service.runCommandExpectSuccessWithRetry(
+                        service.runCommandExpectSuccess(
                                 "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
                                 "Adding the security realm",
                                 "WILDFLY-HTTPS-ERROR-0020",
@@ -120,7 +120,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                         "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
                         "Checking for existing security realm").onSuccess {
                     if (!it.isSuccess) {
-                        service.runCommandExpectSuccessWithRetry(
+                        service.runCommandExpectSuccess(
                                 "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
                                 "Adding the security realm",
                                 "WILDFLY-HTTPS-ERROR-0020",
