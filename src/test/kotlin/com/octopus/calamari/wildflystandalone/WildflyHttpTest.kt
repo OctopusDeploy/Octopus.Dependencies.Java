@@ -12,6 +12,7 @@ import org.funktionale.tries.Try
 import org.jboss.arquillian.container.test.api.RunAsClient
 import org.jboss.arquillian.junit.Arquillian
 import org.junit.Assert
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
@@ -30,31 +31,29 @@ class WildflyHttpTest : WildflyTestBase() {
                 IOUtils.toString(it, Charsets.UTF_8)
             }
 
-
     @Test
     @RunAsClient
-    fun testWildflyCertificateDeployment():Unit =
-        WildflyHttpsOptions(
-                controller = "127.0.0.1",
-                port = System.getProperty("port").toInt(),
-                user = System.getProperty("username"),
-                password = System.getProperty("password"),
-                protocol = System.getProperty("protocol"),
-                privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                profiles = "default"
-        ).apply {
-            WildflyHttpsStandaloneConfig.configureHttps(this)
-        }.apply {
-            Assert.assertTrue(openHomepage(this).isSuccess())
-        }.run {}
+    fun testWildflyCertificateDeployment(): Unit =
+            WildflyHttpsOptions(
+                    controller = "127.0.0.1",
+                    port = System.getProperty("port").toInt(),
+                    user = System.getProperty("username"),
+                    password = System.getProperty("password"),
+                    protocol = System.getProperty("protocol"),
+                    privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
+                    publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8")
+            ).apply {
+                WildflyHttpsStandaloneConfig.configureHttps(this)
+            }.apply {
+                Assert.assertTrue(openHomepage(this).isSuccess())
+            }.run {}
 
     /**
      * Test a fixed filename for the keystore
      */
     @Test
     @RunAsClient
-    fun testWildflyCertificateDeployment2():Unit =
+    fun testWildflyCertificateDeployment2(): Unit =
             WildflyHttpsOptions(
                     controller = "127.0.0.1",
                     port = System.getProperty("port").toInt(),
@@ -63,8 +62,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = "target/wildfly.keystore",
-                    profiles = "default"
+                    keystoreName = "target/wildfly.keystore"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -76,7 +74,7 @@ class WildflyHttpTest : WildflyTestBase() {
      */
     @Test
     @RunAsClient
-    fun testWildflyCertificateDeployment3():Unit =
+    fun testWildflyCertificateDeployment3(): Unit =
             WildflyHttpsOptions(
                     controller = "127.0.0.1",
                     port = System.getProperty("port").toInt(),
@@ -86,8 +84,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = "target/wildfly.keystore",
-                    privateKeyPassword = "blah",
-                    profiles = "default"
+                    privateKeyPassword = "blah"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -99,7 +96,7 @@ class WildflyHttpTest : WildflyTestBase() {
      */
     @Test
     @RunAsClient
-    fun testWildflyCertificateDeployment4():Unit =
+    fun testWildflyCertificateDeployment4(): Unit =
             WildflyHttpsOptions(
                     controller = "127.0.0.1",
                     port = System.getProperty("port").toInt(),
@@ -109,8 +106,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = "target/wildfly.keystore",
-                    privateKeyPassword = "blah",
-                    profiles = "default"
+                    privateKeyPassword = "blah"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -122,7 +118,7 @@ class WildflyHttpTest : WildflyTestBase() {
      */
     @Test
     @RunAsClient
-    fun testWildflyCertificateDeployment5():Unit =
+    fun testWildflyCertificateDeployment5(): Unit =
             WildflyHttpsOptions(
                     controller = "127.0.0.1",
                     port = System.getProperty("port").toInt(),
@@ -133,7 +129,6 @@ class WildflyHttpTest : WildflyTestBase() {
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = "target/wildfly.keystore",
                     privateKeyPassword = "blah",
-                    profiles = "default",
                     elytronKeymanagerName = "keymanager\\\"",
                     elytronKeystoreName = "keystore\\\"",
                     elytronSSLContextName = "sslthingy\\\"",

@@ -26,7 +26,7 @@ interface WildflyHttpsConfigurator {
 
     fun reloadServer(options: WildflyHttpsOptions, service: WildflyService) =
             service.runCommandExpectSuccess(
-                    "reload",
+                    "/:reload",
                     "Reloading the server",
                     "WILDFLY-HTTPS-ERROR-0008",
                     "There was an error reloading the server."
@@ -37,7 +37,7 @@ interface WildflyHttpsConfigurator {
                     "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\":reload",
                     "Reloading the server",
                     "WILDFLY-HTTPS-ERROR-0008",
-                    "There was an error reloading the server."
+                    "There was an error reloading the host $host."
             )
 
     fun getProfilePrefix(profile: String, service: WildflyService) =
@@ -67,7 +67,7 @@ interface WildflyHttpsConfigurator {
     fun getMasterHosts(options: WildflyHttpsOptions, service: WildflyService) =
             if (service.isDomainMode) {
                 service.runCommandExpectSuccessAndDefinedResult(
-                        ":read-children-names(child-type=host)",
+                        "/:read-children-names(child-type=host)",
                         "Getting hosts",
                         "WILDFLY-HTTPS-ERROR-0033",
                         "Failed to get master hosts.").map {
@@ -99,7 +99,7 @@ interface WildflyHttpsConfigurator {
     fun getSlaveHosts(options: WildflyHttpsOptions, service: WildflyService) =
             if (service.isDomainMode) {
                 service.runCommandExpectSuccessAndDefinedResult(
-                        ":read-children-names(child-type=host)",
+                        "/:read-children-names(child-type=host)",
                         "Getting hosts",
                         "WILDFLY-HTTPS-ERROR-0032",
                         "Failed to get slave hosts.").map {
