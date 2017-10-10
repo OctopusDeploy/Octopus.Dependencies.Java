@@ -4,10 +4,12 @@ import com.octopus.calamari.tomcathttps.TomcatHttpsImplementation.*
 import com.octopus.calamari.utils.BaseTomcatTest
 import com.octopus.calamari.utils.TomcatUtils
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(Tomcat9ArquillianAPR::class)
+@Ignore("Test machine needs the APR runtime to succeed")
 class TomcatHTTPSTestAPR : BaseTomcatTest() {
     @Test
     fun listDeployments() =

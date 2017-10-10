@@ -5,10 +5,12 @@ import com.octopus.calamari.utils.BaseTomcatTest
 import com.octopus.calamari.utils.TomcatUtils
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(Tomcat85ArquillianAPRConnector::class)
+@Ignore("Test machine needs the APR runtime to succeed")
 class TomcatHTTPSTestAPRConnector : BaseTomcatTest() {
     @Test
     fun listDeployments() =

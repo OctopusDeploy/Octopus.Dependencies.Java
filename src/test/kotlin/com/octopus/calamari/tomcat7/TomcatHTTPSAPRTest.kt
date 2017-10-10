@@ -8,6 +8,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(Tomcat7ArquillianAPR::class)
+@Ignore("Test machine needs the APR runtime to succeed")
 class TomcatHTTPSAPRTest : BaseTomcatTest() {
     @Test
     fun listDeployments() =
