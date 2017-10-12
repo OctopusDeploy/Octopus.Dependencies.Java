@@ -14,6 +14,7 @@ import org.jboss.`as`.cli.scriptsupport.CLI
 import org.jboss.arquillian.container.test.api.RunAsClient
 import org.jboss.arquillian.junit.Arquillian
 import org.junit.Assert
+import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -58,6 +59,12 @@ class WildflyHttpTest : WildflyTestBase() {
             }
             true
         }))
+    }
+
+    @Before
+    @Throws(InterruptedException::class)
+    fun initialise() {
+        Thread.sleep(10000)
     }
 
     @Test

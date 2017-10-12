@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils
 import org.jboss.arquillian.container.test.api.RunAsClient
 import org.jboss.arquillian.junit.Arquillian
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,6 +15,12 @@ import java.io.File
 
 @RunWith(Arquillian::class)
 class WildflyHttpTest : WildflyTestBase() {
+
+    @Before
+    @Throws(InterruptedException::class)
+    fun initialise() {
+        Thread.sleep(10000)
+    }
 
     @Test
     @RunAsClient
