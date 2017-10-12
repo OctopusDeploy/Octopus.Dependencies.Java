@@ -199,7 +199,7 @@ class WildflyService {
      * Ensures the server is in a running state
      */
     fun ensureRunning() =
-            runCommandExpectSuccess(
+            runCommandExpectSuccessWithRetry(
                     ":read-attribute(name=server-state)",
                     "Checking server state",
                     "Failed to check server state").onSuccess {
