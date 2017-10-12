@@ -35,6 +35,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                 with the certificate information, and not configure the shared profile.
              */
             if (!service.isDomainMode || StringUtils.isNotBlank(profile)) {
+                service.ensureRunning()
                 takeSnapshotFacade(this, service)
                 validateProfile(profile, service)
                 validateSocketBindingsFacade(this, options, service)
