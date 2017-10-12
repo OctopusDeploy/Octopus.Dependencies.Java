@@ -256,7 +256,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      * @return true if this server has the undertow extension enabled, and false otherwise
      */
     private fun undertowEnabled(service: WildflyService) =
-            service.runCommandWithRetry("/extension=org.wildfly.extension.undertow:read-resource", "Checking for Undertow").map {
+            service.runCommandWithRetry("${getProfilePrefix(profile, service)}/subsystem=undertow:read-resource", "Checking for Undertow").map {
                 it.isSuccess
             }.onFailure {
                 throw it

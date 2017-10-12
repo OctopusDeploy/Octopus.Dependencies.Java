@@ -119,12 +119,11 @@ class WildflyService {
 
                     connected.set(false)
                 })
+            }.onFailure {
+                throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-DEPLOY-ERROR-0010",
+                        "There was an error logging out of the management API"))
             }
-                    .onFailure {
-                        throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
-                                "WILDFLY-DEPLOY-ERROR-0010",
-                                "There was an error logging out of the management API"))
-                    }
 
             return this
         }
@@ -142,12 +141,11 @@ class WildflyService {
 
                     connected.set(false)
                 })
+            }.onFailure {
+                throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-DEPLOY-ERROR-0011",
+                        "There was an error terminating the CLI object"))
             }
-                    .onFailure {
-                        throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
-                                "WILDFLY-DEPLOY-ERROR-0011",
-                                "There was an error terminating the CLI object"))
-                    }
 
             return this
         }

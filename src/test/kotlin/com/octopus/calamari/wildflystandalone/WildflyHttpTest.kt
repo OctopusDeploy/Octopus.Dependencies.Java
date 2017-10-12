@@ -2,6 +2,7 @@ package com.octopus.calamari.wildflystandalone
 
 import com.octopus.calamari.utils.HttpUtils
 import com.octopus.calamari.utils.impl.RetryServiceImpl
+import com.octopus.calamari.utils.impl.WildflyService
 import com.octopus.calamari.wildflyhttps.WildflyHttpsStandaloneConfig
 import com.octopus.calamari.wildflyhttps.WildflyHttpsOptions
 import com.octopus.common.WildflyTestBase
@@ -61,10 +62,37 @@ class WildflyHttpTest : WildflyTestBase() {
         }))
     }
 
+    private fun checkServerState(options: WildflyHttpsOptions) {
+        retry.execute(RetryCallback<Unit, Throwable> { context ->
+            WildflyService().apply {
+                login(options)
+            }.apply {
+                runCommandExpectSuccess(
+                        ":read-attribute(name=server-state)",
+                        "Checking server state",
+                        "Failed to check server state").onSuccess {
+                    it.response.get("result").asString().apply {
+                        if (this != "running") {
+                            throw Exception ("server is not running, state is $this")
+                        }
+                    }
+
+                }.onFailure {
+                    throw it
+                }
+            }
+        })
+    }
+
     @Before
     @Throws(InterruptedException::class)
     fun initialise() {
-        Thread.sleep(10000)
+        checkServerState(WildflyHttpsOptions(
+                controller = "127.0.0.1",
+                port = System.getProperty("port").toInt(),
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                protocol = System.getProperty("protocol")))
     }
 
     @Test
