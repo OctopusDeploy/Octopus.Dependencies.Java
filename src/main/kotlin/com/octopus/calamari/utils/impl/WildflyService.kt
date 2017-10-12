@@ -210,7 +210,7 @@ class WildflyService {
 
                         if (!result.isSuccess) {
                             throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
-                                    errorCode, errorMessage))
+                                    errorCode, errorMessage) + "\n" + result?.response?.toJSONString(false))
                         }
 
                         result
@@ -248,7 +248,7 @@ class WildflyService {
 
                         if (!result.isSuccess || !result.response.get("result").isDefined) {
                             throw CommandNotSuccessfulException(ErrorMessageBuilderImpl.buildErrorMessage(
-                                    errorCode, errorMessage))
+                                    errorCode, errorMessage) + "\n" + result?.response?.toJSONString(false))
                         }
 
                         result
@@ -285,7 +285,7 @@ class WildflyService {
                         logger.info("Result as JSON: " + result?.response?.toJSONString(false))
 
                         if (!result.isSuccess) {
-                            throw CommandNotSuccessfulException(errorMessage)
+                            throw CommandNotSuccessfulException(errorMessage + "\n" + result?.response?.toJSONString(false))
                         }
 
                         result
