@@ -256,11 +256,23 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      * @return true if this server has the undertow extension enabled, and false otherwise
      */
     private fun undertowEnabled(service: WildflyService) =
-            service.runCommandWithRetry("${getProfilePrefix(profile, service)}/subsystem=undertow:read-resource", "Checking for Undertow").map {
-                it.isSuccess
-            }.onFailure {
-                throw it
-            }.get()
+            retry.execute(RetryCallback<Boolean, Throwable> { context ->
+                service.runCommand("${getProfilePrefix(profile, service)}/subsystem=undertow:read-resource", "Checking for Undertow subsystem").flatMap { undertow ->
+                    service.runCommand("${getProfilePrefix(profile, service)}/subsystem=web:read-resource", "Checking for Web subsystem").map { web ->
+                        if (!undertow.isSuccess && !web.isSuccess) {
+                            /*
+                                One response should have succeeded. If they both failed, the server
+                                might be starting up.
+                             */
+                            throw Exception("Failed to find either web or undertow subsystems")
+                        }
+
+                        undertow.isSuccess
+                    }
+                }.onFailure {
+                    throw it
+                }.get()
+            })
 
     /**
      * Configure the https listener in a server that doesn't use undertow

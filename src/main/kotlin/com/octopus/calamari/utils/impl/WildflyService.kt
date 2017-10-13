@@ -196,7 +196,8 @@ class WildflyService {
     }
 
     /**
-     * Ensures the server is in a running state
+     * Ensures the server is in a running state (if we are deploying to
+     * a standalone instance)
      */
     fun ensureRunning() {
         if (!isDomainMode) {
