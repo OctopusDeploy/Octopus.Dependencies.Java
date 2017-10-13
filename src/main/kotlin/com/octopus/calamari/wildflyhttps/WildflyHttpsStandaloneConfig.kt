@@ -43,6 +43,7 @@ object WildflyHttpsStandaloneConfig {
     fun configureHttps(options: WildflyHttpsOptions) {
         WildflyService().apply {
             login(options)
+            ensureRunning()
         }.apply {
             options.checkForServerMismatch(this.isDomainMode)
         }.apply {

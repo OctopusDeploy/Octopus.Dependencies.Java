@@ -29,8 +29,6 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
 
     private fun configureSSL(options: WildflyHttpsOptions, service: WildflyService) =
             getSlaveHosts(options, service).apply {
-                service.ensureRunning()
-
                 /*
                     These functions validate, configure and reload
                     either the standalone server, or the hosts that

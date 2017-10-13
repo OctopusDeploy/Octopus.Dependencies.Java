@@ -18,7 +18,7 @@ object RetryServiceImpl : RetryService {
         retryTemplate.setRetryPolicy(retryPolicy)
 
         val backOffPolicy = ExponentialBackOffPolicy()
-        backOffPolicy.initialInterval = 2000L
+        backOffPolicy.initialInterval = 5000L
         retryTemplate.setBackOffPolicy(backOffPolicy)
 
         return retryTemplate
