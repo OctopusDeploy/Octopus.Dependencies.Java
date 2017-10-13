@@ -5,13 +5,16 @@ import com.octopus.calamari.exception.wildfly.LoginTimeoutException
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
+import com.octopus.calamari.utils.impl.RetryServiceImpl
 import com.octopus.calamari.utils.impl.WildflyService
 import com.octopus.calamari.wildfly.WildflyDeploy
+import org.springframework.retry.RetryCallback
 import java.util.logging.Level
 import java.util.logging.Logger
 
 object WildflyHttpsStandaloneConfig {
     val logger: Logger = Logger.getLogger("")
+    private val retry = RetryServiceImpl.createRetry()
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -59,16 +62,23 @@ object WildflyHttpsStandaloneConfig {
                 }
             }
         }.apply {
-            runCommandWithRetry("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron")
-                    .onSuccess {
+            retry.execute(RetryCallback<Unit, Throwable> { context ->
+                runCommandExpectSuccessAndDefinedResult(
+                        ":read-children-names(child-type=extension)",
+                        "Checking for extensions",
+                        "WILDFLY-HTTPS-ERROR-0040",
+                        "Failed to load any extensions.").onSuccess {
+                    runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron").onSuccess { elytron ->
                         options.profileList.forEach { profile ->
-                            if (it.isSuccess) {
+                            if (elytron.isSuccess) {
                                 ElytronHttpsConfigurator(profile).configureHttps(options, this)
                             } else {
                                 LegacyHttpsConfigurator(profile).configureHttps(options, this)
                             }
                         }
                     }.onFailure { throw it }
+                }.onFailure { throw it }
+            })
         }
     }
 }
