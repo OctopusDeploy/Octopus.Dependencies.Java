@@ -198,19 +198,22 @@ class WildflyService {
     /**
      * Ensures the server is in a running state
      */
-    fun ensureRunning() =
+    fun ensureRunning() {
+        if (!isDomainMode) {
             runCommandExpectSuccessWithRetry(
                     ":read-attribute(name=server-state)",
                     "Checking server state",
                     "Failed to check server state").onSuccess {
                 it.response.get("result").asString().apply {
                     if (this != "running") {
-                        throw Exception ("WILDFLY-HTTPS-ERROR-0038: The server is not in a running state. State is $this")
+                        throw Exception("WILDFLY-HTTPS-ERROR-0038: The server is not in a running state. State is $this")
                     }
                 }
             }.onFailure {
                 throw it
             }
+        }
+    }
 
     fun runCommandExpectSuccess(command: String, description: String, errorCode: String, errorMessage: String): Try<CLI.Result> =
             synchronized(jbossCli) {
