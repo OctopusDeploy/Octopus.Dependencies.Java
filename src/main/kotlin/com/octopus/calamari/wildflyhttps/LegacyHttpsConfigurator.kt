@@ -1,9 +1,6 @@
 package com.octopus.calamari.wildflyhttps
 
-import com.octopus.calamari.utils.impl.LoggingServiceImpl
-import com.octopus.calamari.utils.impl.RetryServiceImpl
-import com.octopus.calamari.utils.impl.StringUtilsImpl
-import com.octopus.calamari.utils.impl.WildflyService
+import com.octopus.calamari.utils.impl.*
 import org.apache.commons.lang.StringUtils
 import org.springframework.retry.RetryCallback
 
@@ -264,7 +261,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 One response should have succeeded. If they both failed, the server
                                 might be starting up.
                              */
-                            throw Exception("Failed to find either web or undertow subsystems")
+                            throw Exception(ErrorMessageBuilderImpl.buildErrorMessage(
+                                    "WILDFLY-HTTPS-ERROR-0039", "Failed to find either web or undertow subsystems"))
                         }
 
                         undertow.isSuccess
