@@ -36,7 +36,13 @@ data class KeystoreOptions(override val privateKey: String,
     }
 
     fun validate() {
-        if (StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
+        if (StringUtils.isBlank(keystoreName)) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "KEYSTORE-ERROR-0004",
+                    "The keystore filename must be supplied."))
+        }
+
+        if (!File(keystoreName).isAbsolute) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "KEYSTORE-ERROR-0003",
                     "The keystore filename must be an absolute path if it is specified."))
