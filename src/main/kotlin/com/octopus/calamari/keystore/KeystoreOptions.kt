@@ -1,9 +1,13 @@
 package com.octopus.calamari.keystore
 
+import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.options.CERTIFICATE_FILE_NAME
 import com.octopus.calamari.options.CertificateDataClass
 import com.octopus.calamari.utils.Constants
+import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
+import com.octopus.calamari.wildfly.ServerType
 import org.apache.commons.lang.StringUtils
+import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.logging.Logger
 import javax.naming.OperationNotSupportedException
@@ -28,6 +32,14 @@ data class KeystoreOptions(override val privateKey: String,
     init {
         if (!this.alreadyDumped) {
             logger.info(this.toSantisisedString())
+        }
+    }
+
+    fun validate() {
+        if (StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "KEYSTORE-ERROR-0003",
+                    "The keystore filename must be an absolute path if it is specified."))
         }
     }
 
