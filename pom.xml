@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.75.49-SNAPSHOT</version>
+    <version>1.0.75.50-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -18,9 +18,9 @@
         <shade.version>3.1.0</shade.version>
         <jar.version>3.0.2</jar.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <kotlin.version>1.1.60-dev-277</kotlin.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <kotlin.version>1.2.20-dev-161</kotlin.version>
         <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <eap.6.version>jboss-eap-6.4</eap.6.version>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>23.0</version>
+            <version>23.1-jre</version>
         </dependency>
 
         <dependency>
