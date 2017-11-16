@@ -3,6 +3,7 @@ package com.octopus.calamari.wildflystandalone
 import com.octopus.calamari.utils.HttpUtils
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import com.octopus.calamari.utils.impl.WildflyService
+import com.octopus.calamari.wildfly.ServerType
 import com.octopus.calamari.wildflyhttps.WildflyHttpsStandaloneConfig
 import com.octopus.calamari.wildflyhttps.WildflyHttpsOptions
 import com.octopus.common.WildflyTestBase
@@ -72,7 +73,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     password = System.getProperty("password"),
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
-                    publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8")
+                    publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
+                    serverType = ServerType.STANDALONE
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -93,7 +95,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = File("target/wildfly.keystore").absolutePath
+                    keystoreName = File("target/wildfly.keystore").absolutePath,
+                    serverType = ServerType.STANDALONE
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -115,7 +118,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = File("target/wildfly.keystore").absolutePath,
-                    privateKeyPassword = "blah"
+                    privateKeyPassword = "blah",
+                    serverType = ServerType.STANDALONE
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -137,7 +141,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = File("target/wildfly.keystore").absolutePath,
-                    privateKeyPassword = "blah"
+                    privateKeyPassword = "blah",
+                    serverType = ServerType.STANDALONE
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -163,7 +168,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     elytronKeymanagerName = "keymanager\\\"",
                     elytronKeystoreName = "keystore\\\"",
                     elytronSSLContextName = "sslthingy\\\"",
-                    wildflySecurityManagerRealmName = "httpsrealm\\\""
+                    wildflySecurityManagerRealmName = "httpsrealm\\\"",
+                    serverType = ServerType.STANDALONE
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {

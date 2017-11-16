@@ -1,5 +1,6 @@
 package com.octopus.calamari.wildflydomain
 
+import com.octopus.calamari.wildfly.ServerType
 import com.octopus.calamari.wildflyhttps.WildflyHttpsOptions
 import com.octopus.calamari.wildflyhttps.WildflyHttpsStandaloneConfig
 import com.octopus.common.WildflyTestBase
@@ -35,7 +36,8 @@ class WildflyHttpTest : WildflyTestBase() {
                 publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                 profiles = "default",
                 relativeTo = "jboss.server.config.dir",
-                keystoreName = File("octopus.keystore").absolutePath
+                keystoreName = File("octopus.keystore").absolutePath,
+                serverType = ServerType.DOMAIN
         ).apply {
             WildflyHttpsStandaloneConfig.configureHttps(this)
         }.run {}
@@ -56,7 +58,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     profiles = "default",
                     relativeTo = "jboss.server.config.dir",
-                    keystoreName = File("octopus.keystore").absolutePath
+                    keystoreName = File("octopus.keystore").absolutePath,
+                    serverType = ServerType.DOMAIN
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.run {}
@@ -81,7 +84,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     elytronKeymanagerName = "keymanager\\\"",
                     elytronKeystoreName = "keystore\\\"",
                     elytronSSLContextName = "sslthingy\\\"",
-                    wildflySecurityManagerRealmName = "httpsrealm\\\""
+                    wildflySecurityManagerRealmName = "httpsrealm\\\"",
+                    serverType = ServerType.DOMAIN
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.run {}
@@ -99,7 +103,8 @@ class WildflyHttpTest : WildflyTestBase() {
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     keystoreName = File("target/wildfly.keystore").absolutePath,
                     privateKeyPassword = "blah",
-                    profiles = "default\""
+                    profiles = "default\"",
+                    serverType = ServerType.DOMAIN
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.run {}
