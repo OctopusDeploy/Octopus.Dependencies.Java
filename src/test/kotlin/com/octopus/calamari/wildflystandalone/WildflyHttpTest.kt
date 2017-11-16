@@ -74,8 +74,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    serverType = ServerType.STANDALONE,
-                    deployKeyStore = false
+                    serverType = ServerType.STANDALONE
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
