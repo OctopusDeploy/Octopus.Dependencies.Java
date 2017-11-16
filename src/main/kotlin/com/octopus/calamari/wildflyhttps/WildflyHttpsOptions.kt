@@ -11,7 +11,6 @@ import com.octopus.calamari.wildfly.ServerType
 import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.util.logging.Logger
 
 private const val KEYSTORE_NAME = "OctopusHttpsKS"
@@ -71,10 +70,38 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     "Configuring a keystore requires that the keystore name be defined."))
         }
 
+        /*
+            If the keystore is specified with no relative path, the keystore path
+            must be absolute.
+         */
+        if ((!deployKeyStore ||
+                serverType == ServerType.DOMAIN) &&
+                StringUtils.isBlank(relativeTo) && !File(keystoreName).isAbsolute) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0042",
+                    "When the keystore is not relative to a path, it must be absolute."))
+        }
+
+        /*
+            If the keystore is specified with no relative path, the keystore path
+            must be absolute.
+         */
+        if ((!deployKeyStore ||
+                serverType == ServerType.DOMAIN) &&
+                StringUtils.isNotBlank(relativeTo) && File(keystoreName).isAbsolute) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0043",
+                    "When the keystore is relative to a path, it must not absolute."))
+        }
+
+        /*
+            If we are deploying a keystore file and have specified the file name, the filename
+            must be absolute.
+         */
         if (serverType == ServerType.STANDALONE &&
                 deployKeyStore && StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0025",
+                    "WILDFLY-HTTPS-ERROR-0041",
                     "The keystore filename must be an absolute path if it is specified."))
         }
 
@@ -151,7 +178,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
      * server type
      * @param isDomain true if the server is a domain server, and false if it is a standalone server
      */
-    fun checkForServerMismatch(isDomain:Boolean) {
+    fun checkForServerMismatch(isDomain: Boolean) {
         if (isDomain && serverType == ServerType.STANDALONE) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0019",
@@ -170,32 +197,32 @@ data class WildflyHttpsOptions(override val controller: String = "",
          * @return a new Options instance populated from the values in the environment variables
          */
         fun fromEnvironmentVars(): WildflyHttpsOptions =
-            WildflyHttpsOptions(
-                    getEnvironmentVar("Controller", "localhost"),
-                    getEnvironmentVar("Port", "9990").toInt(),
-                    getEnvironmentVar("Protocol", "remote+http"),
-                    getEnvironmentVar("User", "", false),
-                    getEnvironmentVar("Password", "", false),
-                    Try {
-                        ServerType.valueOf(getEnvironmentVar("ServerType", ServerType.NONE.toString()).toUpperCase())
-                    }.getOrElse {
-                        ServerType.NONE
-                    },
-                    getKeystoreEnvironmentVar("Private_Key", ""),
-                    getKeystoreEnvironmentVar("Public_Key", ""),
-                    getKeystoreEnvironmentVar("Password", ""),
-                    getKeystoreEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
-                    getKeystoreEnvironmentVar("KeystoreFilename", ""),
-                    getKeystoreEnvironmentVar("KeystoreAlias", ""),
-                    "",
-                    getEnvironmentVar("CertificateProfiles", ""),
-                    getEnvironmentVar("CertificateRelativeTo", ""),
-                    getEnvironmentVar("DeployCertificate", "true").toBoolean(),
-                    getEnvironmentVar("HTTPSPortBindingName", HTTPS_SOCKET_BINDING),
-                    getEnvironmentVar("SecurityRealmName", OCTOPUS_REALM),
-                    getEnvironmentVar("ElytronKeystoreName", KEYSTORE_NAME),
-                    getEnvironmentVar("ElytronKeymanagerName", KEYMANAGER_NAME),
-                    getEnvironmentVar("ElytronSSLContextName", SERVER_SECURITY_CONTEXT_NAME))
+                WildflyHttpsOptions(
+                        getEnvironmentVar("Controller", "localhost"),
+                        getEnvironmentVar("Port", "9990").toInt(),
+                        getEnvironmentVar("Protocol", "remote+http"),
+                        getEnvironmentVar("User", "", false),
+                        getEnvironmentVar("Password", "", false),
+                        Try {
+                            ServerType.valueOf(getEnvironmentVar("ServerType", ServerType.NONE.toString()).toUpperCase())
+                        }.getOrElse {
+                            ServerType.NONE
+                        },
+                        getKeystoreEnvironmentVar("Private_Key", ""),
+                        getKeystoreEnvironmentVar("Public_Key", ""),
+                        getKeystoreEnvironmentVar("Password", ""),
+                        getKeystoreEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
+                        getKeystoreEnvironmentVar("KeystoreFilename", ""),
+                        getKeystoreEnvironmentVar("KeystoreAlias", ""),
+                        "",
+                        getEnvironmentVar("CertificateProfiles", ""),
+                        getEnvironmentVar("CertificateRelativeTo", ""),
+                        getEnvironmentVar("DeployCertificate", "true").toBoolean(),
+                        getEnvironmentVar("HTTPSPortBindingName", HTTPS_SOCKET_BINDING),
+                        getEnvironmentVar("SecurityRealmName", OCTOPUS_REALM),
+                        getEnvironmentVar("ElytronKeystoreName", KEYSTORE_NAME),
+                        getEnvironmentVar("ElytronKeymanagerName", KEYMANAGER_NAME),
+                        getEnvironmentVar("ElytronSSLContextName", SERVER_SECURITY_CONTEXT_NAME))
 
         private fun getKeystoreEnvironmentVar(name: String, default: String, trim: Boolean = true) =
                 (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}Java_Certificate_$name"] ?: default).run {

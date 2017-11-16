@@ -1,5 +1,6 @@
 package com.octopus.calamari.wildflystandalone
 
+import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.utils.HttpUtils
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import com.octopus.calamari.utils.impl.WildflyService
