@@ -36,7 +36,7 @@ class WildflyHttpTest : WildflyTestBase() {
                 publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                 profiles = "default",
                 relativeTo = "jboss.server.config.dir",
-                keystoreName = File("octopus.keystore").absolutePath,
+                keystoreName = "octopus.keystore",
                 serverType = ServerType.DOMAIN
         ).apply {
             WildflyHttpsStandaloneConfig.configureHttps(this)
@@ -58,7 +58,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     profiles = "default",
                     relativeTo = "jboss.server.config.dir",
-                    keystoreName = File("octopus.keystore").absolutePath,
+                    keystoreName = "octopus.keystore",
                     serverType = ServerType.DOMAIN
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
