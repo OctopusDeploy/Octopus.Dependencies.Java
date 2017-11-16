@@ -210,6 +210,12 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                     "TOMCAT-HTTPS-ERROR-0003",
                     "The ${implementation.name} HTTPS implementation is not supported by the installed version of Tomcat"))
         }
+
+        if (StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "TOMCAT-HTTPS-ERROR-0020",
+                    "The keystore filename must be an absolute path if it is specified."))
+        }
     }
 
     companion object Factory {
