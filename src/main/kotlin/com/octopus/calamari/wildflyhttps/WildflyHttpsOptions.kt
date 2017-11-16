@@ -10,6 +10,7 @@ import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.wildfly.ServerType
 import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
+import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.logging.Logger
 
@@ -62,6 +63,12 @@ data class WildflyHttpsOptions(override val controller: String = "",
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0017",
                     "Configuring a keystore requires that the keystore name be defined."))
+        }
+
+        if (StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0025",
+                    "The keystore filename must be an absolute path if it is specified."))
         }
 
         if (serverType == ServerType.STANDALONE &&
