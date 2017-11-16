@@ -181,16 +181,8 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     }.getOrElse {
                         ServerType.NONE
                     },
-                    getKeystoreEnvironmentVar("Private_Key", "").apply {
-                        if (StringUtils.isBlank(this)) {
-                            throw IllegalArgumentException("private key can not be null")
-                        }
-                    },
-                    getKeystoreEnvironmentVar("Public_Key", "").apply {
-                        if (StringUtils.isBlank(this)) {
-                            throw IllegalArgumentException("public key can not be null")
-                        }
-                    },
+                    getKeystoreEnvironmentVar("Private_Key", ""),
+                    getKeystoreEnvironmentVar("Public_Key", ""),
                     getKeystoreEnvironmentVar("Password", ""),
                     getKeystoreEnvironmentVar("Public_Key_Subject", CERTIFICATE_FILE_NAME),
                     getKeystoreEnvironmentVar("KeystoreFilename", ""),
