@@ -93,7 +93,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = "target/wildfly.keystore"
+                    keystoreName = File("target/wildfly.keystore").absolutePath
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.apply {
@@ -114,7 +114,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = "target/wildfly.keystore",
+                    keystoreName = File("target/wildfly.keystore").absolutePath,
                     privateKeyPassword = "blah"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
@@ -136,7 +136,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = "target/wildfly.keystore",
+                    keystoreName = File("target/wildfly.keystore").absolutePath,
                     privateKeyPassword = "blah"
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
@@ -158,7 +158,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = "target/wildfly.keystore",
+                    keystoreName = File("target/wildfly.keystore").absolutePath,
                     privateKeyPassword = "blah",
                     elytronKeymanagerName = "keymanager\\\"",
                     elytronKeystoreName = "keystore\\\"",

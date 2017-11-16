@@ -35,7 +35,7 @@ class WildflyHttpTest : WildflyTestBase() {
                 publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                 profiles = "default",
                 relativeTo = "jboss.server.config.dir",
-                keystoreName = "octopus.keystore"
+                keystoreName = File("octopus.keystore").absolutePath
         ).apply {
             WildflyHttpsStandaloneConfig.configureHttps(this)
         }.run {}
@@ -56,7 +56,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     profiles = "default",
                     relativeTo = "jboss.server.config.dir",
-                    keystoreName = "octopus.keystore"
+                    keystoreName = File("octopus.keystore").absolutePath
             ).apply {
                 WildflyHttpsStandaloneConfig.configureHttps(this)
             }.run {}
@@ -75,7 +75,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = "target/wildfly.keystore",
+                    keystoreName = File("target/wildfly.keystore").absolutePath,
                     privateKeyPassword = "blah",
                     profiles = "default",
                     elytronKeymanagerName = "keymanager\\\"",
@@ -97,7 +97,7 @@ class WildflyHttpTest : WildflyTestBase() {
                     protocol = System.getProperty("protocol"),
                     privateKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.key").file), "UTF-8"),
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
-                    keystoreName = "target/wildfly.keystore",
+                    keystoreName = File("target/wildfly.keystore").absolutePath,
                     privateKeyPassword = "blah",
                     profiles = "default\""
             ).apply {
