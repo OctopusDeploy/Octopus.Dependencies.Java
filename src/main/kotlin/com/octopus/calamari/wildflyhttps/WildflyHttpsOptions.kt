@@ -57,6 +57,12 @@ data class WildflyHttpsOptions(override val controller: String = "",
     }
 
     fun validate() {
+        if (serverType == ServerType.NONE) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "WILDFLY-HTTPS-ERROR-0018",
+                    "The server type needs to be defined."))
+        }
+
         if ((!deployKeyStore ||
                 serverType == ServerType.DOMAIN) &&
                 StringUtils.isBlank(keystoreName)) {
