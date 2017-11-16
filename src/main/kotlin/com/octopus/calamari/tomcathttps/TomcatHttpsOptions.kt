@@ -216,6 +216,18 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                     "TOMCAT-HTTPS-ERROR-0020",
                     "The keystore filename must be an absolute path if it is specified."))
         }
+
+        if (StringUtils.isNotBlank(privateKeyName) && !File(privateKeyName).isAbsolute) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "TOMCAT-HTTPS-ERROR-0020",
+                    "The keystore filename must be an absolute path if it is specified."))
+        }
+
+        if (StringUtils.isNotBlank(publicKeyName) && !File(publicKeyName).isAbsolute) {
+            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                    "TOMCAT-HTTPS-ERROR-0020",
+                    "The keystore filename must be an absolute path if it is specified."))
+        }
     }
 
     companion object Factory {
