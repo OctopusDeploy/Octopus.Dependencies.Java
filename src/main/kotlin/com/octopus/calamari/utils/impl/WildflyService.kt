@@ -2,6 +2,7 @@ package com.octopus.calamari.utils.impl
 
 import com.google.common.base.Preconditions.checkState
 import com.octopus.calamari.exception.wildfly.CommandNotSuccessfulException
+import com.octopus.calamari.exception.wildfly.IncorrectServerStateException
 import com.octopus.calamari.exception.wildfly.LoginFailException
 import com.octopus.calamari.exception.wildfly.LoginTimeoutException
 import com.octopus.calamari.options.WildflyDataClass
@@ -207,7 +208,7 @@ class WildflyService {
                     "Failed to check server state").onSuccess {
                 it.response.get("result").asString().apply {
                     if (this != "running") {
-                        throw Exception("WILDFLY-HTTPS-ERROR-0038: The server is not in a running state. State is $this")
+                        throw IncorrectServerStateException("WILDFLY-HTTPS-ERROR-0038: The server is not in a running state. State is $this")
                     }
                 }
             }.onFailure {
