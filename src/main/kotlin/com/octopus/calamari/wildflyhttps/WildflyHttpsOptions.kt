@@ -65,7 +65,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     "Configuring a keystore requires that the keystore name be defined."))
         }
 
-        if (StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
+        if (deployKeyStore && StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0025",
                     "The keystore filename must be an absolute path if it is specified."))
