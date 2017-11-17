@@ -712,6 +712,24 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>java9</id>
+            <build>
+                <plugins>
+                    <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${compiler.version}</version>
+                    <configuration>
+                        <compilerArgs>
+                            <arg>--add-modules</arg>
+                            <arg>java.sql</arg>
+                        </compilerArgs>
+                    </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
