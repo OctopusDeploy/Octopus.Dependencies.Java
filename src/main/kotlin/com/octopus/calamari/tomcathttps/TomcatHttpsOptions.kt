@@ -257,7 +257,8 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                                 throw IllegalArgumentException("version can not be null")
                             }
                         },
-                        getEnvironmentVar("CatalinaBase", "").apply {
+                        listOf(getEnvironmentVar("CatalinaBase", ""), getEnvironmentVar("CatalinaHome", ""))
+                                .first(StringUtils::isNotBlank).apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("location can not be null")
                             }
