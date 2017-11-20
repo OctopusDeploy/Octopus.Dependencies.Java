@@ -62,6 +62,11 @@
             <url>https://maven.repository.redhat.com/ga/</url>
         </repository>
         <repository>
+            <id>jboss</id>
+            <name>jboss</name>
+            <url>https://repository.jboss.org/nexus/service/local/repositories/snapshots/content</url>
+        </repository>
+        <repository>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -712,6 +717,37 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>java9</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${compiler.version}</version>
+                        <configuration>
+                            <source>1.9</source>
+                            <target>1.9</target>
+                            <compilerArgs>
+                                <arg>--add-modules</arg>
+                                <arg>java.sql</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <configuration>
+                            <argLine>--add-modules java.sql</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
@@ -902,6 +938,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
                 <configuration>
                     <trimStackTrace>false</trimStackTrace>
                     <useFile>false</useFile>
