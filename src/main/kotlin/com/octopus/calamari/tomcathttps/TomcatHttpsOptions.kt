@@ -38,7 +38,7 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                               override val keystoreName: String = "",
                               override val keystoreAlias: String = "",
                               private val tomcatVersion: String = "",
-                              val tomcatLocation: String = "",
+                              val catalinaBase: String = "",
                               val service: String = "",
                               val port: Int = -1,
                               val implementation: TomcatHttpsImplementation = TomcatHttpsImplementation.NONE,
@@ -47,13 +47,13 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                               private val alreadyDumped: Boolean = false) : CertificateDataClass {
 
     override var defaultCertificateLocation: String
-        get () = File(tomcatLocation, "conf").absolutePath
+        get () = File(catalinaBase, "conf").absolutePath
         set (value) = throw OperationNotSupportedException()
 
     val logger: Logger = Logger.getLogger("")
     val fixedHostname = if (StringUtils.isEmpty(hostName)) DEFAULT_HOST_NAME else hostName
     val isDefaultHostname = fixedHostname == DEFAULT_HOST_NAME
-    val serverXmlFile = "$tomcatLocation${File.separator}conf${File.separator}server.xml"
+    val serverXmlFile = "$catalinaBase${File.separator}conf${File.separator}server.xml"
     val openSSLPassword = if (StringUtils.isBlank(privateKeyPassword)) Option.None else Option.Some(privateKeyPassword)
     private val serverPattern: Pattern = Pattern.compile("Server number:\\s+(?<major>\\d+)\\.(?<minor>\\d+)")
 
@@ -179,7 +179,7 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
      * @return Converts an absolute path to a interpolated version
      */
     fun convertPathToTomcatVariable(path: String) =
-            path.replace(File(tomcatLocation).absolutePath, "\${catalina.base}")
+            path.replace(File(catalinaBase).absolutePath, "\${catalina.base}")
 
     /**
      * ensures that the options supplied match the version of Tomcat installed
@@ -257,7 +257,7 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                                 throw IllegalArgumentException("version can not be null")
                             }
                         },
-                        getEnvironmentVar("Location", "").apply {
+                        getEnvironmentVar("CatalinaBase", "").apply {
                             if (StringUtils.isBlank(this)) {
                                 throw IllegalArgumentException("location can not be null")
                             }

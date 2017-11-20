@@ -51,7 +51,7 @@ object TomcatHttpsConfig {
             }.apply {
                 FileUtilsImpl.addToZipFile(
                         options.serverXmlFile,
-                        File(options.tomcatLocation, "conf${File.separator}$BACKUP_FILE"),
+                        File(options.catalinaBase, "conf${File.separator}$BACKUP_FILE"),
                         SimpleDateFormat(BACKUP_FOLDER_FORMAT).format(Date()))
             }.apply {
                 XMLUtilsImpl.saveXML(
@@ -69,7 +69,7 @@ object TomcatHttpsConfig {
      * Loads the XML file and processes the matching service node
      */
     private fun processXml(options: TomcatHttpsOptions): Document =
-            Try { File(options.tomcatLocation, "conf${File.separator}server.xml") }.map {
+            Try { File(options.catalinaBase, "conf${File.separator}server.xml") }.map {
                 it.apply {
                     if (!it.exists()) {
                         throw ConfigFileNotFoundException(ErrorMessageBuilderImpl.buildErrorMessage(
