@@ -76,7 +76,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
          */
         if ((!deployKeyStore ||
                 serverType == ServerType.DOMAIN) &&
-                StringUtils.isBlank(relativeTo) && !File(keystoreName).isAbsolute) {
+                StringUtils.isBlank(fixedRelativeTo) && !File(keystoreName).isAbsolute) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0042",
                     "When the keystore is not relative to a path, it must be absolute."))
@@ -88,7 +88,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
          */
         if ((!deployKeyStore ||
                 serverType == ServerType.DOMAIN) &&
-                StringUtils.isNotBlank(relativeTo) && File(keystoreName).isAbsolute) {
+                StringUtils.isNotBlank(fixedRelativeTo) && File(keystoreName).isAbsolute) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0043",
                     "When the keystore is relative to a path, it must not absolute."))
@@ -96,7 +96,7 @@ data class WildflyHttpsOptions(override val controller: String = "",
 
         if ((!deployKeyStore ||
                 serverType == ServerType.DOMAIN) &&
-                StringUtils.isBlank(relativeTo) && !File(keystoreName).isAbsolute) {
+                StringUtils.isBlank(fixedRelativeTo) && !File(keystoreName).isAbsolute) {
             throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                     "WILDFLY-HTTPS-ERROR-0044",
                     "When the keystore is not relative to a path, it must be absolute."))
