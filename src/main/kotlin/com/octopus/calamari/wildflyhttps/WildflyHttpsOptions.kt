@@ -94,14 +94,6 @@ data class WildflyHttpsOptions(override val controller: String = "",
                     "When the keystore is relative to a path, it must not absolute."))
         }
 
-        if ((!deployKeyStore ||
-                serverType == ServerType.DOMAIN) &&
-                StringUtils.isBlank(fixedRelativeTo) && !File(keystoreName).isAbsolute) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0044",
-                    "When the keystore is not relative to a path, it must be absolute."))
-        }
-
         /*
             If we are deploying a keystore file and have specified the file name, the filename
             must be absolute.
