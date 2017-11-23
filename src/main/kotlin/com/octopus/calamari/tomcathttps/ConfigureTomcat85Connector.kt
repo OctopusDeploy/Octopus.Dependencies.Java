@@ -82,7 +82,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                     node,
                     "SSLHostConfig",
                     if (!options.isDefaultHostname) mapOf(Pair("hostName", options.fixedHostname)) else mapOf(),
-                    if (options.isDefaultHostname) mapOf(Pair("hostName", options.fixedHostname)) else mapOf()).get().run {
+                    if (options.isDefaultHostname) mapOf(Pair("hostName", options.fixedHostname), Pair("type", "RSA")) else mapOf(Pair("type", "RSA"))).get().run {
                 XMLUtilsImpl.createOrReturnElement(this, "Certificate").get()
             }
 
