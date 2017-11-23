@@ -52,6 +52,9 @@ object KeyUtilsImpl : KeyUtils {
             }
 
     private fun generatePrivateKey(unencrypted: String, password: String): Try<PemObject> =
+            /*
+                3DES is the default for openssl, so we use it here too.
+             */
             JceOpenSSLPKCS8EncryptorBuilder(PKCS8Generator.PBE_SHA1_3DES).apply {
                 setRandom(SecureRandom())
                 setPasssword(password.toCharArray())
