@@ -16,8 +16,12 @@ import java.io.IOException
 import java.io.StringReader
 import java.util.*
 
+/**
+ * Octopus will provide private keys in isolation, and the default Bouncy Castle parsers
+ * will sometimes break when there is no public key. This class provides a fallback
+ * for these cases.
+ */
 class PrivateKeyPEMParser(val source:String) : PEMParser(StringReader(source)) {
-    private val BEGIN = "-----BEGIN "
     private val parsers = HashMap<String, KeyPairParser>()
 
     init {
