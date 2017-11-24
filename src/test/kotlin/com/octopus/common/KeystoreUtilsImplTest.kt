@@ -75,6 +75,10 @@ const val EXAMPLE_EC_PKCS1 = "-----BEGIN EC PARAMETERS-----\n" +
         "VVx+ITUokGJ5f+HXaX+28fyUoWVaSuVNgA==\n" +
         "-----END EC PRIVATE KEY-----\n"
 
+/**
+ * This is an example of a private key stripped of the public key sent back
+ * by Octopus.
+ */
 const val EXAMPLE_EC_PKCS1_2 = "-----BEGIN EC PRIVATE KEY-----\n" +
         "MFACAQEEQgDoiqWrnaz7u0Bs46yApEEny1TMK2gKuEoAu019y9jAT4L486LIWecV\n" +
         "E5QYK+LBL3OzWZtFAfDMAAbg7hadxv3NFaAHBgUrgQQAIw==\n" +
@@ -128,12 +132,47 @@ const val EXAMPLE_ECDH_PKCS8 = "-----BEGIN PRIVATE KEY-----\n" +
         "YkQcpEnIhQXA71mJBrG40SGJPqyfCW5x2MF6ZrSRJiMwAZpWr0B0jKIs\n" +
         "-----END PRIVATE KEY-----\n"
 
-
+/**
+ * This was copied stright from the output sent by Octopus for an example
+ * RSA self signed cert.
+ */
+const val EXAMPLE_RSA_PKCS1_2 = "-----BEGIN RSA PRIVATE KEY-----\n" +
+        "MIIEpAIBAAKCAQEAvqgCw6AJRhTaeqT2XufYa+EWW/pcmlsm9xQbpci2WMVT2PiF\n" +
+        "6qOHiI9rkZ7roqnId8ZDjxVA7Rv6jW0Hb9pGDEM4NRmCaSnB/L6Uurw3AL+qLD04\n" +
+        "oL/8NuMOeTLH20EhgNWq19zCklit+HWuRsckAFwnAXAd1fA+4yuZFxjrb83wiH6o\n" +
+        "gEYrLBBNMl9l8zZrGKOccrZ63zvb8ZD/XyUJMIl4kcoYIMq1IIKJeY7DyIPS38eD\n" +
+        "b1zepY3qJcfNPMT+0egWuBYmAFpj2onJgMjaT6hf6wwc4cPSIpq+wHvMDvDGu8wu\n" +
+        "wMYogZU4y05tO2PQPUgY+AQriZMsXRC2Xj7BwwIDAQABAoIBAQCjWqDDrGNFwKhR\n" +
+        "XPYa6trr07espx6gwmjoWjo2GXrjJG9q/8T9/Y8q2nd4FYofnQk+VomcFsHCZq6O\n" +
+        "blRo6cQKza1jEbBDGpwzSbd1J76YzZ+ot+vFD7mx7WmBPpkuqudh07DFs0iiy4iD\n" +
+        "0ZC44/dct5hUCxQFMgsv6TMKLzfKWlaZNvRv55o/bCqO7R51TANSWvb84rwKENU3\n" +
+        "iHnNJjyRcIfS8swC9o3SJ7EsX1609DF5HIZXZA/Vhn6OK9lHdpdVOtJ2tNN+q6Up\n" +
+        "1I31rEcaiIsDDFm5cWgSAtag9e7GP/XuiW11/PhkOKT0fA4tgeQJL/a9xRSzV1um\n" +
+        "dzj6Jr8BAoGBAN+KNDrD4lFsYVWSf0pmqjE/GRyBnf1ZpR9IfztnHt2GKOmrZpWL\n" +
+        "ATO2VChAVxkPN6X0V0gz+8tviBWhWjai+TFw+1A9Pk2E8rdejnfStOFEGnZhb3/a\n" +
+        "LuxlO6I5Nt8+qnTpKeXZptTzmZ34jobGXn5uvHeNigCsC5X/IqIpjddRAoGBANpX\n" +
+        "Z29Yi+yJWMYeCPf6NYc3GcHidl27gmN70VAIp8WnU6QlxA6vmREKO8lVcdONoHhu\n" +
+        "DijU/Xjs5zYPTdwaJKeTZJaxqhljFO/S7JXM4xP3mwRdaPuvhd0nM4YinvoItAvN\n" +
+        "dS/GppwqceEnucwUll0GuzDfUUVE+8G0wfx+EyrTAoGBAK7c65J0nNtYzqMj4BMR\n" +
+        "UF0JoNkdw7rlnzdjfLO5LPnY8rQnci3U+PG81QRPoFJoBv34rzY6A+PVsTxKZcmL\n" +
+        "nyc/3DeeUNhPAZbTjtrIptn4bkLgYVpAEKi3X/i8jOIBoVGm+zFkGw9GJ4rdXpCr\n" +
+        "KEv6z88tlyCDdOS3Gh6EJwKhAoGABKoJU5+YnZzxgInztxhpPFI5AqNL1ATFbEqg\n" +
+        "1gzZSKeiacdEwOuPYYXOcSaaH+LOosP3GXgzUfn9lnINP75vOgU0COQStigfsl/X\n" +
+        "Hfwafbq0XQuByp6dRXQo7ZyfuMem0Pm6nyKnPH7Ln/uxRGLMM4CJTyn2Gny2xBSQ\n" +
+        "cExhLHECgYAuQW1I0NzniQnS5PfO1h7MAwdI6c/nAcINDhERXEwiQ+4O44/4epvE\n" +
+        "5HS3AeO/zoogGgtEKY9t5lcWsWX7UXEcNFZbEzgDyu4SGBht1tobToLVVRxnCIpY\n" +
+        "v+rimDrVbrOXOAQ0g+N3d/aLbKWG4YiokomPjO3pOKocoDpn015oBA==\n" +
+        "-----END RSA PRIVATE KEY-----\n"
 
 class KeystoreUtilsImplTest {
     @Test
     fun testPKCS1() {
         KeyUtilsImpl.createKey(EXAMPLE_RSA_PKCS1).get()
+    }
+
+    @Test
+    fun testPKCS1_2() {
+        KeyUtilsImpl.createKey(EXAMPLE_RSA_PKCS1_2).get()
     }
 
     @Test
