@@ -75,6 +75,11 @@ const val EXAMPLE_EC_PKCS1 = "-----BEGIN EC PARAMETERS-----\n" +
         "VVx+ITUokGJ5f+HXaX+28fyUoWVaSuVNgA==\n" +
         "-----END EC PRIVATE KEY-----\n"
 
+const val EXAMPLE_EC_PKCS1_2 = "-----BEGIN EC PRIVATE KEY-----\n" +
+        "MFACAQEEQgDoiqWrnaz7u0Bs46yApEEny1TMK2gKuEoAu019y9jAT4L486LIWecV\n" +
+        "E5QYK+LBL3OzWZtFAfDMAAbg7hadxv3NFaAHBgUrgQQAIw==\n" +
+        "-----END EC PRIVATE KEY-----\n"
+
 const val EXAMPLE_DSA_PKCS8 = "-----BEGIN PRIVATE KEY-----\n" +
         "MIIBSgIBADCCASsGByqGSM44BAEwggEeAoGBALARXin/25WCCSkDUfZWZ2H+TKPe\n" +
         "SANUQzb10D8lwB/b7J1eWV8G+x4YgwjJd50pslZIZZtLNry9YotjlnnnJsnjBO5C\n" +
@@ -107,7 +112,7 @@ const val EXAMPLE_DSA_PKCS1 = "-----BEGIN DSA PARAMETERS-----\n" +
         "ff1meoW+Y9Fe0ek4\n" +
         "-----END DSA PRIVATE KEY-----\n"
 
-const val EXAMPLE_DH = "-----BEGIN PRIVATE KEY-----\n" +
+const val EXAMPLE_DH_PKCS8 = "-----BEGIN PRIVATE KEY-----\n" +
         "MIIBIQIBADCBlQYJKoZIhvcNAQMBMIGHAoGBAOhiHD+PcYo3sRX4eYCATECZanrO\n" +
         "nRSjH8fze6eMm2mtzG/2JEo882mUka6jL6net2DEBazmpunsECHHkVuc16b3N4Hq\n" +
         "7Z/6DPgM9tfKzdquaIgh5oYKqPaXVtzDG7BzohIYnt+9wig6CMdTOr1K9f8Ibaaw\n" +
@@ -117,11 +122,13 @@ const val EXAMPLE_DH = "-----BEGIN PRIVATE KEY-----\n" +
         "NUbJO40=\n" +
         "-----END PRIVATE KEY-----\n"
 
-const val EXAMPLE_ECDH = "-----BEGIN PRIVATE KEY-----\n" +
+const val EXAMPLE_ECDH_PKCS8 = "-----BEGIN PRIVATE KEY-----\n" +
         "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgWIR0Drsw8Obbz+RJ\n" +
         "yQcHFa7YLFYEzpNe3x/AuIUaclyhRANCAARkV4H6DAZjEjhjLrxAoOwQgj0VsLWP\n" +
         "YkQcpEnIhQXA71mJBrG40SGJPqyfCW5x2MF6ZrSRJiMwAZpWr0B0jKIs\n" +
         "-----END PRIVATE KEY-----\n"
+
+
 
 class KeystoreUtilsImplTest {
     @Test
@@ -155,12 +162,17 @@ class KeystoreUtilsImplTest {
     }
 
     @Test
+    fun testECPKCS1_2() {
+        KeyUtilsImpl.createKey(EXAMPLE_EC_PKCS1_2).get()
+    }
+
+    @Test
     fun testDH() {
-        KeyUtilsImpl.createKey(EXAMPLE_DH).get()
+        KeyUtilsImpl.createKey(EXAMPLE_DH_PKCS8).get()
     }
 
     @Test
     fun testECDH() {
-        KeyUtilsImpl.createKey(EXAMPLE_ECDH).get()
+        KeyUtilsImpl.createKey(EXAMPLE_ECDH_PKCS8).get()
     }
 }

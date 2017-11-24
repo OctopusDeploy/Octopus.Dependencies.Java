@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.82</version>
+    <version>1.0.83</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -96,7 +96,7 @@
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
+            <artifactId>bcprov-debug-jdk15on</artifactId>
             <version>1.58</version>
         </dependency>
         <dependency>

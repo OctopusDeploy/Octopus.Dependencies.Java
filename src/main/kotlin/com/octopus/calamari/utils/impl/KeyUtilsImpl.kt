@@ -1,6 +1,7 @@
 package com.octopus.calamari.utils.impl
 
 import com.octopus.calamari.exception.tomcat.UnrecognisedFormatException
+import com.octopus.calamari.security.PrivateKeyPEMParser
 import com.octopus.calamari.utils.KeyUtils
 import org.bouncycastle.asn1.ASN1ObjectIdentifier
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
@@ -60,6 +61,8 @@ object KeyUtilsImpl : KeyUtils {
     private fun generatePrivateKey(unencrypted: String, password: String): Try<Pair<PrivateKey, PemObject>> =
             /*
                 3DES is the default for openssl, so we use it here too.
+                Also because of this (https://en.wikipedia.org/wiki/Key_size):
+                NIST approved symmetric encryption algorithms include three-key Triple DES, and AES.
              */
             JceOpenSSLPKCS8EncryptorBuilder(PKCS8Generator.PBE_SHA1_3DES).apply {
                 setRandom(SecureRandom())
@@ -105,9 +108,7 @@ object KeyUtilsImpl : KeyUtils {
                         }
                     }
                 }.run {
-                    StringReader(this)
-                }.run {
-                    PEMParser(this)
+                    PrivateKeyPEMParser(this)
                 }.run {
                     this.readObject()
                 }.let { pemObject ->
@@ -117,7 +118,7 @@ object KeyUtilsImpl : KeyUtils {
                                 converter.getKeyPair(pemObject.decryptKeyPair(this)).private
                             }
                         } else {
-                            throw UnrecognisedFormatException("pemObject must be a PEMEncryptedKeyPair when a password protected key is supplied.")
+                            throw UnrecognisedFormatException("pemObject must be a PEMEncryptedPrivateKey when a password protected key is supplied.")
                         }
                     }.getOrElse {
                         if (pemObject is PEMKeyPair) {
