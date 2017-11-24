@@ -125,6 +125,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
             node.apply {
                 cleanUpOldAttributes(this)
             }.apply {
+                attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = "RSA" })
                 if (options.implementation == TomcatHttpsImplementation.APR) {
                     attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply {
                         nodeValue = options.createPrivateKey()
@@ -137,7 +138,6 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                             nodeValue = it
                         })
                     }
-                    attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = "RSA" })
                 } else {
                     attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystoreFile").apply {
                         value = options.createKeystore()

@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.80</version>
+    <version>1.0.81</version>
     <packaging>jar</packaging>
 
     <properties>
