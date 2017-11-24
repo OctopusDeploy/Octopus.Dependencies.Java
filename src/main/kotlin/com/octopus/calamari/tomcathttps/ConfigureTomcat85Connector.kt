@@ -271,7 +271,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
     private fun convertAlgToTomcatType(alg: String): String =
             when (alg) {
                 "RSA" -> "RSA"
-                "DSA" -> "DSS"
+                "DSA" -> "DSA"
                 "EC" -> "EC"
                 "ECDSA" -> "EC"
                 else -> {
