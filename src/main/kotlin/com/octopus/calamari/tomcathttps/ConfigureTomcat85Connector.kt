@@ -1,6 +1,7 @@
 package com.octopus.calamari.tomcathttps
 
 import com.octopus.calamari.exception.tomcat.ConfigurationOperationInvalidException
+import com.octopus.calamari.exception.tomcat.UnrecognisedFormatException
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.funktionale.tries.Try
@@ -43,12 +44,9 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
             }.run {
                 if (defaultHostIsInConnector(this, options)) {
                     configureConnectorCertificate(this, options)
-                    this
                 } else {
                     addDefaultHostNameToConnector(this, options)
-                    createCertificateNode(this, options).apply {
-                        configureSSLHostConfigCertificate(this, options)
-                    }
+                    configureSSLHostConfigCertificate(this, options)
                 }
             }
 
@@ -77,13 +75,15 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
     /**
      * Builds up a <SSLHostConfig> element with the certificate information.
      */
-    private fun createCertificateNode(node: Node, options: TomcatHttpsOptions): Node =
+    private fun createCertificateNode(node: Node, options: TomcatHttpsOptions, type: String): Node =
             XMLUtilsImpl.createOrReturnElement(
                     node,
                     "SSLHostConfig",
                     if (!options.isDefaultHostname) mapOf(Pair("hostName", options.fixedHostname)) else mapOf(),
-                    if (options.isDefaultHostname) mapOf(Pair("hostName", options.fixedHostname), Pair("type", "RSA")) else mapOf(Pair("type", "RSA"))).get().run {
+                    if (options.isDefaultHostname) mapOf(Pair("hostName", options.fixedHostname), Pair("type", type)) else mapOf(Pair("type", type))).get().run {
                 XMLUtilsImpl.createOrReturnElement(this, "Certificate").get()
+            }.apply {
+                cleanUpOldAttributes(this)
             }
 
     /**
@@ -95,7 +95,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
             }.apply {
                 if (options.implementation == TomcatHttpsImplementation.APR) {
                     attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateKeyFile").apply {
-                        nodeValue = options.createPrivateKey()
+                        nodeValue = options.createPrivateKey().second
                     })
                     attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateFile").apply {
                         nodeValue = options.createPublicCert()
@@ -107,13 +107,13 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                     }
                 } else {
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keystoreFile").apply {
-                        value = options.createKeystore()
+                        nodeValue = options.createKeystore().second
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keystorePass").apply {
-                        value = options.fixedPrivateKeyPassword
+                        nodeValue = options.fixedPrivateKeyPassword
                     })
                     attributes.setNamedItem(node.ownerDocument.createAttribute("keyAlias").apply {
-                        value = options.fixedKeystoreAlias
+                        nodeValue = options.fixedKeystoreAlias
                     })
                 }
             }
@@ -123,31 +123,38 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
      */
     private fun configureSSLHostConfigCertificate(node: Node, options: TomcatHttpsOptions) =
             node.apply {
-                cleanUpOldAttributes(this)
-            }.apply {
-                attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = "RSA" })
                 if (options.implementation == TomcatHttpsImplementation.APR) {
-                    attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply {
-                        nodeValue = options.createPrivateKey()
-                    })
-                    attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply {
-                        nodeValue = options.createPublicCert()
-                    })
-                    options.openSSLPassword.forEach {
-                        attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyPassword").apply {
-                            nodeValue = it
-                        })
+                    options.createPrivateKey().also { keyDetails ->
+                        createCertificateNode(node, options, convertAlgToTomcatType(keyDetails.first.algorithm)).apply {
+                            attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply {
+                                nodeValue = keyDetails.second
+                            })
+                            attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply {
+                                nodeValue = options.createPublicCert()
+                            })
+                            options.openSSLPassword.forEach {
+                                attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyPassword").apply {
+                                    nodeValue = it
+                                })
+                            }
+                            attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = convertAlgToTomcatType(keyDetails.first.algorithm) })
+                        }
                     }
                 } else {
-                    attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystoreFile").apply {
-                        value = options.createKeystore()
-                    })
-                    attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystorePassword").apply {
-                        value = options.fixedPrivateKeyPassword
-                    })
-                    attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeyAlias").apply {
-                        value = options.fixedKeystoreAlias
-                    })
+                    options.createKeystore().also { keyDetails ->
+                        createCertificateNode(node, options, convertAlgToTomcatType(keyDetails.first.algorithm)).apply {
+                            attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystoreFile").apply {
+                                nodeValue = keyDetails.second
+                            })
+                            attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystorePassword").apply {
+                                nodeValue = options.fixedPrivateKeyPassword
+                            })
+                            attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeyAlias").apply {
+                                nodeValue = options.fixedKeystoreAlias
+                            })
+                            attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = convertAlgToTomcatType(keyDetails.first.algorithm) })
+                        }
+                    }
                 }
 
             }
@@ -165,14 +172,14 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
      * @returns the value of the defaultSSLHostConfigName attribute, taking into account the fact that it
      * may not be defined in which case the default value or "_default_" is returned
      */
-    private fun getConnectorDefaultHost(node:Node) =
+    private fun getConnectorDefaultHost(node: Node) =
             node.attributes.getNamedItem(AttributeDatabase.defaultSSLHostConfigName)?.nodeValue ?: DEFAULT_HOST_NAME
 
 
     /**
      * @returns true if the <Connector> element contains a <SSLHostConfig> element that matches the supplied hostName
      */
-    private fun connectorContainsDefaultSSLHostConfig(node: Node, hostName:String) =
+    private fun connectorContainsDefaultSSLHostConfig(node: Node, hostName: String) =
             XMLUtilsImpl.xpathQueryNodelist(
                     node,
                     "SSLHostConfig[@hostName='$hostName'${if (hostName == DEFAULT_HOST_NAME) " or not(@hostName)" else ""}]").length != 0
@@ -212,33 +219,33 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
      *  configuration.
      */
     private fun validateAddingDefaultWithConnectorCertificate(node: Node, options: TomcatHttpsOptions) {
-            getConnectorDefaultHost(node).run {
-                if(
+        getConnectorDefaultHost(node).run {
+            if (
+            /*
+                 We can only conflict if this is not an empty node
+             */
+            !connectorIsEmpty(node) &&
                     /*
-                         We can only conflict if this is not an empty node
+                        We can only conflict if we are trying to add another default hostname
                      */
-                    !connectorIsEmpty(node) &&
-                        /*
-                            We can only conflict if we are trying to add another default hostname
-                         */
-                        options.default &&
-                        /*
-                            We can only conflict if we are changing the default hostname
-                         */
-                        options.fixedHostname != this &&
-                        /*
-                            We can only conflict if the default host name does not exist in a
-                            <SSLHostConfig> element
-                         */
-                        !connectorContainsDefaultSSLHostConfig(node, this)) {
-                    throw ConfigurationOperationInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
-                            "TOMCAT-HTTPS-ERROR-0008" ,
-                            "The <Connector> " +
-                            "listening to port ${options.port} has certificate information with the hostName of " +
-                            "${this} already configured. Attempting to add a new default hostName of ${options.fixedHostname} " +
-                            "will lead to an invalid configuration."))
-                }
+                    options.default &&
+                    /*
+                        We can only conflict if we are changing the default hostname
+                     */
+                    options.fixedHostname != this &&
+                    /*
+                        We can only conflict if the default host name does not exist in a
+                        <SSLHostConfig> element
+                     */
+                    !connectorContainsDefaultSSLHostConfig(node, this)) {
+                throw ConfigurationOperationInvalidException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0008",
+                        "The <Connector> " +
+                                "listening to port ${options.port} has certificate information with the hostName of " +
+                                "${this} already configured. Attempting to add a new default hostName of ${options.fixedHostname} " +
+                                "will lead to an invalid configuration."))
             }
+        }
 
     }
 
@@ -252,5 +259,20 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
             options.fixedHostname == getConnectorDefaultHost(node) &&
                     !connectorContainsDefaultSSLHostConfig(node, options.fixedHostname) &&
                     !connectorIsEmpty(node)
+
+    /**
+     * Converts a Java algorithm (i.e. PrivateKey.algorithm) into a Tomcat type as defined
+     * in https://tomcat.apache.org/tomcat-9.0-doc/config/http.html#SSL_Support_-_Certificate
+     */
+    private fun convertAlgToTomcatType(alg: String): String =
+            when (alg) {
+                "RSA" -> "RSA"
+                "DSA" -> "DSS"
+                "EC" -> "EC"
+                "ECDSA" -> "EC"
+                else -> {
+                    throw UnrecognisedFormatException()
+                }
+            }
 }
 

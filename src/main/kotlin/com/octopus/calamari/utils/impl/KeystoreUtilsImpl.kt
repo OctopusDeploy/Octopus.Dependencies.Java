@@ -9,12 +9,13 @@ import org.funktionale.tries.Try
 import java.io.File
 import java.io.FileOutputStream
 import java.security.KeyStore
+import java.security.PrivateKey
 import java.util.logging.Logger
 
 object KeystoreUtilsImpl : KeystoreUtils {
     val logger: Logger = Logger.getLogger("")
 
-    override fun saveKeystore(options: CertificateDataClass, destination: File): Try<File> =
+    override fun saveKeystore(options: CertificateDataClass, destination: File): Try<Pair<PrivateKey, File>> =
             KeystoreUtilsImpl.generateKeystore(
                     options.fixedKeystoreAlias,
                     options.publicKey,
@@ -26,9 +27,11 @@ object KeystoreUtilsImpl : KeystoreUtils {
                         Tomcat does not support mismatched keys.
                      */
                     Option.Some(options.fixedPrivateKeyPassword)).map { keystore ->
-                destination.apply {
+                Pair(
+                        keystore.first,
+                        destination.apply {
                     FileOutputStream(this).use {
-                        keystore.store(
+                        keystore.second.store(
                                 it,
                                 /*
                                     This needs to match the password used to save
@@ -37,16 +40,17 @@ object KeystoreUtilsImpl : KeystoreUtils {
                                 options.fixedPrivateKeyPassword.toCharArray())
                     }
                 }
-            }.map {
-                destination.apply {
+                )
+            }.map { myDestination ->
+                myDestination.apply {
                     /*
                         The store operation may not fail, even if permissions prevent
                         the file from being created. So we do an additional check here.
                      */
-                    if (!(exists() && isFile)) {
-                        throw Exception("File was not created at ${this.absolutePath}")
+                    if (!(second.exists() && second.isFile)) {
+                        throw Exception("File was not created at ${second.absolutePath}")
                     } else {
-                        logger.info("Successfully created keystore at ${this.absolutePath}")
+                        logger.info("Successfully created keystore at ${second.absolutePath}")
                     }
                 }
             }.onFailure {
@@ -59,16 +63,23 @@ object KeystoreUtilsImpl : KeystoreUtils {
                                   publicCertificate: String,
                                   privateKey: String,
                                   sourcePrivateKeyPassword: Option<String>,
-                                  destPrivateKeyPassword: Option<String>): Try<KeyStore> =
+                                  destPrivateKeyPassword: Option<String>): Try<Pair<PrivateKey, KeyStore>> =
             Try {
                 KeyStore.getInstance("JKS").apply {
                     load(null, null)
-                }.apply {
-                    setKeyEntry(alias,
-                            KeyUtilsImpl.createKey(privateKey, sourcePrivateKeyPassword).get(),
-                            destPrivateKeyPassword.getOrElse { "" }.toCharArray(),
-                            KeyUtilsImpl.createCertificateChain(publicCertificate)
-                                    .get().toTypedArray())
+                }.let { keyStore ->
+                    KeyUtilsImpl.createKey(privateKey, sourcePrivateKeyPassword).get().run {
+                        Pair(
+                                this,
+                                keyStore.apply {
+                                    setKeyEntry(alias,
+                                            KeyUtilsImpl.createKey(privateKey, sourcePrivateKeyPassword).get(),
+                                            destPrivateKeyPassword.getOrElse { "" }.toCharArray(),
+                                            KeyUtilsImpl.createCertificateChain(publicCertificate)
+                                                    .get().toTypedArray())
+                                })
+                    }
+
                 }
             }
 }

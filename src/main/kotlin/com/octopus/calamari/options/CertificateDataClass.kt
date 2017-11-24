@@ -11,6 +11,7 @@ import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
 import org.springframework.retry.RetryCallback
 import java.io.File
+import java.security.PrivateKey
 import java.util.*
 import javax.naming.ldap.LdapName
 
@@ -59,10 +60,10 @@ interface CertificateDataClass {
     /**
      * @return Create the keystore file and returns the path
      */
-    fun createKeystore():String =
-            RetryServiceImpl.createRetry().execute(RetryCallback<String, Throwable> { context ->
+    fun createKeystore():Pair<PrivateKey, String> =
+            RetryServiceImpl.createRetry().execute(RetryCallback<Pair<PrivateKey, String>, Throwable> { context ->
                 KeystoreUtilsImpl.saveKeystore(this, getKeystoreFile()).map {
-                    it.absolutePath
+                    Pair(it.first, it.second.absolutePath)
                 }.onFailure {
                     throw it
                 }.get()

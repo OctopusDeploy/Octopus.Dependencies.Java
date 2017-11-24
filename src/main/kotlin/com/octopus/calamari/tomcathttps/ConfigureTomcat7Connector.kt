@@ -50,7 +50,7 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
                     nodeValue = options.implementation.className.get()
                 })
                 attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateKeyFile").apply {
-                    nodeValue = options.createPrivateKey()
+                    nodeValue = options.createPrivateKey().second
                 })
                 attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateFile").apply {
                     nodeValue = options.createPublicCert()
@@ -66,7 +66,7 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
     private fun configureBIOAndNIO(options: TomcatHttpsOptions, node: Node) =
             node.apply {
                 attributes.setNamedItem(ownerDocument.createAttribute("keystoreFile").apply {
-                    value = options.createKeystore()
+                    value = options.createKeystore().second
                 })
                 attributes.setNamedItem(ownerDocument.createAttribute("keystorePass").apply {
                     value = options.fixedPrivateKeyPassword

@@ -12,9 +12,9 @@ interface KeyUtils {
     /**
      * @param unencrypted The unencrypted PEM file
      * @param password The password to encrypt the file with
-     * @return a string representation of a PEM file encrypted with the password
+     * @return the algorithm used is the first spot, and a string representation of a PEM file encrypted with the password
      */
-    fun addPasswordToPEM(unencrypted: String, password: String):Try<String>
+    fun addPasswordToPEM(unencrypted: String, password: String): Try<Pair<PrivateKey, String>>
 
     /**
      * @param privateKey The private key contents

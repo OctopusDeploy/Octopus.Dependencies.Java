@@ -1,16 +1,26 @@
 package com.octopus.calamari.utils.impl
 
+import com.octopus.calamari.exception.tomcat.UnrecognisedFormatException
 import com.octopus.calamari.utils.KeyUtils
+import org.bouncycastle.asn1.ASN1ObjectIdentifier
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.openssl.PEMEncryptedKeyPair
+import org.bouncycastle.openssl.PEMKeyPair
+import org.bouncycastle.openssl.PEMParser
 import org.bouncycastle.openssl.PKCS8Generator
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JcaPKCS8Generator
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8EncryptorBuilder
+import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder
 import org.bouncycastle.util.io.pem.PemObject
 import org.bouncycastle.util.io.pem.PemWriter
 import org.funktionale.option.Option
 import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
 import java.io.ByteArrayInputStream
+import java.io.InputStreamReader
+import java.io.StringReader
 import java.io.StringWriter
 import java.nio.charset.StandardCharsets
 import java.security.*
@@ -24,34 +34,30 @@ import javax.crypto.EncryptedPrivateKeyInfo
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
-
 private val CERT_PATTERN = Pattern.compile(
         "-+BEGIN\\s+.*CERTIFICATE[^-]*-+(?:\\s|\\r|\\n)+" + // Header
                 "([a-z0-9+/=\\r\\n]+)" + // Base64 text
                 "-+END\\s+.*CERTIFICATE[^-]*-+", // Footer
         Pattern.CASE_INSENSITIVE)
 
-private val KEY_PATTERN = Pattern.compile(
-        "-+BEGIN\\s+.*PRIVATE\\s+KEY[^-]*-+(?:\\s|\\r|\\n)+" + // Header
-                "([a-z0-9+/=\\r\\n]+)" + // Base64 text
-                "-+END\\s+.*PRIVATE\\s+KEY[^-]*-+", // Footer
-        Pattern.CASE_INSENSITIVE)
+private val BEGIN = Pattern.compile("-+BEGIN\\s+.*PRIVATE\\s+KEY", Pattern.CASE_INSENSITIVE)
 
 object KeyUtilsImpl : KeyUtils {
     init {
         Security.addProvider(BouncyCastleProvider())
     }
 
-    override fun addPasswordToPEM(unencrypted: String, password: String): Try<String> =
+    override fun addPasswordToPEM(unencrypted: String, password: String): Try<Pair<PrivateKey, String>> =
             generatePrivateKey(unencrypted, password).map { privKey ->
-                StringWriter().apply {
-                    PemWriter(this).use { writer ->
-                        writer.writeObject(privKey)
-                    }
-                }.toString()
+                Pair(privKey.first,
+                        StringWriter().apply {
+                            PemWriter(this).use { writer ->
+                                writer.writeObject(privKey.second)
+                            }
+                        }.toString())
             }
 
-    private fun generatePrivateKey(unencrypted: String, password: String): Try<PemObject> =
+    private fun generatePrivateKey(unencrypted: String, password: String): Try<Pair<PrivateKey, PemObject>> =
             /*
                 3DES is the default for openssl, so we use it here too.
              */
@@ -60,18 +66,7 @@ object KeyUtilsImpl : KeyUtils {
                 setPasssword(password.toCharArray())
             }.build().run {
                 createKey(unencrypted, Option.None).map {
-                    JcaPKCS8Generator(it, this).generate()
-                }
-            }
-
-    override fun createKey(privateKey: String, keyPassword: Option<String>): Try<PrivateKey> =
-            readPrivateKey(privateKey, keyPassword).flatMap { privKey ->
-                Try {
-                    KeyFactory.getInstance("RSA")
-                            .generatePrivate(privKey)
-                }.handle {
-                    KeyFactory.getInstance("DSA")
-                            .generatePrivate(privKey)
+                    Pair<PrivateKey, PemObject>(it, JcaPKCS8Generator(it, this).generate())
                 }
             }
 
@@ -98,52 +93,44 @@ object KeyUtilsImpl : KeyUtils {
                 }
             }
 
-    private fun extractPrivateKey(content: String):Try<ByteArray> =
-            Try {
-                KEY_PATTERN.matcher(content).apply {
-                    if (!find())
-                        throw KeyStoreException(ErrorMessageBuilderImpl.buildErrorMessage("JAVA-HTTPS-ERROR-0002",
-                                "Could not find a private key. This is probably because the input key file is invalid."))
-                }
-            }.map {
-                base64Decode(it.group(1))
-            }
-
-    private fun readPrivateKey(content: String, keyPassword: Option<String>): Try<PKCS8EncodedKeySpec> =
-            keyPassword
-                    .map { password ->
-                        extractPrivateKey(content)
-                                /*
-                                    Convert the extracted text to a EncryptedPrivateKeyInfo
-                                 */
-                                .map {
-                                    EncryptedPrivateKeyInfo(it)
-                                }
-                                /*
-                                    Create a cipher and use it to get the key spec
-                                    from the EncryptedPrivateKeyInfo
-                                 */
-                                .map {
-                                    Cipher.getInstance(it.algName).apply {
-                                        init(Cipher.DECRYPT_MODE,
-                                                SecretKeyFactory.getInstance(it.algName)
-                                                        .generateSecret(
-                                                                PBEKeySpec(password.toCharArray())),
-                                                it.algParameters)
-                                    }.run {
-                                        it.getKeySpec(this)
-                                    }
-                                }
-                    }
-                    .getOrElse {
-                        /*
-                            If there is no password, return a PKCS8EncodedKeySpec
-                            from the extracted content
-                         */
-                        extractPrivateKey(content).map {
-                            PKCS8EncodedKeySpec(it)
+    override fun createKey(content: String, keyPassword: Option<String>):Try<PrivateKey> =
+        Try {
+            JcaPEMKeyConverter().setProvider("BC").let { converter ->
+                content.run {
+                    BEGIN.matcher(this).run {
+                        if (find()) {
+                            content.substring(this.start())
+                        } else {
+                            throw Exception()
                         }
                     }
+                }.run {
+                    StringReader(this)
+                }.run {
+                    PEMParser(this)
+                }.run {
+                    this.readObject()
+                }.let { pemObject ->
+                    keyPassword.map {
+                        if (pemObject is PEMEncryptedKeyPair) {
+                            JcePEMDecryptorProviderBuilder().build(it.toCharArray()).run {
+                                converter.getKeyPair(pemObject.decryptKeyPair(this)).private
+                            }
+                        } else {
+                            throw UnrecognisedFormatException("pemObject must be a PEMEncryptedKeyPair when a password protected key is supplied.")
+                        }
+                    }.getOrElse {
+                        if (pemObject is PEMKeyPair) {
+                            converter.getKeyPair(pemObject).private
+                        } else if (pemObject is PrivateKeyInfo) {
+                            converter.getPrivateKey(pemObject)
+                        } else {
+                            throw UnrecognisedFormatException("pemObject must be a PEMKeyPair or PrivateKeyInfo when a unencrypted key is supplied.")
+                        }
+                    }
+                }
+            }
+        }
 
     private fun base64Decode(base64: String): ByteArray =
             Base64.getMimeDecoder().decode(base64.toByteArray(StandardCharsets.US_ASCII))

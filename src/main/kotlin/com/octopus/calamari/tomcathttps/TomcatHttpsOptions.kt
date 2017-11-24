@@ -17,6 +17,7 @@ import org.funktionale.tries.Try
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.nio.charset.StandardCharsets
+import java.security.PrivateKey
 import java.util.logging.Logger
 import java.util.regex.Pattern
 import javax.naming.OperationNotSupportedException
@@ -31,7 +32,7 @@ const val DEFAULT_HOST_NAME = "_default_"
  */
 data class TomcatHttpsOptions(override val privateKey: String = "",
                               override val publicKey: String = "",
-                              override val privateKeyPassword:String = "",
+                              override val privateKeyPassword: String = "",
                               override val publicKeySubject: String = "",
                               private val privateKeyName: String = "",
                               private val publicKeyName: String = "",
@@ -97,7 +98,7 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
     /**
      * @return Either a unique file in the Tomcat conf folder, or the name that was supplied by the user
      */
-    private fun getPrivateKeyFile():File =
+    private fun getPrivateKeyFile(): File =
             if (StringUtils.isBlank(privateKeyName)) {
                 FileUtilsImpl.getUniqueFilename(
                         defaultCertificateLocation,
@@ -110,7 +111,7 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
     /**
      * @return Either a unique file in the Tomcat conf folder, or the name that was supplied by the user
      */
-    private fun getPublicKeyFile():File =
+    private fun getPublicKeyFile(): File =
             if (StringUtils.isBlank(publicKeyName)) {
                 FileUtilsImpl.getUniqueFilename(
                         defaultCertificateLocation,
@@ -122,29 +123,34 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
 
     override fun createKeystore() =
             super.createKeystore().run {
-                convertPathToTomcatVariable(this)
+                Pair(first, convertPathToTomcatVariable(second))
             }
 
     /**
      * Creates a private PEM key file in the Tomcat conf dir
      * @return The path to the PEM file
      */
-    fun createPrivateKey() =
+    fun createPrivateKey():Pair<PrivateKey, String> =
             Try {
                 getPrivateKeyFile()
-            }.map {
-                it.apply {
-                    FileUtils.write(
-                            it,
-                            openSSLPassword.map {
-                                KeyUtilsImpl.addPasswordToPEM(privateKey, it)
-                                        .onFailure { throw it }
-                                        .get()
-                            }.getOrElse { privateKey },
-                            StandardCharsets.US_ASCII)
+            }.map { privateKeyFile ->
+                openSSLPassword.map {
+                    KeyUtilsImpl.addPasswordToPEM(privateKey, it)
+                            .onFailure { throw it }
+                            .get()
+                }.getOrElse {
+                    Pair<PrivateKey, String>(
+                            KeyUtilsImpl.createKey(privateKey)
+                                    .onFailure { throw it }
+                                    .get(),
+                            privateKey)
+                }.apply {
+                    FileUtils.write(privateKeyFile, second, StandardCharsets.US_ASCII)
+                }.run {
+                    Pair(this.first, privateKeyFile)
                 }
             }.map {
-                convertPathToTomcatVariable(it.absolutePath)
+                Pair(it.first, convertPathToTomcatVariable(it.second.absolutePath))
             }.onFailure {
                 if (it is ExpectedException) {
                     throw it
@@ -163,10 +169,12 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
             Try {
                 getPublicKeyFile()
             }.map {
-                it.apply{FileUtils.write(
-                        this,
-                        publicKey,
-                        StandardCharsets.US_ASCII)}
+                it.apply {
+                    FileUtils.write(
+                            this,
+                            publicKey,
+                            StandardCharsets.US_ASCII)
+                }
             }.map {
                 convertPathToTomcatVariable(it.absolutePath)
             }.onFailure {

@@ -116,6 +116,34 @@ open class BaseArquillian(testClass: Class<*>?) : Arquillian(testClass) {
                 XMLUtilsImpl.saveXML(xmlFile, this)
             }.run { }
 
+    fun createOptionsEC(tomcatVersionInfo: String,
+                        tomcatVersion: String,
+                        subject: String,
+                        implementation: TomcatHttpsImplementation,
+                        hostName: String = "",
+                        defaultHost: Boolean = false,
+                        password: String = "",
+                        privateKeyName: String = "",
+                        publicKeyName:String = "",
+                        keyStoreName: String = "",
+                        keyStoreAlias: String = "") =
+            TomcatHttpsOptions(
+                    FileUtils.readFileToString(File(this.javaClass.getResource("/octopusec.key").file), "UTF-8"),
+                    FileUtils.readFileToString(File(this.javaClass.getResource("/octopusec.crt").file), "UTF-8"),
+                    password,
+                    subject,
+                    privateKeyName,
+                    publicKeyName,
+                    keyStoreName,
+                    keyStoreAlias,
+                    tomcatVersionInfo,
+                    "target" + File.separator + "config" + File.separator + tomcatVersion,
+                    "Catalina",
+                    HTTPS_PORT,
+                    implementation,
+                    hostName,
+                    defaultHost)
+
     fun createOptions(tomcatVersionInfo: String,
                       tomcatVersion: String,
                       subject: String,

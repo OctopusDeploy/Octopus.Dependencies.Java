@@ -18,7 +18,7 @@ interface WildflyHttpsConfigurator {
     fun deployKey(options: WildflyHttpsOptions, service: WildflyService): WildflyHttpsOptions =
             if (options.deployKeyStore && !service.isDomainMode) {
                 options.createKeystore().run {
-                    options.copy(keystoreName = this)
+                    options.copy(keystoreName = this.second)
                 }
             } else {
                 options
