@@ -19,7 +19,7 @@ class ValidationTest {
                     publicKey = FileUtils.readFileToString(File(this.javaClass.getResource("/octopus.crt").file), "UTF-8"),
                     serverType = ServerType.STANDALONE,
                     keystoreName = "target/wildfly.keystore"
-            ).validate()
+            ).validate().run {}
 
     @Test(expected = InvalidOptionsException::class)
     fun testDomainKeystoreShouldBeRelative(): Unit =
@@ -32,7 +32,7 @@ class ValidationTest {
                     serverType = ServerType.DOMAIN,
                     keystoreName = File("target/wildfly.keystore").absolutePath,
                     relativeTo = "jboss.domain.config.dir"
-            ).validate()
+            ).validate().run {}
 
     @Test(expected = InvalidOptionsException::class)
     fun testStandaloneKeystoreShouldBeRelative(): Unit =
@@ -46,7 +46,7 @@ class ValidationTest {
                     keystoreName = File("target/wildfly.keystore").absolutePath,
                     relativeTo = "jboss.domain.config.dir",
                     deployKeyStore = false
-            ).validate()
+            ).validate().run {}
 
     @Test(expected = InvalidOptionsException::class)
     fun testDomainKeystoreShouldBeAbsolute(): Unit =
@@ -59,7 +59,7 @@ class ValidationTest {
                     serverType = ServerType.DOMAIN,
                     keystoreName = "target/wildfly.keystore",
                     relativeTo = ""
-            ).validate()
+            ).validate().run {}
 
     @Test(expected = InvalidOptionsException::class)
     fun testStandaloneKeystoreShouldBeAbsolute(): Unit =
@@ -73,5 +73,5 @@ class ValidationTest {
                     keystoreName = "target/wildfly.keystore",
                     relativeTo = "",
                     deployKeyStore = false
-            ).validate()
+            ).validate().run {}
 }

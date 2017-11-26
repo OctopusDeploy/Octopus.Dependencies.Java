@@ -163,7 +163,9 @@ data class WildflyHttpsOptions(override val controller: String = "",
                         "WILDFLY-HTTPS-ERROR-0018",
                         "The Elytron ssl context name can not be blank."))
             }
-        }.onFailure { throw it }
+        }.onFailure {
+            throw it
+        }
 
 
     /**

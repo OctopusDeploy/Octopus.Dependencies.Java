@@ -235,7 +235,9 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                         "TOMCAT-HTTPS-ERROR-0020",
                         "The public key filename must be an absolute path if it is specified."))
             }
-        }.onFailure { throw it }
+        }.onFailure {
+            throw it
+        }
 
 
     companion object Factory {
