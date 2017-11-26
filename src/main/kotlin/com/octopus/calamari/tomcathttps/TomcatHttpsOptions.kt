@@ -192,51 +192,51 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
     /**
      * ensures that the options supplied match the version of Tomcat installed
      */
-    fun validate() {
-        val version = getTomcatVersion()
+    fun validate(version:Version = getTomcatVersion()) =
+        Try {
+            if (version.major !in 7..9) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0004",
+                        "Only Tomcat 7 to Tomcat 9 are supported"))
+            }
+        }.map {
+            if (StringUtils.isNotBlank(hostName) && version.toSingleInt() < Version(8, 5).toSingleInt()) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0002",
+                        "SNI host names are only supported by Tomcat 8.5 and later"))
+            }
+        }.map {
+            if (implementation.lowerBoundVersion.isDefined() && version.toSingleInt() < implementation.lowerBoundVersion.get().toSingleInt()) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0003",
+                        "The ${implementation.name} HTTPS implementation is not supported by the installed version of Tomcat"))
+            }
+        }.map {
+            if (implementation.upperBoundVersion.isDefined() && version.toSingleInt() >= implementation.upperBoundVersion.get().toSingleInt()) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0003",
+                        "The ${implementation.name} HTTPS implementation is not supported by the installed version of Tomcat"))
+            }
+        }.map {
+            if (StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0020",
+                        "The keystore filename must be an absolute path if it is specified."))
+            }
+        }.map {
+            if (StringUtils.isNotBlank(privateKeyName) && !File(privateKeyName).isAbsolute) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0020",
+                        "The private key filename must be an absolute path if it is specified."))
+            }
+        }.map {
+            if (StringUtils.isNotBlank(publicKeyName) && !File(publicKeyName).isAbsolute) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "TOMCAT-HTTPS-ERROR-0020",
+                        "The public key filename must be an absolute path if it is specified."))
+            }
+        }.onFailure { throw it }
 
-        if (version.major !in 7..9) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "TOMCAT-HTTPS-ERROR-0004",
-                    "Only Tomcat 7 to Tomcat 9 are supported"))
-        }
-
-        if (StringUtils.isNotBlank(hostName) && version.toSingleInt() < Version(8, 5).toSingleInt()) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "TOMCAT-HTTPS-ERROR-0002",
-                    "SNI host names are only supported by Tomcat 8.5 and later"))
-        }
-
-        if (implementation.lowerBoundVersion.isDefined() && version.toSingleInt() < implementation.lowerBoundVersion.get().toSingleInt()) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "TOMCAT-HTTPS-ERROR-0003",
-                    "The ${implementation.name} HTTPS implementation is not supported by the installed version of Tomcat"))
-        }
-
-        if (implementation.upperBoundVersion.isDefined() && version.toSingleInt() >= implementation.upperBoundVersion.get().toSingleInt()) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "TOMCAT-HTTPS-ERROR-0003",
-                    "The ${implementation.name} HTTPS implementation is not supported by the installed version of Tomcat"))
-        }
-
-        if (StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "TOMCAT-HTTPS-ERROR-0020",
-                    "The keystore filename must be an absolute path if it is specified."))
-        }
-
-        if (StringUtils.isNotBlank(privateKeyName) && !File(privateKeyName).isAbsolute) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "TOMCAT-HTTPS-ERROR-0020",
-                    "The private key filename must be an absolute path if it is specified."))
-        }
-
-        if (StringUtils.isNotBlank(publicKeyName) && !File(publicKeyName).isAbsolute) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "TOMCAT-HTTPS-ERROR-0020",
-                    "The public key filename must be an absolute path if it is specified."))
-        }
-    }
 
     companion object Factory {
         /**

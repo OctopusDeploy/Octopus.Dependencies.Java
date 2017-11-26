@@ -55,114 +55,116 @@ data class WildflyHttpsOptions(override val controller: String = "",
         }
     }
 
-    fun validate() {
-        if (serverType == ServerType.NONE) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The server type needs to be defined."))
-        }
+    fun validate() =
+        Try {
+            if (serverType == ServerType.NONE) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The server type needs to be defined."))
+            }
+        }.map {
+            if ((!deployKeyStore ||
+                    serverType == ServerType.DOMAIN) &&
+                    StringUtils.isBlank(keystoreName)) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0017",
+                        "Configuring a keystore requires that the keystore name be defined."))
+            }
+        }.map {
+            /*
+                If the keystore is specified with no relative path, the keystore path
+                must be absolute.
+             */
+            if ((!deployKeyStore ||
+                    serverType == ServerType.DOMAIN) &&
+                    StringUtils.isBlank(fixedRelativeTo) && !File(keystoreName).isAbsolute) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0042",
+                        "When the keystore is not relative to a path, it must be absolute."))
+            }
+        }.map {
+            /*
+                If the keystore is specified with no relative path, the keystore path
+                must be absolute.
+             */
+            if ((!deployKeyStore ||
+                    serverType == ServerType.DOMAIN) &&
+                    StringUtils.isNotBlank(fixedRelativeTo) && File(keystoreName).isAbsolute) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0043",
+                        "When the keystore is relative to a path, it must not absolute."))
+            }
+        }.map {
+            /*
+                If we are deploying a keystore file and have specified the file name, the filename
+                must be absolute.
+             */
+            if (serverType == ServerType.STANDALONE &&
+                    deployKeyStore && StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0041",
+                        "The keystore filename must be an absolute path if it is specified."))
+            }
+        }.map {
+            if (serverType == ServerType.STANDALONE &&
+                    deployKeyStore &&
+                    StringUtils.isBlank(privateKey)) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The private key needs to be defined if deploying the keystore."))
+            }
+        }.map {
+            if (serverType == ServerType.STANDALONE &&
+                    deployKeyStore &&
+                    StringUtils.isBlank(publicKey)) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The public key needs to be defined if deploying the keystore."))
+            }
+        }.map {
+            if (StringUtils.isBlank(controller)) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The controller needs to be defined if configuring a keystore."))
+            }
+        }.map {
+            if (port !in 1..65535) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The port needs to be defined if configuring a keystore."))
+            }
+        }.map {
+            if (StringUtils.isBlank(httpsPortBindingName)) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The port binding name can not be blank."))
+            }
+        }.map {
+            if (StringUtils.isBlank(wildflySecurityManagerRealmName)) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The security realm name can not be blank."))
+            }
+        }.map {
+            if (StringUtils.isBlank(elytronKeystoreName)) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The Elytron keystore name can not be blank."))
+            }
+        }.map {
+            if (StringUtils.isBlank(elytronKeymanagerName)) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The Elytron keymanager name can not be blank."))
+            }
+        }.map {
+            if (StringUtils.isBlank(elytronSSLContextName)) {
+                throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
+                        "WILDFLY-HTTPS-ERROR-0018",
+                        "The Elytron ssl context name can not be blank."))
+            }
+        }.onFailure { throw it }
 
-        if ((!deployKeyStore ||
-                serverType == ServerType.DOMAIN) &&
-                StringUtils.isBlank(keystoreName)) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0017",
-                    "Configuring a keystore requires that the keystore name be defined."))
-        }
-
-        /*
-            If the keystore is specified with no relative path, the keystore path
-            must be absolute.
-         */
-        if ((!deployKeyStore ||
-                serverType == ServerType.DOMAIN) &&
-                StringUtils.isBlank(fixedRelativeTo) && !File(keystoreName).isAbsolute) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0042",
-                    "When the keystore is not relative to a path, it must be absolute."))
-        }
-
-        /*
-            If the keystore is specified with no relative path, the keystore path
-            must be absolute.
-         */
-        if ((!deployKeyStore ||
-                serverType == ServerType.DOMAIN) &&
-                StringUtils.isNotBlank(fixedRelativeTo) && File(keystoreName).isAbsolute) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0043",
-                    "When the keystore is relative to a path, it must not absolute."))
-        }
-
-        /*
-            If we are deploying a keystore file and have specified the file name, the filename
-            must be absolute.
-         */
-        if (serverType == ServerType.STANDALONE &&
-                deployKeyStore && StringUtils.isNotBlank(keystoreName) && !File(keystoreName).isAbsolute) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0041",
-                    "The keystore filename must be an absolute path if it is specified."))
-        }
-
-        if (serverType == ServerType.STANDALONE &&
-                deployKeyStore &&
-                StringUtils.isBlank(privateKey)) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The private key needs to be defined if deploying the keystore."))
-        }
-
-        if (serverType == ServerType.STANDALONE &&
-                deployKeyStore &&
-                StringUtils.isBlank(publicKey)) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The public key needs to be defined if deploying the keystore."))
-        }
-
-        if (StringUtils.isBlank(controller)) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The controller needs to be defined if configuring a keystore."))
-        }
-
-        if (port !in 1..65535) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The port needs to be defined if configuring a keystore."))
-        }
-
-        if (StringUtils.isBlank(httpsPortBindingName)) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The port binding name can not be blank."))
-        }
-
-        if (StringUtils.isBlank(wildflySecurityManagerRealmName)) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The security realm name can not be blank."))
-        }
-
-        if (StringUtils.isBlank(elytronKeystoreName)) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The Elytron keystore name can not be blank."))
-        }
-
-        if (StringUtils.isBlank(elytronKeymanagerName)) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The Elytron keymanager name can not be blank."))
-        }
-
-        if (StringUtils.isBlank(elytronSSLContextName)) {
-            throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
-                    "WILDFLY-HTTPS-ERROR-0018",
-                    "The Elytron ssl context name can not be blank."))
-        }
-    }
 
     /**
      * Masks the password when dumping the string version of this object
