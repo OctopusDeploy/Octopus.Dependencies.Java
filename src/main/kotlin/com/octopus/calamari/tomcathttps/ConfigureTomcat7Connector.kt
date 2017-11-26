@@ -1,5 +1,6 @@
 package com.octopus.calamari.tomcathttps
 
+import com.octopus.calamari.extension.addAttribute
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
@@ -16,9 +17,7 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
             node.apply {
                 validateProtocolSwap(node, options)
             }.apply {
-                attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
-                    value = options.implementation.className.get()
-                })
+                addAttribute("protocol", options.implementation.className.get())
                 configureCommonIO(options, this)
                 configureBIOAndNIO(options, this)
             }.run { Unit }
@@ -28,9 +27,7 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
             node.apply {
                 validateProtocolSwap(node, options)
             }.apply {
-                attributes.setNamedItem(node.ownerDocument.createAttribute("protocol").apply {
-                    nodeValue = options.implementation.className.get()
-                })
+                addAttribute("protocol", options.implementation.className.get())
                 configureCommonIO(options, this)
                 configureBIOAndNIO(options, this)
             }.run { Unit }
@@ -46,15 +43,9 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
                 Try { attributes.removeNamedItem("keyAlias") }
                 Try { attributes.removeNamedItem("SSLPassword") }
             }.apply {
-                attributes.setNamedItem(ownerDocument.createAttribute("protocol").apply {
-                    nodeValue = options.implementation.className.get()
-                })
-                attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateKeyFile").apply {
-                    nodeValue = options.createPrivateKey().second
-                })
-                attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateFile").apply {
-                    nodeValue = options.createPublicCert()
-                })
+                addAttribute("protocol", options.implementation.className.get())
+                addAttribute("SSLCertificateKeyFile", options.createPrivateKey().second)
+                addAttribute("SSLCertificateFile", options.createPublicCert())
                 options.openSSLPassword.forEach {
                     attributes.setNamedItem(ownerDocument.createAttribute("SSLPassword").apply {
                         nodeValue = it
@@ -65,15 +56,9 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
 
     private fun configureBIOAndNIO(options: TomcatHttpsOptions, node: Node) =
             node.apply {
-                attributes.setNamedItem(ownerDocument.createAttribute("keystoreFile").apply {
-                    value = options.createKeystore().second
-                })
-                attributes.setNamedItem(ownerDocument.createAttribute("keystorePass").apply {
-                    value = options.fixedPrivateKeyPassword
-                })
-                attributes.setNamedItem(ownerDocument.createAttribute("keyAlias").apply {
-                    value = options.fixedKeystoreAlias
-                })
+                addAttribute("keystoreFile", options.createKeystore().second)
+                addAttribute("keystorePass", options.fixedPrivateKeyPassword)
+                addAttribute("keyAlias", options.fixedKeystoreAlias)
                 if (attributes != null) {
                     /*
                         SSL specific attributes are not valid for JSSE (SSLEnabled is the exception)
@@ -89,9 +74,9 @@ object ConfigureTomcat7Connector : ConfigureConnector() {
 
     private fun configureCommonIO(options: TomcatHttpsOptions, node: Node) =
             node.apply {
-                attributes.setNamedItem(node.ownerDocument.createAttribute("SSLEnabled").apply { value = "true" })
-                attributes.setNamedItem(node.ownerDocument.createAttribute("scheme").apply { value = "https" })
-                attributes.setNamedItem(node.ownerDocument.createAttribute("secure").apply { value = "true" })
+                addAttribute("SSLEnabled", "true" )
+                addAttribute("scheme", "https" )
+                addAttribute("secure", "true" )
                 /*
                     We try to keep as much of the existing configuration as possible, but these values
                     can conflict with the new settings, so they are removed

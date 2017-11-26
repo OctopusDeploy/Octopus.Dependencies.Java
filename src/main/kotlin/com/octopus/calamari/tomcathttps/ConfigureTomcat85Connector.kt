@@ -2,6 +2,7 @@ package com.octopus.calamari.tomcathttps
 
 import com.octopus.calamari.exception.tomcat.ConfigurationOperationInvalidException
 import com.octopus.calamari.exception.tomcat.UnrecognisedFormatException
+import com.octopus.calamari.extension.addAttribute
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.funktionale.tries.Try
@@ -34,13 +35,9 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                 validateProtocolSwap(node, options)
                 validateAddingDefaultWithConnectorCertificate(node, options)
             }.apply {
-                attributes.setNamedItem(ownerDocument.createAttribute("protocol").apply {
-                    nodeValue = options.implementation.className.get()
-                })
+                addAttribute("protocol",  options.implementation.className.get())
             }.apply {
-                attributes.setNamedItem(ownerDocument.createAttribute("SSLEnabled").apply {
-                    nodeValue = "true"
-                })
+                addAttribute("SSLEnabled", "true")
             }.run {
                 if (defaultHostIsInConnector(this, options)) {
                     configureConnectorCertificate(this, options)
@@ -65,9 +62,7 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                 /*
                     Explicitly set the default host to the named entry
                  */
-                node.attributes.setNamedItem(node.ownerDocument.createAttribute(AttributeDatabase.defaultSSLHostConfigName).apply {
-                    nodeValue = options.fixedHostname
-                })
+                node.addAttribute(AttributeDatabase.defaultSSLHostConfigName, options.fixedHostname)
             }
         }
     }
@@ -98,27 +93,15 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                 cleanUpOldAttributes(this)
             }.apply {
                 if (options.implementation == TomcatHttpsImplementation.APR) {
-                    attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateKeyFile").apply {
-                        nodeValue = options.createPrivateKey().second
-                    })
-                    attributes.setNamedItem(ownerDocument.createAttribute("SSLCertificateFile").apply {
-                        nodeValue = options.createPublicCert()
-                    })
+                    addAttribute("SSLCertificateKeyFile", options.createPrivateKey().second)
+                    addAttribute("SSLCertificateFile", options.createPublicCert())
                     options.openSSLPassword.forEach {
-                        attributes.setNamedItem(ownerDocument.createAttribute("SSLPassword").apply {
-                            nodeValue = it
-                        })
+                        addAttribute("SSLPassword", it)
                     }
                 } else {
-                    attributes.setNamedItem(node.ownerDocument.createAttribute("keystoreFile").apply {
-                        nodeValue = options.createKeystore().second
-                    })
-                    attributes.setNamedItem(node.ownerDocument.createAttribute("keystorePass").apply {
-                        nodeValue = options.fixedPrivateKeyPassword
-                    })
-                    attributes.setNamedItem(node.ownerDocument.createAttribute("keyAlias").apply {
-                        nodeValue = options.fixedKeystoreAlias
-                    })
+                    addAttribute("keystoreFile", options.createKeystore().second)
+                    addAttribute("keystorePass", options.fixedPrivateKeyPassword)
+                    addAttribute("keyAlias", options.fixedKeystoreAlias)
                 }
             }
 
@@ -130,33 +113,21 @@ object ConfigureTomcat85Connector : ConfigureConnector() {
                 if (options.implementation == TomcatHttpsImplementation.APR) {
                     options.createPrivateKey().also { keyDetails ->
                         createCertificateNode(node, options, convertAlgToTomcatType(keyDetails.first.algorithm)).apply {
-                            attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyFile").apply {
-                                nodeValue = keyDetails.second
-                            })
-                            attributes.setNamedItem(ownerDocument.createAttribute("certificateFile").apply {
-                                nodeValue = options.createPublicCert()
-                            })
+                            addAttribute("certificateKeyFile", keyDetails.second)
+                            addAttribute("certificateFile", options.createPublicCert())
                             options.openSSLPassword.forEach {
-                                attributes.setNamedItem(ownerDocument.createAttribute("certificateKeyPassword").apply {
-                                    nodeValue = it
-                                })
+                                addAttribute("certificateKeyPassword", it)
                             }
-                            attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = convertAlgToTomcatType(keyDetails.first.algorithm) })
+                            addAttribute("type", convertAlgToTomcatType(keyDetails.first.algorithm))
                         }
                     }
                 } else {
                     options.createKeystore().also { keyDetails ->
                         createCertificateNode(node, options, convertAlgToTomcatType(keyDetails.first.algorithm)).apply {
-                            attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystoreFile").apply {
-                                nodeValue = keyDetails.second
-                            })
-                            attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeystorePassword").apply {
-                                nodeValue = options.fixedPrivateKeyPassword
-                            })
-                            attributes.setNamedItem(node.ownerDocument.createAttribute("certificateKeyAlias").apply {
-                                nodeValue = options.fixedKeystoreAlias
-                            })
-                            attributes.setNamedItem(ownerDocument.createAttribute("type").apply { nodeValue = convertAlgToTomcatType(keyDetails.first.algorithm) })
+                            addAttribute("certificateKeystoreFile", keyDetails.second)
+                            addAttribute("certificateKeystorePassword", options.fixedPrivateKeyPassword)
+                            addAttribute("certificateKeyAlias", options.fixedKeystoreAlias)
+                            addAttribute("type", convertAlgToTomcatType(keyDetails.first.algorithm))
                         }
                     }
                 }
