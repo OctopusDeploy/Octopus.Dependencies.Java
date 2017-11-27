@@ -8,6 +8,6 @@ import org.w3c.dom.Node
  * @param value the value of the attribute
  */
 fun Node.addAttribute(name:String, value:String) =
-        attributes.setNamedItem(ownerDocument.createAttribute("name").apply {
+        attributes.setNamedItem(ownerDocument.createAttribute(name).apply {
             nodeValue = value
         })
