@@ -20,8 +20,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <kotlin.version>1.2.20-dev-331</kotlin.version>
-        <junit.version>4.12</junit.version>
+        <kotlin.version>1.2.20-dev-504</kotlin.version>
+        <junit.version>4.12.0.redhat-003</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <eap.6.version>jboss-eap-6.4</eap.6.version>
         <domain.eap.6.version>domain-jboss-eap-6.4</domain.eap.6.version>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>23.1-jre</version>
+            <version>23.5-jre</version>
         </dependency>
 
         <dependency>
@@ -150,7 +150,7 @@
         <dependency>
             <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-cli</artifactId>
-            <version>3.0.2.Final</version>
+            <version>3.0.10.Final</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.retry</groupId>
@@ -160,7 +160,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.5</version>
+            <version>2.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -170,7 +170,7 @@
         <dependency>
             <groupId>org.funktionale</groupId>
             <artifactId>funktionale-all</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
 
         <dependency>
@@ -193,7 +193,7 @@
         <dependency>
             <groupId>org.arquillian.container</groupId>
             <artifactId>arquillian-container-chameleon</artifactId>
-            <version>1.0.0.Beta2</version>
+            <version>1.0.0.Beta3</version>
             <scope>test</scope>
         </dependency>
 
