@@ -301,6 +301,7 @@ class WildflyService {
                     try {
                         val result = jbossCli.cmd(command)
 
+                        LoggingServiceImpl.printInfo { logger.info(description) }
                         logger.info("Command: " + command)
                         logger.info("Result as JSON: " + result?.response?.toJSONString(false))
 
