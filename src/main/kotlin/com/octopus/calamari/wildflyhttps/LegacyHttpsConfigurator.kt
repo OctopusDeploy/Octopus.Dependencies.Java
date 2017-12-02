@@ -169,16 +169,17 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm keystore alias.").onFailure { throw it }
                         service.runCommandExpectSuccess(
-                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" + "name=keystore-path, " +
+                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                        "name=keystore-path, " +
                                         "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
-                                "Configuring the security realm keystore alias",
+                                "Configuring the security realm keystore keystore-path",
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm keystore path.").onFailure { throw it }
                         service.runCommandExpectSuccess(
                                 "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
                                         "name=keystore-password, " +
                                         "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the security realm keystore alias",
+                                "Configuring the security realm keystore keystore-password",
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm keystore password.").onFailure { throw it }
 
@@ -231,16 +232,17 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm keystore alias.").onFailure { throw it }
                         service.runCommandExpectSuccess(
-                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" + "name=keystore-path, " +
+                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                        "name=keystore-path, " +
                                         "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
-                                "Configuring the security realm keystore alias",
+                                "Configuring the security realm keystore keystore-path",
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm keystore path.").onFailure { throw it }
                         service.runCommandExpectSuccess(
                                 "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
                                         "name=keystore-password, " +
                                         "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the security realm keystore alias",
+                                "Configuring the security realm keystore keystore-password",
                                 "WILDFLY-HTTPS-ERROR-0022",
                                 "There was an error configuring the security realm keystore password.").onFailure { throw it }
                     }

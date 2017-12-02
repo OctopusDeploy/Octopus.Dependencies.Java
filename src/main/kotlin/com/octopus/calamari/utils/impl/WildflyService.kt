@@ -157,7 +157,7 @@ class WildflyService {
     fun takeSnapshot(): Try<CLI.Result> {
         return runCommandExpectSuccessWithRetry(
                 "/:take-snapshot",
-                "take configuration snapshot",
+                "Take configuration snapshot",
                 ErrorMessageBuilderImpl.buildErrorMessage(
                         "WILDFLY-DEPLOY-ERROR-0001",
                         "There was an error taking a snapshot of the current configuration"))
@@ -166,7 +166,7 @@ class WildflyService {
     fun takeSnapshot(host: String): Try<CLI.Result> {
         return runCommandExpectSuccessWithRetry(
                 "/host=\"${host.run(StringUtilsImpl::escapePathForCLICommand)}\":take-snapshot",
-                "take configuration snapshot",
+                "Take configuration snapshot",
                 ErrorMessageBuilderImpl.buildErrorMessage(
                         "WILDFLY-DEPLOY-ERROR-0001",
                         "There was an error taking a snapshot of the current configuration"))
