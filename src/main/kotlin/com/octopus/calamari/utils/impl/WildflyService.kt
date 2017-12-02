@@ -533,7 +533,7 @@ class WildflyService {
     fun getSocketBindingForHost(host: String, server:String) =
             runCommandExpectSuccessAndDefinedResultWithRetry(
                     "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server=\"${server.run(StringUtilsImpl::escapeStringForCLICommand)}\"/:read-children-names(child-type=socket-binding-group)",
-                    "Getting socket binding for host $host",
+                    "Getting socket binding for host $host and server $server",
                     "WILDFLY-HTTPS-ERROR-0031",
                     "Failed to get socket binding for host $host.").map {
                 it.response.get("result").asList().map {
