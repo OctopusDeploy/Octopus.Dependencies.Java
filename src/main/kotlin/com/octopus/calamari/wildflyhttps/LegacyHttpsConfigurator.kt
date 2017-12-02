@@ -377,14 +377,14 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
                                         "name=socket-binding, " +
                                         "value=\"${options.httpsPortBindingName}\")",
-                                "Configuring the existing security realm keystore alias",
+                                "Configuring the https listener socket-binding",
                                 "WILDFLY-HTTPS-ERROR-0025",
                                 "There was an error configuring the https listener socket binding.").onFailure { throw it }
                         service.runCommandExpectSuccess(
                                 "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
                                         "name=security-realm, " +
                                         "value=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the existing security realm keystore alias",
+                                "Configuring the https listener security-realm",
                                 "WILDFLY-HTTPS-ERROR-0025",
                                 "There was an error configuring the https listener security realm.").onFailure { throw it }
                     }

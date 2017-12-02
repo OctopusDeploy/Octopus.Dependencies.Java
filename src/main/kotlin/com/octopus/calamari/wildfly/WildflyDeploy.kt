@@ -83,7 +83,7 @@ object WildflyDeploy {
                     .flatMap {
                         service.runCommandExpectSuccessWithRetry(
                                 "deploy --force ${if (!options.state) "--disabled" else ""} --name=${options.escapedPackageName} \"${options.application}\"",
-                                "deploy application to standalone WildFly/EAP instance",
+                                "Deploy application to standalone WildFly/EAP instance",
                                 ErrorMessageBuilderImpl.buildErrorMessage(
                                         "WILDFLY-DEPLOY-ERROR-0007",
                                         "There was an error deploying the package ${options.packageName} to the standalone server"))
@@ -92,7 +92,7 @@ object WildflyDeploy {
                         if (options.state) {
                             service.runCommandExpectSuccessWithRetry(
                                     "deploy --name=${options.escapedPackageName}",
-                                    "enable application in standalone WildFly/EAP instance",
+                                    "Enable application in standalone WildFly/EAP instance",
                                     ErrorMessageBuilderImpl.buildErrorMessage(
                                             "WILDFLY-DEPLOY-ERROR-0008",
                                             "There was an error enabling the package ${options.packageName} in the standalone server")
@@ -115,7 +115,7 @@ object WildflyDeploy {
                     .flatMap {
                         service.runCommandExpectSuccessWithRetry(
                                 "deploy --force --name=${options.escapedPackageName} \"${options.application}\"",
-                                "deploy application ${options.application} as ${options.packageName}",
+                                "Deploy application ${options.application} as ${options.packageName}",
                                 ErrorMessageBuilderImpl.buildErrorMessage(
                                         "WILDFLY-DEPLOY-ERROR-0002",
                                         "There was an error deploying the artifact"))
@@ -126,7 +126,7 @@ object WildflyDeploy {
                     .flatMap {
                         service.runCommandExpectSuccessWithRetry(
                                 ":read-children-names(child-type=deployment)",
-                                "query deployments",
+                                "Query deployments",
                                 ErrorMessageBuilderImpl.buildErrorMessage(
                                         "WILDFLY-DEPLOY-ERROR-0003",
                                         "There was an error reading the existing deployments"))
@@ -149,7 +149,7 @@ object WildflyDeploy {
                                                 if (!it.isSuccess) {
                                                     service.runCommandExpectSuccessWithRetry(
                                                             "/server-group=$serverGroup/deployment=${options.escapedPackageName}:add",
-                                                            "add package ${options.packageName} to server group $serverGroup",
+                                                            "Add package ${options.packageName} to server group $serverGroup",
                                                             ErrorMessageBuilderImpl.buildErrorMessage(
                                                                     "WILDFLY-DEPLOY-ERROR-0004",
                                                                     "There was an error adding the " +
@@ -170,7 +170,7 @@ object WildflyDeploy {
                                 .forEach { serverGroup ->
                                     service.runCommandExpectSuccessWithRetry(
                                             "/server-group=$serverGroup/deployment=${options.escapedPackageName}:deploy",
-                                            "deploy the package ${options.packageName} to the server group $serverGroup",
+                                            "Deploy the package ${options.packageName} to the server group $serverGroup",
                                             ErrorMessageBuilderImpl.buildErrorMessage(
                                                     "WILDFLY-DEPLOY-ERROR-0005",
                                                     "There was an error deploying the " +
@@ -188,7 +188,7 @@ object WildflyDeploy {
                                 .split(options.disabledServerGroup).forEach { serverGroup ->
                             service.runCommandExpectSuccessWithRetry(
                                     "/server-group=$serverGroup/deployment=${options.escapedPackageName}:undeploy",
-                                    "undeploy the package ${options.packageName} from the server group $serverGroup",
+                                    "Undeploy the package ${options.packageName} from the server group $serverGroup",
                                     ErrorMessageBuilderImpl.buildErrorMessage(
                                             "WILDFLY-DEPLOY-ERROR-0006",
                                             "There was an error undeploying the " +
