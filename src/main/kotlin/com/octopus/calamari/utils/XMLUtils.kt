@@ -9,7 +9,7 @@ import java.io.File
 interface XMLUtils {
     /**
      * Create or return a matching node
-     * @param the parent node whose children are matched against the criteria
+     * @param node the parent node whose children are matched against the criteria
      * @param elementName the name of the child element node to match
      * @param requiredAttributeValues a map of attribute names and values that are required to be present
      * @param requiredOrMissingAttributes a map of attributes and values that are required to be present,

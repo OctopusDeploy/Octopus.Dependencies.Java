@@ -25,15 +25,15 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
     }
 
     private fun configureSSL(options: WildflyHttpsOptions, service: WildflyService) =
-            getSlaveHosts(options, service).apply {
+            service.getSlaveHosts(options).apply {
                 /*
                     These functions validate, configure and reload
                     either the standalone server, or the hosts that
                     make up the domain.
                  */
-                takeSnapshotFacade(this, service)
+                service.takeSnapshotFacade(this)
 
-                validateProfile(profile, service)
+                service.validateProfile(profile)
 
                 /*
                     Undertow refers to the security realm. The legacy web subsystem references
@@ -48,7 +48,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                         Either the realm is not configured for SSL, or the server has not been reloaded
                         since the SSL config was added.
                      */
-                    reloadServersFacade(this, options, service)
+                    service.reloadServersFacade(this)
                 }
 
                 /*
@@ -58,9 +58,9 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                     with the certificate information, and not configure the shared profile.
                  */
                 if (!service.isDomainMode || StringUtils.isNotBlank(profile)) {
-                    validateSocketBindingsFacade(this, options, service)
+                    service.validateSocketBindingsFacade(this, options)
                     if (undertowEnabled(service)) {
-                        getUndertowServers(profile, options, service).forEach {
+                        service.getUndertowServers(profile).forEach {
                             configureUndertowSocketBinding(it, options, service)
                         }
                     } else {
@@ -71,7 +71,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                         One final reload ensures the HTTPS interface is ready
                         to use.
                     */
-                    reloadServersFacade(this, options, service)
+                    service.reloadServersFacade(this)
                 }
             }
 
@@ -254,8 +254,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
      */
     private fun undertowEnabled(service: WildflyService) =
             retry.execute(RetryCallback<Boolean, Throwable> { context ->
-                service.runCommand("${getProfilePrefix(profile, service)}/subsystem=undertow:read-resource", "Checking for Undertow subsystem").flatMap { undertow ->
-                    service.runCommand("${getProfilePrefix(profile, service)}/subsystem=web:read-resource", "Checking for Web subsystem").map { web ->
+                service.runCommand("${service.getProfilePrefix(profile)}/subsystem=undertow:read-resource", "Checking for Undertow subsystem").flatMap { undertow ->
+                    service.runCommand("${service.getProfilePrefix(profile)}/subsystem=web:read-resource", "Checking for Web subsystem").map { web ->
                         if (!undertow.isSuccess && !web.isSuccess) {
                             /*
                                 One response should have succeeded. If they both failed, the server
@@ -281,11 +281,11 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
     private fun configureWebSSL(options: WildflyHttpsOptions, service: WildflyService) =
             retry.execute(RetryCallback<Unit, Throwable> { context ->
                 service.runCommand(
-                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:read-resource",
+                        "${service.getProfilePrefix(profile)}/subsystem=web/connector=https:read-resource",
                         "Checking for existing https connector").onSuccess {
                     if (!it.isSuccess) {
                         service.runCommandExpectSuccess(
-                                "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:add(" +
+                                "${service.getProfilePrefix(profile)}/subsystem=web/connector=https:add(" +
                                         "socket-binding=\"${options.httpsPortBindingName.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
                                         "scheme=https, " +
                                         "secure=true, " +
@@ -294,7 +294,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 "WILDFLY-HTTPS-ERROR-0029",
                                 "There was an error adding a new https connector in the web subsystem.").onFailure { throw it }
                         service.runCommandExpectSuccess(
-                                "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:add(" +
+                                "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:add(" +
                                         "name=ssl, " +
                                         "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
                                         "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
@@ -309,11 +309,11 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 "Failed to save legacy web subsystem https connector as a batch operation.").onFailure { throw it }
                     } else {
                         service.runCommand(
-                                "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:read-resource",
+                                "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:read-resource",
                                 "Checking for existing https connector").onSuccess {
                             if (!it.isSuccess) {
                                 service.runCommandExpectSuccess(
-                                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:add(" +
+                                        "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:add(" +
                                                 "name=ssl, " +
                                                 "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
                                                 "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
@@ -325,21 +325,21 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                         "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
                             } else {
                                 service.runCommandExpectSuccess(
-                                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
+                                        "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
                                                 "name=key-alias, " +
                                                 "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                         "Configuring the existing https connector ssl configuration key alias",
                                         "WILDFLY-HTTPS-ERROR-0030",
                                         "There was an error configuring the existing https connector ssl configuration key alias.").onFailure { throw it }
                                 service.runCommandExpectSuccess(
-                                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
+                                        "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
                                                 "name=password, " +
                                                 "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                         "Configuring the existing https connector ssl configuration key password",
                                         "WILDFLY-HTTPS-ERROR-0030",
                                         "There was an error configuring the existing https connector ssl configuration key password.").onFailure { throw it }
                                 service.runCommandExpectSuccess(
-                                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
+                                        "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
                                                 "name=certificate-key-file, " +
                                                 "value=\"" +
                                                 (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
@@ -359,12 +359,12 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
     private fun configureUndertowSocketBinding(undertowServer: String, options: WildflyHttpsOptions, service: WildflyService) =
             retry.execute(RetryCallback<Unit, Throwable> { context ->
                 service.runCommand(
-                        "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:read-resource",
+                        "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:read-resource",
                         "Checking for existing ssl configuration").onSuccess {
 
                     if (!it.isSuccess) {
                         service.runCommandExpectSuccess(
-                                "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:add(" +
+                                "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:add(" +
                                         "socket-binding=\"${options.httpsPortBindingName}\", " +
                                         "security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                 "Configuring the https listener in undertow",
@@ -372,14 +372,14 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                 "There was an error adding a new https listener in undertow.").onFailure { throw it }
                     } else {
                         service.runCommandExpectSuccess(
-                                "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
+                                "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
                                         "name=socket-binding, " +
                                         "value=\"${options.httpsPortBindingName}\")",
                                 "Configuring the existing security realm keystore alias",
                                 "WILDFLY-HTTPS-ERROR-0025",
                                 "There was an error configuring the https listener socket binding.").onFailure { throw it }
                         service.runCommandExpectSuccess(
-                                "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
+                                "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
                                         "name=security-realm, " +
                                         "value=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                 "Configuring the existing security realm keystore alias",
