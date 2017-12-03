@@ -137,30 +137,31 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
             retry.execute(RetryCallback<Unit, Throwable> { context ->
                 service.runCommand(
                         "${service.getProfilePrefix(profile)}/subsystem=elytron/key-manager=\"${options.elytronKeymanagerName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
-                        "Reading existing keymanager").onFailure {
-                    throw it
-                }.onSuccess {
+                        "Reading existing keymanager").flatMap {
                     if (!it.isSuccess) {
                         service.runCommandExpectSuccess(
                                 "${service.getProfilePrefix(profile)}/subsystem=elytron/key-manager=\"${options.elytronKeymanagerName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add(" +
                                         "key-store=\"${options.elytronKeystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\",credential-reference={clear-text=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\"})",
                                 "Adding the Elytron key manager",
                                 "WILDFLY-HTTPS-ERROR-0011",
-                                "There was an error adding the Elytron key manager.").onFailure { throw it }
+                                "There was an error adding the Elytron key manager.")
                     } else {
                         service.runCommandExpectSuccess(
                                 "${service.getProfilePrefix(profile)}/subsystem=elytron/key-manager=\"${options.elytronKeymanagerName.run(StringUtilsImpl::escapeStringForCLICommand)}\":write-attribute(" +
                                         "name=key-store, value=\"${options.elytronKeystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                 "Configuring the Elytron key manager key store",
                                 "WILDFLY-HTTPS-ERROR-0012",
-                                "There was an error configuring the Elytron key manager key store.").onFailure { throw it }
-                        service.runCommandExpectSuccess(
-                                "${service.getProfilePrefix(profile)}/subsystem=elytron/key-manager=\"${options.elytronKeymanagerName.run(StringUtilsImpl::escapeStringForCLICommand)}\":write-attribute(" +
-                                        "name=credential-reference, value={clear-text=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\"})",
-                                "Configuring the Elytron key manager credential reference",
-                                "WILDFLY-HTTPS-ERROR-0012",
-                                "There was an error configuring the Elytron key manager credential reference.").onFailure { throw it }
+                                "There was an error configuring the Elytron key manager key store.").flatMap {
+                            service.runCommandExpectSuccess(
+                                    "${service.getProfilePrefix(profile)}/subsystem=elytron/key-manager=\"${options.elytronKeymanagerName.run(StringUtilsImpl::escapeStringForCLICommand)}\":write-attribute(" +
+                                            "name=credential-reference, value={clear-text=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\"})",
+                                    "Configuring the Elytron key manager credential reference",
+                                    "WILDFLY-HTTPS-ERROR-0012",
+                                    "There was an error configuring the Elytron key manager credential reference.")
+                        }
                     }
+                }.onFailure {
+                    throw it
                 }
             })
 
@@ -197,7 +198,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                 service.apply {
                     runCommand(
                             "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:read-attribute(name=security-realm)",
-                            "Reading existing security name").onSuccess {
+                            "Reading existing security name").flatMap {
                         service.enterBatchMode().map {
                             if (it.isSuccess) {
                                 service.runCommandExpectSuccess(
@@ -205,9 +206,9 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
                                         "Removing the legacy security realm",
                                         "WILDFLY-HTTPS-ERROR-0005",
                                         "There was an error removing the legacy security realm."
-                                )
+                                ).onFailure { throw it }
                             }
-                        }.onFailure { throw it }
+                        }
                     }.onFailure {
                         throw it
                     }

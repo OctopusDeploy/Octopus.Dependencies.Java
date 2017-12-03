@@ -68,7 +68,7 @@ object WildflyHttpsStandaloneConfig {
                         "Checking for extensions",
                         "WILDFLY-HTTPS-ERROR-0040",
                         "Failed to load any extensions.").onSuccess {
-                    runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron").onSuccess { elytron ->
+                    runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron").map { elytron ->
                         options.profileList.forEach { profile ->
                             if (elytron.isSuccess) {
                                 ElytronHttpsConfigurator(profile).configureHttps(options, this)
@@ -76,7 +76,7 @@ object WildflyHttpsStandaloneConfig {
                                 LegacyHttpsConfigurator(profile).configureHttps(options, this)
                             }
                         }
-                    }.onFailure { throw it }
+                    }
                 }.onFailure { throw it }
             })
         }
