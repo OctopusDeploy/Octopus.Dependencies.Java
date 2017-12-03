@@ -154,6 +154,7 @@ object WildflyDeploy {
                                                                     "WILDFLY-DEPLOY-ERROR-0004",
                                                                     "There was an error adding the " +
                                                                             "${options.packageName} to the server group $serverGroup"))
+                                                            .onFailure { throw it }
                                                 }
                                             }
                                             .onFailure { throw it }
