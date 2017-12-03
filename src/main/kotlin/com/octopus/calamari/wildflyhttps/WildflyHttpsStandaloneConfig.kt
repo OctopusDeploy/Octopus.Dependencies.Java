@@ -14,7 +14,6 @@ import java.util.logging.Logger
 
 object WildflyHttpsStandaloneConfig {
     val logger: Logger = Logger.getLogger("")
-    private val retry = RetryServiceImpl.createRetry()
 
     @JvmStatic
     fun main(args: Array<String>) {
