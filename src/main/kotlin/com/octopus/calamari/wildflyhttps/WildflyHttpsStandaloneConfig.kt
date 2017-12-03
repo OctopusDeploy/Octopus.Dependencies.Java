@@ -67,7 +67,7 @@ object WildflyHttpsStandaloneConfig {
                         ":read-children-names(child-type=extension)",
                         "Checking for extensions",
                         "WILDFLY-HTTPS-ERROR-0040",
-                        "Failed to load any extensions.").onSuccess {
+                        "Failed to load any extensions.").flatMap {
                     runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron").map { elytron ->
                         options.profileList.forEach { profile ->
                             if (elytron.isSuccess) {
