@@ -195,36 +195,33 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
 
     private fun assignSecurityRealm(undertowServer: String, options: WildflyHttpsOptions, service: WildflyService) =
             retry.execute(RetryCallback<Unit, Throwable> { context ->
-                service.apply {
-                    runCommand(
+                service.enterBatchMode().flatMap {
+                    service.runCommand(
                             "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:read-attribute(name=security-realm)",
-                            "Reading existing security name").flatMap {
-                        service.enterBatchMode().map {
-                            if (it.isSuccess) {
-                                service.runCommandExpectSuccess(
-                                        "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:undefine-attribute(name=security-realm)",
-                                        "Removing the legacy security realm",
-                                        "WILDFLY-HTTPS-ERROR-0005",
-                                        "There was an error removing the legacy security realm."
-                                ).onFailure { throw it }
-                            }
+                            "Reading existing security name").map { existingRealm ->
+                        if (existingRealm.isSuccess) {
+                            service.runCommandExpectSuccess(
+                                    "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:undefine-attribute(name=security-realm)",
+                                    "Removing the legacy security realm",
+                                    "WILDFLY-HTTPS-ERROR-0005",
+                                    "There was an error removing the legacy security realm."
+                            ).onFailure { throw it }
                         }
-                    }.onFailure {
-                        throw it
                     }
-                }.apply {
-                    runCommandExpectSuccess(
-                            "${getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
+                }.flatMap {
+                    service.runCommandExpectSuccess(
+                            "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
                                     "name=ssl-context,value=\"${options.elytronSSLContextName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                             "Adding the Elytron security context",
                             "WILDFLY-HTTPS-ERROR-0006",
                             "There was an error adding the Elytron security context."
-                    ).flatMap {
-                        runBatch(
-                                "WILDFLY-HTTPS-ERROR-0007",
-                                "There was an error with the batched operation to remove the legacy security realm and add the Elytron security context.")
-                    }.onFailure { throw it }
+                    )
+                }.flatMap {
+                    service.runBatch(
+                            "WILDFLY-HTTPS-ERROR-0007",
+                            "There was an error with the batched operation to remove the legacy security realm and add the Elytron security context.")
+                }.onFailure {
+                    throw it
                 }
             })
-
 }
