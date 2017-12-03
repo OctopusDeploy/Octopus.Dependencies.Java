@@ -145,7 +145,7 @@ object WildflyDeploy {
                                     service.runCommandWithRetry(
                                             "/server-group=$serverGroup/deployment=${options.escapedPackageName}:read-resource",
                                             "read package details ${options.packageName} for server group $serverGroup")
-                                            .onSuccess {
+                                            .map {
                                                 if (!it.isSuccess) {
                                                     service.runCommandExpectSuccessWithRetry(
                                                             "/server-group=$serverGroup/deployment=${options.escapedPackageName}:add",

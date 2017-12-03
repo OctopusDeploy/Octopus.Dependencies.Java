@@ -207,7 +207,7 @@ class WildflyService {
             runCommandExpectSuccessWithRetry(
                     ":read-attribute(name=server-state)",
                     "Checking server state",
-                    "Failed to check server state").onSuccess {
+                    "Failed to check server state").map {
                 it.response.get("result").asString().apply {
                     if (this != "running") {
                         throw IncorrectServerStateException("WILDFLY-HTTPS-ERROR-0038: The server is not in a running state. State is $this")

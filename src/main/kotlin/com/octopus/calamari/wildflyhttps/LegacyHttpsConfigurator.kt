@@ -97,7 +97,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
             retry.execute(RetryCallback<Unit, Throwable> { context ->
                 service.runCommand(
                         "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
-                        "Checking for existing security realm").onSuccess {
+                        "Checking for existing security realm").map {
                     if (!it.isSuccess) {
                         service.runCommandExpectSuccess(
                                 "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
@@ -115,7 +115,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
             retry.execute(RetryCallback<Unit, Throwable> { context ->
                 service.runCommand(
                         "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
-                        "Checking for existing security realm").onSuccess {
+                        "Checking for existing security realm").map {
                     if (!it.isSuccess) {
                         service.runCommandExpectSuccess(
                                 "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\":add()",
