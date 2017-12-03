@@ -409,7 +409,7 @@ class WildflyService {
                         }.onFailure {
                             throw it
                         }.get()
-                    }.toList()
+                    }
                 }.onFailure {
                     throw it
                 }.get()
@@ -441,7 +441,7 @@ class WildflyService {
                         }.onFailure {
                             throw it
                         }.get()
-                    }.toList()
+                    }
                 }.onFailure {
                     throw it
                 }.get()
@@ -463,7 +463,7 @@ class WildflyService {
                 }.map {
                     it.map {
                         it.asString()
-                    }.toList()
+                    }
                 }.onFailure {
                     throw it
                 }.get()
@@ -538,7 +538,7 @@ class WildflyService {
                     "Failed to get socket binding for host $host.").map {
                 it.response.get("result").asList().map {
                     it.asString()
-                }.toList()
+                }
             }.onFailure {
                 throw it
             }.get()
