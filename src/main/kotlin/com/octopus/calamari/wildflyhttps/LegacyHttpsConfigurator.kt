@@ -170,9 +170,10 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                     "There was an error configuring the security realm keystore alias.")
                         }.flatMap {
                             service.runCommandExpectSuccess(
-                                    "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" + "name=keystore-path, " +
+                                    "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
+                                            "name=keystore-path, " +
                                             "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
-                                    "Configuring the security realm keystore alias",
+                                    "Configuring the security realm keystore keystore path",
                                     "WILDFLY-HTTPS-ERROR-0022",
                                     "There was an error configuring the security realm keystore path.")
                         }.flatMap {
@@ -180,7 +181,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                     "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
                                             "name=keystore-password, " +
                                             "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                    "Configuring the security realm keystore alias",
+                                    "Configuring the security realm keystore password",
                                     "WILDFLY-HTTPS-ERROR-0022",
                                     "There was an error configuring the security realm keystore password.")
                         }

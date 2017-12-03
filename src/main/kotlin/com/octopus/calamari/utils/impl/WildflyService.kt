@@ -434,7 +434,7 @@ class WildflyService {
                     }.filter {
                         runCommandExpectSuccessAndDefinedResultWithRetry(
                                 "/host=\"${it.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-resource",
-                                "Getting host details looking for slaves",
+                                "Getting host details looking for slaves in host $it",
                                 "WILDFLY-HTTPS-ERROR-0032",
                                 "Failed to get slave host details.").map {
                             !it.response.get("result").get("master").asBoolean()
