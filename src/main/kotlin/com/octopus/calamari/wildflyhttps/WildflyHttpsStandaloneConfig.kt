@@ -57,28 +57,24 @@ object WildflyHttpsStandaloneConfig {
                         "WILDFLY-HTTPS-ERROR-0015",
                         "There was an error reading the app server config path.").onSuccess {
                     options.defaultCertificateLocation = it.response.get("result").get("path").asString()
-                }.onFailure {
-                    throw it
-                }
+                }.onFailure { throw it }
             }
         }.apply {
-            retry.execute(RetryCallback<Unit, Throwable> { context ->
-                runCommandExpectSuccessAndDefinedResult(
-                        ":read-children-names(child-type=extension)",
-                        "Checking for extensions",
-                        "WILDFLY-HTTPS-ERROR-0040",
-                        "Failed to load any extensions.").flatMap {
-                    runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron").map { elytron ->
-                        options.profileList.forEach { profile ->
-                            if (elytron.isSuccess) {
-                                ElytronHttpsConfigurator(profile).configureHttps(options, this)
-                            } else {
-                                LegacyHttpsConfigurator(profile).configureHttps(options, this)
-                            }
+            runCommandExpectSuccessAndDefinedResult(
+                    ":read-children-names(child-type=extension)",
+                    "Checking for extensions",
+                    "WILDFLY-HTTPS-ERROR-0040",
+                    "Failed to load any extensions.").flatMap {
+                runCommand("/extension=org.wildfly.extension.elytron:read-resource", "Checking for Elytron").map { elytron ->
+                    options.profileList.forEach { profile ->
+                        if (elytron.isSuccess) {
+                            ElytronHttpsConfigurator(profile).configureHttps(options, this)
+                        } else {
+                            LegacyHttpsConfigurator(profile).configureHttps(options, this)
                         }
                     }
-                }.onFailure { throw it }
-            })
+                }
+            }.onFailure { throw it }
         }
     }
 }
