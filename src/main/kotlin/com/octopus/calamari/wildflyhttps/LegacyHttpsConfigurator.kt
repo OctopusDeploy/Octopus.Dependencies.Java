@@ -184,31 +184,6 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                     "WILDFLY-HTTPS-ERROR-0022",
                                     "There was an error configuring the security realm keystore password.")
                         }
-<<<<<<< HEAD
-=======
-                        service.runCommandExpectSuccess(
-                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=alias, " +
-                                        "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the security realm keystore alias",
-                                "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error configuring the security realm keystore alias.").onFailure { throw it }
-                        service.runCommandExpectSuccess(
-                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=keystore-path, " +
-                                        "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
-                                "Configuring the security realm keystore keystore-path",
-                                "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error configuring the security realm keystore path.").onFailure { throw it }
-                        service.runCommandExpectSuccess(
-                                "/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=keystore-password, " +
-                                        "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the security realm keystore keystore-password",
-                                "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error configuring the security realm keystore password.").onFailure { throw it }
-
->>>>>>> d01055fde10100655051920e44c4695ce4ba5e34
                     }
                 }.onFailure {
                     throw it
@@ -273,30 +248,6 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                     "WILDFLY-HTTPS-ERROR-0022",
                                     "There was an error configuring the security realm keystore password.")
                         }
-<<<<<<< HEAD
-=======
-                        service.runCommandExpectSuccess(
-                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=alias, " +
-                                        "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the security realm keystore alias",
-                                "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error configuring the security realm keystore alias.").onFailure { throw it }
-                        service.runCommandExpectSuccess(
-                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=keystore-path, " +
-                                        "value=\"${options.keystoreName.run(StringUtilsImpl::escapePathForCLICommand)}\")",
-                                "Configuring the security realm keystore keystore-path",
-                                "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error configuring the security realm keystore path.").onFailure { throw it }
-                        service.runCommandExpectSuccess(
-                                "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\"/core-service=management/security-realm=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\"/server-identity=ssl:write-attribute(" +
-                                        "name=keystore-password, " +
-                                        "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the security realm keystore keystore-password",
-                                "WILDFLY-HTTPS-ERROR-0022",
-                                "There was an error configuring the security realm keystore password.").onFailure { throw it }
->>>>>>> d01055fde10100655051920e44c4695ce4ba5e34
                     }
                 }.onFailure {
                     throw it
@@ -335,13 +286,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
     private fun configureWebSSL(options: WildflyHttpsOptions, service: WildflyService) =
             retry.execute(RetryCallback<Unit, Throwable> { context ->
                 service.runCommand(
-<<<<<<< HEAD
-                        "${getProfilePrefix(profile, service)}/subsystem=web/connector=https:read-resource",
-                        "Checking for existing https connector").flatMap {
-=======
                         "${service.getProfilePrefix(profile)}/subsystem=web/connector=https:read-resource",
-                        "Checking for existing https connector").onSuccess {
->>>>>>> d01055fde10100655051920e44c4695ce4ba5e34
+                        "Checking for existing https connector").flatMap {
                     if (!it.isSuccess) {
                         service.runCommandExpectSuccess(
                                 "${service.getProfilePrefix(profile)}/subsystem=web/connector=https:add(" +
@@ -351,10 +297,9 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                         "protocol=HTTP/1.1)",
                                 "Configuring the https connector in web subsystem",
                                 "WILDFLY-HTTPS-ERROR-0029",
-<<<<<<< HEAD
                                 "There was an error adding a new https connector in the web subsystem.").flatMap {
                             service.runCommandExpectSuccess(
-                                    "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:add(" +
+                                    "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:add(" +
                                             "name=ssl, " +
                                             "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
                                             "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
@@ -371,29 +316,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                         }
                     } else {
                         service.runCommand(
-                                "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:read-resource",
-                                "Checking for existing https connector").flatMap {
-=======
-                                "There was an error adding a new https connector in the web subsystem.").onFailure { throw it }
-                        service.runCommandExpectSuccess(
-                                "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:add(" +
-                                        "name=ssl, " +
-                                        "key-alias=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                        "password=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\", " +
-                                        "certificate-key-file=\"" +
-                                        (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
-                                        "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the https connector ssl configuration in web subsystem",
-                                "WILDFLY-HTTPS-ERROR-0029",
-                                "There was an error adding a new https connector ssl configuration in the web subsystem.").onFailure { throw it }
-                        service.runBatch(
-                                "WILDFLY-HTTPS-ERROR-0036",
-                                "Failed to save legacy web subsystem https connector as a batch operation.").onFailure { throw it }
-                    } else {
-                        service.runCommand(
                                 "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:read-resource",
-                                "Checking for existing https connector").onSuccess {
->>>>>>> d01055fde10100655051920e44c4695ce4ba5e34
+                                "Checking for existing https connector").flatMap {
                             if (!it.isSuccess) {
                                 service.runCommandExpectSuccess(
                                         "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:add(" +
@@ -413,10 +337,9 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                                 "value=\"${options.fixedKeystoreAlias.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                         "Configuring the existing https connector ssl configuration key alias",
                                         "WILDFLY-HTTPS-ERROR-0030",
-<<<<<<< HEAD
                                         "There was an error configuring the existing https connector ssl configuration key alias.").flatMap {
                                     service.runCommandExpectSuccess(
-                                            "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
+                                            "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
                                                     "name=password, " +
                                                     "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                             "Configuring the existing https connector ssl configuration key password",
@@ -424,7 +347,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                             "There was an error configuring the existing https connector ssl configuration key password.")
                                 }.flatMap {
                                     service.runCommandExpectSuccess(
-                                            "${getProfilePrefix(profile, service)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
+                                            "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
                                                     "name=certificate-key-file, " +
                                                     "value=\"" +
                                                     (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
@@ -433,25 +356,6 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                             "WILDFLY-HTTPS-ERROR-0030",
                                             "There was an error configuring the existing https connector ssl configuration keystore filename.")
                                 }
-=======
-                                        "There was an error configuring the existing https connector ssl configuration key alias.").onFailure { throw it }
-                                service.runCommandExpectSuccess(
-                                        "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
-                                                "name=password, " +
-                                                "value=\"${options.fixedPrivateKeyPassword.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                        "Configuring the existing https connector ssl configuration key password",
-                                        "WILDFLY-HTTPS-ERROR-0030",
-                                        "There was an error configuring the existing https connector ssl configuration key password.").onFailure { throw it }
-                                service.runCommandExpectSuccess(
-                                        "${service.getProfilePrefix(profile)}/subsystem=web/connector=https/ssl=configuration:write-attribute(" +
-                                                "name=certificate-key-file, " +
-                                                "value=\"" +
-                                                (if (StringUtils.isNotBlank(options.fixedRelativeTo)) "\${${options.fixedRelativeTo.run(StringUtilsImpl::escapeStringForCLICommand)}}/" else "") +
-                                                "${options.keystoreName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                        "Configuring the existing https connector ssl configuration keystore filename",
-                                        "WILDFLY-HTTPS-ERROR-0030",
-                                        "There was an error configuring the existing https connector ssl configuration keystore filename.").onFailure { throw it }
->>>>>>> d01055fde10100655051920e44c4695ce4ba5e34
                             }
                         }
                     }
@@ -464,13 +368,8 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
     private fun configureUndertowSocketBinding(undertowServer: String, options: WildflyHttpsOptions, service: WildflyService) =
             retry.execute(RetryCallback<Unit, Throwable> { context ->
                 service.runCommand(
-<<<<<<< HEAD
-                        "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:read-resource",
-                        "Checking for existing ssl configuration").flatMap {
-=======
                         "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:read-resource",
-                        "Checking for existing ssl configuration").onSuccess {
->>>>>>> d01055fde10100655051920e44c4695ce4ba5e34
+                        "Checking for existing ssl configuration").flatMap {
 
                     if (!it.isSuccess) {
                         service.runCommandExpectSuccess(
@@ -487,26 +386,15 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                                         "value=\"${options.httpsPortBindingName}\")",
                                 "Configuring the https listener socket-binding",
                                 "WILDFLY-HTTPS-ERROR-0025",
-<<<<<<< HEAD
                                 "There was an error configuring the https listener socket binding.").flatMap {
                             service.runCommandExpectSuccess(
-                                    "${getProfilePrefix(profile, service)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
+                                    "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
                                             "name=security-realm, " +
                                             "value=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
                                     "Configuring the existing security realm keystore alias",
                                     "WILDFLY-HTTPS-ERROR-0025",
                                     "There was an error configuring the https listener security realm.")
                         }
-=======
-                                "There was an error configuring the https listener socket binding.").onFailure { throw it }
-                        service.runCommandExpectSuccess(
-                                "${service.getProfilePrefix(profile)}/subsystem=undertow/server=\"${undertowServer.run(StringUtilsImpl::escapeStringForCLICommand)}\"/https-listener=https:write-attribute(" +
-                                        "name=security-realm, " +
-                                        "value=\"${options.wildflySecurityManagerRealmName.run(StringUtilsImpl::escapeStringForCLICommand)}\")",
-                                "Configuring the https listener security-realm",
-                                "WILDFLY-HTTPS-ERROR-0025",
-                                "There was an error configuring the https listener security realm.").onFailure { throw it }
->>>>>>> d01055fde10100655051920e44c4695ce4ba5e34
                     }
                 }.onFailure { throw it }
             })
