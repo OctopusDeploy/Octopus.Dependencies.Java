@@ -273,8 +273,6 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                         }
 
                         undertow.isSuccess
-                    }.onFailure {
-                        throw it
                     }
                 }.onFailure {
                     throw it
