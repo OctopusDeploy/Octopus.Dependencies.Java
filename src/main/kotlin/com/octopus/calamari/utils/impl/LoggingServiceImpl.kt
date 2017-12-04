@@ -2,7 +2,10 @@ package com.octopus.calamari.utils.impl
 
 import com.octopus.calamari.utils.LoggingService
 import org.funktionale.tries.Try
-import java.util.logging.*
+import java.util.logging.Level
+import java.util.logging.LogManager
+import java.util.logging.Logger
+import java.util.logging.StreamHandler
 
 object LoggingServiceImpl : LoggingService {
     override fun flushStreams() {
@@ -49,14 +52,14 @@ object LoggingServiceImpl : LoggingService {
             /*
                 Info level messages should go to std out
              */
-            val infoLogger = StreamHandler(System.out, SimpleFormatter())
+            val infoLogger = StreamHandler(System.out, CustomFormatter)
             infoLogger.level = Level.INFO
             rootLog.addHandler(infoLogger)
 
             /*
                 Warning level messages should go to std err
              */
-            val warnLogger = StreamHandler(System.err, SimpleFormatter())
+            val warnLogger = StreamHandler(System.err, CustomFormatter)
             warnLogger.level = Level.WARNING
             rootLog.addHandler(warnLogger)
         }

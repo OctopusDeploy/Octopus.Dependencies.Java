@@ -1,7 +1,9 @@
 package com.octopus.calamari.wildfly
 
+import com.octopus.calamari.options.WildflyDataClass
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
+import com.octopus.calamari.wildflyhttps.WildflyHttpsOptions
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang.StringUtils
 import org.funktionale.tries.Try
@@ -23,19 +25,19 @@ import java.util.logging.Logger
  * @property disabledServerGroup The comma separated names of the server groups that should have the deployment disabled in domain mode
  */
 data class WildflyOptions(
-        val controller:String = "",
-        val port:Int = 0,
-        val protocol:String = "",
-        val user:String? = null,
-        val password:String? = null,
+        override val controller:String = "",
+        override val port:Int = 0,
+        override val protocol:String = "",
+        override val user:String? = null,
+        override val password:String? = null,
         val application:String = "",
         val name:String? = "",
-        val serverType: ServerType = ServerType.NONE,
+        override val serverType: ServerType = ServerType.NONE,
         val state:Boolean = true,
         val enabledServerGroup:String = "",
         val disabledServerGroup:String = "",
         private val alreadyDumped:Boolean = false
-) {
+) : WildflyDataClass {
     /**
      * Octopus will append a guid onto the end of the file, which we need to remove
      */
@@ -47,15 +49,6 @@ data class WildflyOptions(
             else
                 name!!
     val escapedPackageName = packageName.replace(" ", "\\ ")
-
-    /**
-     * An empty username is treated as null
-     */
-    val fixedUsername = if (StringUtils.isBlank(user)) null else user
-    /**
-     * And empty username means we have no password
-     */
-    val fixedPassword = if (StringUtils.isBlank(user)) null else password
 
     init {
         if (!this.alreadyDumped) {
@@ -70,18 +63,17 @@ data class WildflyOptions(
         fun fromEnvironmentVars(): WildflyOptions {
             val envVars = System.getenv()
 
-            val controller = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Controller"] ?: "localhost"
-            val port = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Port"] ?: "9990"
-            val protocol = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Protocol"] ?: "http-remoting"
-            val user = envVars.get(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_User")
-            val password = envVars.get(Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Password")
+            val controller = getEnvironmentVar("Controller", "localhost")
+            val port = getEnvironmentVar("Port", "9990")
+            val protocol = getEnvironmentVar("Protocol", "remote+http")
+            val user = getEnvironmentVar("User", "", false)
+            val password = getEnvironmentVar("Password", "", false)
             val application = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "Octopus_Tentacle_CurrentDeployment_PackageFilePath"] ?: ""
-            val name = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Name"]
-            val enabled = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_Enabled"] ?: "true").toBoolean()
-            val enabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_EnabledServerGroup"] ?: ""
-            val disabledServerGroup = envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_DisabledServerGroup"] ?: ""
-            val serverType = (envVars[Constants.ENVIRONEMT_VARS_PREFIX + "WildFly_Deploy_ServerType"] ?:
-                            ServerType.NONE.toString()).toUpperCase()
+            val name = getEnvironmentVar("Name", "")
+            val enabled = (getEnvironmentVar("Enabled", "true")).toBoolean()
+            val enabledServerGroup = getEnvironmentVar("EnabledServerGroup", "")
+            val disabledServerGroup = getEnvironmentVar("DisabledServerGroup", "")
+            val serverType = getEnvironmentVar("ServerType", ServerType.NONE.toString()).toUpperCase()
 
             return WildflyOptions(
                     controller.trim(),
@@ -98,6 +90,11 @@ data class WildflyOptions(
                     disabledServerGroup.trim()
             )
         }
+
+        private fun getEnvironmentVar(name: String, default: String, trim: Boolean = true) =
+                (System.getenv()["${Constants.ENVIRONEMT_VARS_PREFIX}WildFly_Deploy_$name"] ?: default).run {
+                    if (trim) this.trim() else this
+                }
     }
 
     /**

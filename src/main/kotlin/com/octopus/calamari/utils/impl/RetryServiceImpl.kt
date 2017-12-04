@@ -12,13 +12,13 @@ object RetryServiceImpl : RetryService {
     /**
      * @return A common Spring retry template
      */
-    override fun createRetry():RetryTemplate {
+    override fun createRetry(retryCount: Int):RetryTemplate {
         val retryTemplate = RetryTemplate()
-        val retryPolicy = SimpleRetryPolicy(5)
+        val retryPolicy = SimpleRetryPolicy(retryCount)
         retryTemplate.setRetryPolicy(retryPolicy)
 
         val backOffPolicy = ExponentialBackOffPolicy()
-        backOffPolicy.initialInterval = 2000L
+        backOffPolicy.initialInterval = 5000L
         retryTemplate.setBackOffPolicy(backOffPolicy)
 
         return retryTemplate
