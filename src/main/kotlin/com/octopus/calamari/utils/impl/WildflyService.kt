@@ -456,7 +456,7 @@ class WildflyService {
             if (isDomainMode) {
                 runCommandExpectSuccessAndDefinedResultWithRetry(
                         "/host=\"${host.run(StringUtilsImpl::escapeStringForCLICommand)}\":read-children-names(child-type=server)",
-                        "Getting servers",
+                        "Getting servers for host $host",
                         "WILDFLY-HTTPS-ERROR-0035",
                         "Failed to get servers for host $host").map {
                     it.response.get("result").asList()
