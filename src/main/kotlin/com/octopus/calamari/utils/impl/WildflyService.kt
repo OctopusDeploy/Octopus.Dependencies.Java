@@ -489,9 +489,9 @@ class WildflyService {
      * Throws an exception if the socket binding group for the standalone server does not have a https port defined,
      * or if the interface is not a public one.
      */
-    fun validateSocketBinding(socketGroup: String, options: WildflyHttpsOptions) =
+    fun validateSocketBinding(socketGroup: String, httpsPortBindingName: String) =
             runCommandExpectSuccessAndDefinedResultWithRetry(
-                    "/socket-binding-group=\"${socketGroup.run(StringUtilsImpl::escapeStringForCLICommand)}\"/socket-binding=\"${options.httpsPortBindingName}\":read-resource",
+                    "/socket-binding-group=\"${socketGroup.run(StringUtilsImpl::escapeStringForCLICommand)}\"/socket-binding=\"$httpsPortBindingName\":read-resource",
                     "Getting https socket binding",
                     "WILDFLY-HTTPS-ERROR-0027",
                     "Failed to get the https socket binding.").map {
@@ -569,18 +569,18 @@ class WildflyService {
      * A sanity check to ensure the socket binding that we are adding along side the
      * certificate info exists.
      */
-    fun validateSocketBindingsFacade(hosts: List<String>, options: WildflyHttpsOptions) {
+    fun validateSocketBindingsFacade(hosts: List<String>, httpsPortBindingName: String) {
         if (isDomainMode) {
             hosts.forEach { host ->
                 getServers(host).forEach {
                     getSocketBindingForHost(host, it).forEach {
-                        validateSocketBinding(it, options)
+                        validateSocketBinding(it, httpsPortBindingName)
                     }
                 }
             }
         } else {
             getSocketBindingForStandalone().also {
-                validateSocketBinding(it, options)
+                validateSocketBinding(it, httpsPortBindingName)
             }
         }
     }

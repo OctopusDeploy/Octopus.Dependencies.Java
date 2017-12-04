@@ -37,7 +37,7 @@ class ElytronHttpsConfigurator(private val profile: String = "") : WildflyHttpsC
             if (!service.isDomainMode || StringUtils.isNotBlank(profile)) {
                 service.takeSnapshotFacade(this)
                 service.validateProfile(profile)
-                service.validateSocketBindingsFacade(this, options)
+                service.validateSocketBindingsFacade(this, options.httpsPortBindingName)
                 createOrUpdateKeystore(options, service)
                 createOrUpdateKeyManager(options, service)
                 createOrUpdateSSL(options, service)

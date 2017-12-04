@@ -58,7 +58,7 @@ class LegacyHttpsConfigurator(private val profile: String = "") : WildflyHttpsCo
                     with the certificate information, and not configure the shared profile.
                  */
                 if (!service.isDomainMode || StringUtils.isNotBlank(profile)) {
-                    service.validateSocketBindingsFacade(this, options)
+                    service.validateSocketBindingsFacade(this, options.httpsPortBindingName)
                     if (undertowEnabled(service)) {
                         service.getUndertowServers(profile).forEach {
                             configureUndertowSocketBinding(it, options, service)
