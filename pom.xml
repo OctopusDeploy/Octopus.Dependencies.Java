@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.97</version>
+    <version>1.0.98</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <kotlin.version>1.2.20-dev-504</kotlin.version>
+        <kotlin.version>1.2.40-dev-610</kotlin.version>
         <junit.version>4.12.0.redhat-003</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <eap.6.version>jboss-eap-6.4</eap.6.version>
@@ -33,6 +33,8 @@
         <domain.wildfly.10.version>domain-wildfly-10.1.0.Final</domain.wildfly.10.version>
         <wildfly.11.version>wildfly-11.0.0.Final</wildfly.11.version>
         <domain.wildfly.11.version>domain-wildfly-11.0.0.Final</domain.wildfly.11.version>
+        <wildfly.12.version>wildfly-12.0.0.Final</wildfly.12.version>
+        <domain.wildfly.12.version>domain-wildfly-12.0.0.Final</domain.wildfly.12.version>
         <tomcat.7.version>tomcat-7.0.81</tomcat.7.version>
         <tomcat.8.version>tomcat-8.0.46</tomcat.8.version>
         <tomcat.85.version>tomcat-8.5.20</tomcat.85.version>
@@ -97,12 +99,12 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-debug-jdk15on</artifactId>
-            <version>1.58</version>
+            <version>1.59</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.58</version>
+            <version>1.59</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -559,6 +561,76 @@
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                                 <arquillian.launch>${domain.wildfly.11.version}</arquillian.launch>
+                                <port>9990</port>
+                                <protocol>http-remoting</protocol>
+                                <projDir>${project.basedir}</projDir>
+                                <username>admin</username>
+                                <password>password1!</password>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <includes>
+                                <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflydomain/*Test*.*</include>
+                            </includes>
+                            <useSystemClassLoader>false</useSystemClassLoader>
+                            <useManifestOnlyJar>false</useManifestOnlyJar>
+                            <failIfNoTests>false</failIfNoTests>
+                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>wildfly12</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <configuration>
+                            <!-- Fork every test because it will launch a separate AS instance -->
+                            <forkMode>always</forkMode>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <arquillian.launch>${wildfly.12.version}</arquillian.launch>
+                                <port>9990</port>
+                                <protocol>http-remoting</protocol>
+                                <projDir>${project.basedir}</projDir>
+                                <username>admin</username>
+                                <password>password1!</password>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <includes>
+                                <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
+                            </includes>
+                            <useSystemClassLoader>false</useSystemClassLoader>
+                            <useManifestOnlyJar>false</useManifestOnlyJar>
+                            <failIfNoTests>false</failIfNoTests>
+                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>domain-wildfly12</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <configuration>
+                            <!-- Fork every test because it will launch a separate AS instance -->
+                            <forkMode>always</forkMode>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <arquillian.launch>${domain.wildfly.12.version}</arquillian.launch>
                                 <port>9990</port>
                                 <protocol>http-remoting</protocol>
                                 <projDir>${project.basedir}</projDir>
