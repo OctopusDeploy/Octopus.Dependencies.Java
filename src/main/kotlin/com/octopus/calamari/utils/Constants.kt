@@ -22,7 +22,9 @@ object Constants {
      */
     const val FAILED_HTTPS_CONFIG_RETURN = 2
     /**
-     * HTTP Connection timeouts
+     * HTTP Connection timeouts. This was increased
+     * to account for situations like the one reported at
+     * https://secure.helpscout.net/conversation/533260154?folderId=557080
      */
-    const val CONNECTION_TIMEOUT = 30000
+    const val CONNECTION_TIMEOUT = 60000
 }
