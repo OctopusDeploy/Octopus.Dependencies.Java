@@ -24,7 +24,8 @@ object Constants {
     /**
      * HTTP Connection timeouts. This was increased
      * to account for situations like the one reported at
-     * https://secure.helpscout.net/conversation/533260154?folderId=557080
+     * https://secure.helpscout.net/conversation/533260154?folderId=557080 and
+     * https://help.octopus.com/t/tomcat-manager-deploy-fails-with-read-timeout/19847/4
      */
-    const val CONNECTION_TIMEOUT = 60000
+    const val CONNECTION_TIMEOUT = 300000
 }
