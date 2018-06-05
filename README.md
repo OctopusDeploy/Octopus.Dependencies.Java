@@ -54,14 +54,14 @@ Tests against these profiles can be run with the following command
 For example
 
 ```
-./mvnw clean verify -Peap6`
+./mvnw clean verify -Peap6
 ```
 
 All containers can be tested with the command:
 
 ```
-./mvnw verify -Peap6; ./mvnw verify -Peap7; ./mvnw verify -Pwildfly10; ./mvnw verify -Pwildfly11; ./mvnw verify -Ptomcat7; ./mvnw verify -Ptomcat8; ./mvnw verify -Ptomcat85; ./mvnw verify -Ptomcat9
-./mvnw verify -Pdomain-eap6; ./mvnw verify -Pdomain-eap7; ./mvnw verify -Pdomain-wildfly10; ./mvnw verify -Pdomain-wildfly11
+./mvnw verify -Peap6; ./mvnw verify -Peap7; ./mvnw verify -Pwildfly10; ./mvnw verify -Pwildfly11; ./mvnw verify -Pwildfly12; ./mvnw verify -Pwildfly13; ./mvnw verify -Ptomcat7; ./mvnw verify -Ptomcat8; ./mvnw verify -Ptomcat85; ./mvnw verify -Ptomcat9
+./mvnw verify -Pdomain-eap6; ./mvnw verify -Pdomain-eap7; ./mvnw verify -Pdomain-wildfly10; ./mvnw verify -Pdomain-wildfly11; ./mvnw verify -Pdomain-wildfly12; ./mvnw verify -Pdomain-wildfly13
 ```
 
 # Java Tools

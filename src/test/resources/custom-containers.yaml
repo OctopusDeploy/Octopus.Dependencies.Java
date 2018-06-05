@@ -2,15 +2,15 @@
   versionExpression: 7.*
   adapters:
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &EAP7_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: *EAP7_CONFIG
   defaultType: managed
@@ -32,11 +32,11 @@
   versionExpression: 7.*
   adapters:
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.managed.ManagedDomainDeployableContainer
       configuration: *EAP7_CONFIG
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
   dist: *EAP7_DIST
@@ -96,15 +96,15 @@
   versionExpression: 11.*
   adapters:
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &WF_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: &WF_EMBEDD_CONFIG
         jbossHome: ${dist}
@@ -129,11 +129,11 @@
   versionExpression: 11.*
   adapters:
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.managed.ManagedDomainDeployableContainer
       configuration: *WF_CONFIG
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
   dist: *WF_DIST
@@ -154,15 +154,15 @@
   versionExpression: 12.*
   adapters:
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &WF_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: &WF_EMBEDD_CONFIG
         jbossHome: ${dist}
@@ -187,15 +187,106 @@
   versionExpression: 12.*
   adapters:
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.managed.ManagedDomainDeployableContainer
       configuration: *WF_CONFIG
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.0.1.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.1.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
   dist: *WF_DIST
   exclude: &WF12_EXCLUDE
+    - org.jboss.arquillian.test:*
+    - org.jboss.arquillian.testenricher:*
+    - org.jboss.arquillian.container:*
+    - org.jboss.arquillian.core:*
+    - org.jboss.arquillian.config:*
+    - org.jboss.arquillian.protocol:*
+    - org.jboss.shrinkwrap.api:*
+    - org.jboss.shrinkwrap:*
+    - org.jboss.shrinkwrap.descriptors:*
+    - org.jboss.shrinkwrap.resolver:*
+    - "*:wildfly-arquillian-testenricher-msc"
+    
+- name: WildFly
+  versionExpression: 12.*
+  adapters:
+    - type: remote
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
+      adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
+    - type: managed
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
+      adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
+      configuration: &WF_CONFIG
+        jbossHome: ${dist}
+    - type: embedded
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
+      adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
+      configuration: &WF_EMBEDD_CONFIG
+        jbossHome: ${dist}
+        modulePath: ${dist}/modules
+  defaultType: managed
+  dist: &WF_DIST
+    coordinates: org.wildfly:wildfly-dist:zip:${version}
+  exclude: &WF12_EXCLUDE
+    - org.jboss.arquillian.test:*
+    - org.jboss.arquillian.testenricher:*
+    - org.jboss.arquillian.container:*
+    - org.jboss.arquillian.core:*
+    - org.jboss.arquillian.config:*
+    - org.jboss.arquillian.protocol:*
+    - org.jboss.shrinkwrap.api:*
+    - org.jboss.shrinkwrap:*
+    - org.jboss.shrinkwrap.descriptors:*
+    - org.jboss.shrinkwrap.resolver:*
+    - "*:wildfly-arquillian-testenricher-msc"
+
+- name: WildFly Domain
+  versionExpression: 13.*
+  adapters:
+    - type: managed
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.1.0.Final
+      adapterClass: org.jboss.as.arquillian.container.domain.managed.ManagedDomainDeployableContainer
+      configuration: *WF_CONFIG
+    - type: remote
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.1.0.Final
+      adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
+  defaultType: managed
+  dist: *WF_DIST
+  exclude: &WF13_EXCLUDE
+    - org.jboss.arquillian.test:*
+    - org.jboss.arquillian.testenricher:*
+    - org.jboss.arquillian.container:*
+    - org.jboss.arquillian.core:*
+    - org.jboss.arquillian.config:*
+    - org.jboss.arquillian.protocol:*
+    - org.jboss.shrinkwrap.api:*
+    - org.jboss.shrinkwrap:*
+    - org.jboss.shrinkwrap.descriptors:*
+    - org.jboss.shrinkwrap.resolver:*
+    - "*:wildfly-arquillian-testenricher-msc"    
+
+- name: WildFly
+  versionExpression: 13.*
+  adapters:
+    - type: remote
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
+      adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
+    - type: managed
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
+      adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
+      configuration: &WF_CONFIG
+        jbossHome: ${dist}
+    - type: embedded
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
+      adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
+      configuration: &WF_EMBEDD_CONFIG
+        jbossHome: ${dist}
+        modulePath: ${dist}/modules
+  defaultType: managed
+  dist: &WF_DIST
+    coordinates: org.wildfly:wildfly-dist:zip:${version}
+  exclude: &WF13_EXCLUDE
     - org.jboss.arquillian.test:*
     - org.jboss.arquillian.testenricher:*
     - org.jboss.arquillian.container:*

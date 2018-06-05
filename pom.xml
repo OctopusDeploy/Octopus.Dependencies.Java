@@ -35,6 +35,8 @@
         <domain.wildfly.11.version>domain-wildfly-11.0.0.Final</domain.wildfly.11.version>
         <wildfly.12.version>wildfly-12.0.0.Final</wildfly.12.version>
         <domain.wildfly.12.version>domain-wildfly-12.0.0.Final</domain.wildfly.12.version>
+        <wildfly.13.version>wildfly-13.0.0.Final</wildfly.13.version>
+        <domain.wildfly.13.version>domain-wildfly-13.0.0.Final</domain.wildfly.13.version>
         <tomcat.7.version>tomcat-7.0.81</tomcat.7.version>
         <tomcat.8.version>tomcat-8.0.46</tomcat.8.version>
         <tomcat.85.version>tomcat-8.5.20</tomcat.85.version>
@@ -631,6 +633,76 @@
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                                 <arquillian.launch>${domain.wildfly.12.version}</arquillian.launch>
+                                <port>9990</port>
+                                <protocol>http-remoting</protocol>
+                                <projDir>${project.basedir}</projDir>
+                                <username>admin</username>
+                                <password>password1!</password>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <includes>
+                                <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflydomain/*Test*.*</include>
+                            </includes>
+                            <useSystemClassLoader>false</useSystemClassLoader>
+                            <useManifestOnlyJar>false</useManifestOnlyJar>
+                            <failIfNoTests>false</failIfNoTests>
+                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>wildfly13</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <configuration>
+                            <!-- Fork every test because it will launch a separate AS instance -->
+                            <forkMode>always</forkMode>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <arquillian.launch>${wildfly.13.version}</arquillian.launch>
+                                <port>9990</port>
+                                <protocol>http-remoting</protocol>
+                                <projDir>${project.basedir}</projDir>
+                                <username>admin</username>
+                                <password>password1!</password>
+                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
+                                </org.apache.maven.user-settings>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <includes>
+                                <include>**/wildfly/*Test*.*</include>
+                                <include>**/wildflystandalone/*Test*.*</include>
+                            </includes>
+                            <useSystemClassLoader>false</useSystemClassLoader>
+                            <useManifestOnlyJar>false</useManifestOnlyJar>
+                            <failIfNoTests>false</failIfNoTests>
+                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>domain-wildfly13</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <configuration>
+                            <!-- Fork every test because it will launch a separate AS instance -->
+                            <forkMode>always</forkMode>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <arquillian.launch>${domain.wildfly.13.version}</arquillian.launch>
                                 <port>9990</port>
                                 <protocol>http-remoting</protocol>
                                 <projDir>${project.basedir}</projDir>
