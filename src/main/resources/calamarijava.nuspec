@@ -4,7 +4,9 @@
         <id>Octopus.Dependencies.Java</id>
         <version>{{Version}}</version>
         <description>Java library providing the interface to Java application servers for Calamari</description>
-        <authors>Matthew Casperson</authors>
+        <authors>Octopus Deploy</authors>
+        <licenseUrl>https://github.com/OctopusDeploy/Octopus.Dependencies.Java/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/OctopusDeploy/Octopus.Dependencies.Java</projectUrl>
         <contentFiles>
             <files include="**/calamari*.jar" buildAction="None" copyToOutput="false" />
             <files include="**/tools.jar" buildAction="None" copyToOutput="false" />
