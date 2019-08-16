@@ -46,15 +46,15 @@
   versionExpression: 6.4
   adapters:
     - type: remote
-      coordinates: org.jboss.as:jboss-as-arquillian-container-remote:7.2.0.Final
+      coordinates: org.jboss.as:jboss-as-arquillian-container-remote:7.2.3.Final-redhat-2
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.jboss.as:jboss-as-arquillian-container-managed:7.2.0.Final
+      coordinates: org.jboss.as:jboss-as-arquillian-container-managed:7.2.3.Final-redhat-2
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &EAP_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.jboss.as:jboss-as-arquillian-container-embedded:7.2.0.Final
+      coordinates: org.jboss.as:jboss-as-arquillian-container-embedded:7.2.3.Final-redhat-2
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: *EAP_CONFIG
   defaultType: managed
@@ -81,11 +81,11 @@
   versionExpression: 6.*
   adapters:
     - type: managed
-      coordinates: org.jboss.as:jboss-as-arquillian-container-domain-managed:7.5.22.Final-redhat-1
+      coordinates: org.jboss.as:jboss-as-arquillian-container-domain-managed:7.2.3.Final-redhat-2
       adapterClass: org.jboss.as.arquillian.container.domain.managed.ManagedDomainDeployableContainer
       configuration: *EAP_CONFIG
     - type: remote
-      coordinates: org.jboss.as:jboss-as-arquillian-container-domain-remote:7.5.22.Final-redhat-1
+      coordinates: org.jboss.as:jboss-as-arquillian-container-domain-remote:7.2.3.Final-redhat-2
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
   dist: *EAP_DIST
