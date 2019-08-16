@@ -270,15 +270,15 @@
   versionExpression: 13.*
   adapters:
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.2.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.2.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &WF_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.2.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: &WF_EMBEDD_CONFIG
         jbossHome: ${dist}
