@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.101</version>
+    <version>1.0.104</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -17,6 +17,8 @@
         <compiler.version>3.7.0</compiler.version>
         <shade.version>3.1.0</shade.version>
         <jar.version>3.0.2</jar.version>
+        <bouncycastle.version>1.62</bouncycastle.version>
+        <wildfly.core.version>8.0.0.Final</wildfly.core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -85,7 +87,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.4.0.Final</version>
+                <version>1.4.1.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -96,28 +98,28 @@
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
             <artifactId>zip4j</artifactId>
-            <version>1.3.2</version>
+            <version>1.3.3</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-debug-jdk15on</artifactId>
-            <version>1.59</version>
+            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.59</version>
+            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6.0.redhat-6</version>
+            <version>2.6.0.redhat-7</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>25.1-jre</version>
+            <version>28.0-jre</version>
         </dependency>
 
         <dependency>
@@ -134,7 +136,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>fluent-hc</artifactId>
-            <version>4.5.5</version>
+            <version>4.5.9</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.threads</groupId>
@@ -144,27 +146,22 @@
         <dependency>
             <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-embedded</artifactId>
-            <version>5.0.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.security</groupId>
-            <artifactId>wildfly-security-manager</artifactId>
-            <version>1.1.2.Final</version>
+            <version>${wildfly.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-cli</artifactId>
-            <version>5.0.0.Final</version>
+            <version>${wildfly.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-protocol</artifactId>
-            <version>5.0.0.Final</version>
+            <version>${wildfly.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
-            <version>1.2.2.RELEASE</version>
+            <version>1.2.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -174,7 +171,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
+            <version>4.4</version>
         </dependency>
         <dependency>
             <groupId>org.funktionale</groupId>
@@ -202,7 +199,7 @@
         <dependency>
             <groupId>org.arquillian.container</groupId>
             <artifactId>arquillian-container-chameleon</artifactId>
-            <version>1.0.0.CR2</version>
+            <version>1.0.0.CR6</version>
             <scope>test</scope>
         </dependency>
 

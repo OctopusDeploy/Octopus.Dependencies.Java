@@ -2,15 +2,15 @@
   versionExpression: 7.*
   adapters:
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &EAP7_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: *EAP7_CONFIG
   defaultType: managed
@@ -32,11 +32,11 @@
   versionExpression: 7.*
   adapters:
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.managed.ManagedDomainDeployableContainer
       configuration: *EAP7_CONFIG
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
   dist: *EAP7_DIST
@@ -46,15 +46,15 @@
   versionExpression: 6.4
   adapters:
     - type: remote
-      coordinates: org.jboss.as:jboss-as-arquillian-container-remote:7.5.15.Final-redhat-3
+      coordinates: org.jboss.as:jboss-as-arquillian-container-remote:7.2.3.Final-redhat-2
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.jboss.as:jboss-as-arquillian-container-managed:7.5.15.Final-redhat-3
+      coordinates: org.jboss.as:jboss-as-arquillian-container-managed:7.2.3.Final-redhat-2
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &EAP_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.jboss.as:jboss-as-arquillian-container-embedded:7.5.15.Final-redhat-3
+      coordinates: org.jboss.as:jboss-as-arquillian-container-embedded:7.2.3.Final-redhat-2
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: *EAP_CONFIG
   defaultType: managed
@@ -96,15 +96,15 @@
   versionExpression: 11.*
   adapters:
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &WF_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: &WF_EMBEDD_CONFIG
         jbossHome: ${dist}
@@ -129,11 +129,11 @@
   versionExpression: 11.*
   adapters:
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.managed.ManagedDomainDeployableContainer
       configuration: *WF_CONFIG
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
   dist: *WF_DIST
@@ -154,15 +154,15 @@
   versionExpression: 12.*
   adapters:
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &WF_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: &WF_EMBEDD_CONFIG
         jbossHome: ${dist}
@@ -187,11 +187,11 @@
   versionExpression: 12.*
   adapters:
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.managed.ManagedDomainDeployableContainer
       configuration: *WF_CONFIG
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
   dist: *WF_DIST
@@ -212,15 +212,15 @@
   versionExpression: 12.*
   adapters:
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &WF_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: &WF_EMBEDD_CONFIG
         jbossHome: ${dist}
@@ -245,11 +245,11 @@
   versionExpression: 13.*
   adapters:
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-managed:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.managed.ManagedDomainDeployableContainer
       configuration: *WF_CONFIG
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
   dist: *WF_DIST
@@ -270,15 +270,15 @@
   versionExpression: 13.*
   adapters:
     - type: remote
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-remote:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.remote.RemoteDeployableContainer
     - type: managed
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-managed:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.managed.ManagedDeployableContainer
       configuration: &WF_CONFIG
         jbossHome: ${dist}
     - type: embedded
-      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.0.Final
+      coordinates: org.wildfly.arquillian:wildfly-arquillian-container-embedded:2.1.1.Final
       adapterClass: org.jboss.as.arquillian.container.embedded.EmbeddedDeployableContainer
       configuration: &WF_EMBEDD_CONFIG
         jbossHome: ${dist}
@@ -303,10 +303,10 @@
   versionExpression: 7.*
   adapters:
     - type: remote
-      coordinates: org.jboss.arquillian.container:arquillian-tomcat-remote-7:1.0.0
+      coordinates: org.jboss.arquillian.container:arquillian-tomcat-remote-7:1.1.0.Final
       adapterClass: org.jboss.arquillian.container.tomcat.remote.Tomcat7RemoteContainer
     - type: managed
-      coordinates: org.jboss.arquillian.container:arquillian-tomcat-managed-7:1.0.0
+      coordinates: org.jboss.arquillian.container:arquillian-tomcat-managed-7:1.1.0.Final
       adapterClass: org.jboss.arquillian.container.tomcat.managed.Tomcat7ManagedContainer
       configuration: &TOMCAT_MANAGED_CONFIG
         catalinaHome: ${dist}
@@ -319,10 +319,10 @@
   versionExpression: 8.0.*
   adapters:
     - type: remote
-      coordinates: org.jboss.arquillian.container:arquillian-tomcat-remote-8:1.0.0
+      coordinates: org.jboss.arquillian.container:arquillian-tomcat-remote-7:1.0.1.Final
       adapterClass: org.jboss.arquillian.container.tomcat.remote.Tomcat8RemoteContainer
     - type: managed
-      coordinates: org.jboss.arquillian.container:arquillian-tomcat-managed-8:1.0.0
+      coordinates: org.jboss.arquillian.container:arquillian-tomcat-managed-8:1.0.1.Final
       adapterClass: org.jboss.arquillian.container.tomcat.managed.Tomcat8ManagedContainer
       configuration: &TOMCAT_MANAGED_CONFIG
         catalinaHome: ${dist}
@@ -334,10 +334,10 @@
   versionExpression: 8.5.*
   adapters:
     - type: remote
-      coordinates: org.jboss.arquillian.container:arquillian-tomcat-remote-8:1.0.0
+      coordinates: org.jboss.arquillian.container:arquillian-tomcat-remote-7:1.0.1.Final
       adapterClass: org.jboss.arquillian.container.tomcat.remote.Tomcat8RemoteContainer
     - type: managed
-      coordinates: org.jboss.arquillian.container:arquillian-tomcat-managed-8:1.0.0
+      coordinates: org.jboss.arquillian.container:arquillian-tomcat-managed-8:1.0.1.Final
       adapterClass: org.jboss.arquillian.container.tomcat.managed.Tomcat8ManagedContainer
       configuration: &TOMCAT_MANAGED_CONFIG
         catalinaHome: ${dist}
@@ -349,10 +349,10 @@
   versionExpression: 9.*
   adapters:
     - type: remote
-      coordinates: org.jboss.arquillian.container:arquillian-tomcat-remote-8:1.0.0
+      coordinates: org.jboss.arquillian.container:arquillian-tomcat-remote-7:1.0.1.Final
       adapterClass: org.jboss.arquillian.container.tomcat.remote.Tomcat8RemoteContainer
     - type: managed
-      coordinates: org.jboss.arquillian.container:arquillian-tomcat-managed-8:1.0.0
+      coordinates: org.jboss.arquillian.container:arquillian-tomcat-managed-8:1.0.1.Final
       adapterClass: org.jboss.arquillian.container.tomcat.managed.Tomcat8ManagedContainer
       configuration: &TOMCAT_MANAGED_CONFIG
         catalinaHome: ${dist}
