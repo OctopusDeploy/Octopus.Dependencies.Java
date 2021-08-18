@@ -2,7 +2,7 @@ package com.octopus.calamari.tomcat
 
 import com.octopus.calamari.utils.Constants
 import org.apache.commons.io.FilenameUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.funktionale.option.Option
 import java.lang.IllegalArgumentException
 import java.net.URL

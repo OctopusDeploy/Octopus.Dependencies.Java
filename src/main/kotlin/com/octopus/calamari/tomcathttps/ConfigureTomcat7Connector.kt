@@ -2,7 +2,7 @@ package com.octopus.calamari.tomcathttps
 
 import com.octopus.calamari.extension.addAttribute
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.funktionale.tries.Try
 import org.w3c.dom.Node
 

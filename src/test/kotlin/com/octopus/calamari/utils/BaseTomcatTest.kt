@@ -2,7 +2,7 @@ package com.octopus.calamari.utils
 
 import com.octopus.calamari.utils.impl.XMLUtilsImpl
 import org.apache.commons.collections4.iterators.NodeListIterator
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.junit.Assert
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
