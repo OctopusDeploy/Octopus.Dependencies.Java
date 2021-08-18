@@ -59,11 +59,8 @@
             </snapshots>
         </repository>
         <repository>
-            <id>spring-plugins</id>
-            <url>https://repo.spring.io/plugins-release/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -164,7 +161,7 @@
             <version>4.4</version>
         </dependency>
         <dependency>
-            <groupId>org.funktionale</groupId>
+            <groupId>com.github.MarioAriasC.funKTionale</groupId>
             <artifactId>funktionale-all</artifactId>
             <version>1.2</version>
         </dependency>
