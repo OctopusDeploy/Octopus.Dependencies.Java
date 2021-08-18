@@ -189,6 +189,19 @@
             <version>1.0.0.CR6</version>
             <scope>test</scope>
         </dependency>
+        <!--
+            Works around the error
+             Unable to collect/resolve dependency tree for a resolution due to: Failed to collect dependencies at
+             org.yaml:snakeyaml:jar:1.24, caused by: Server returned HTTP response code: 501 for URL:
+             http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.24/snakeyaml-1.24.pom
+        -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.24</version>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
 
