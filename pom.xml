@@ -12,7 +12,7 @@
 
     <properties>
         <main.class>com.octopus.calamari.Main</main.class>
-        <surefire.version>2.20.1</surefire.version>
+        <surefire.version>2.22.2</surefire.version>
         <resources.version>3.0.2</resources.version>
         <compiler.version>3.7.0</compiler.version>
         <shade.version>3.1.0</shade.version>
