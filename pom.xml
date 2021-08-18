@@ -195,9 +195,9 @@
              org.yaml:snakeyaml:jar:1.24, caused by: Server returned HTTP response code: 501 for URL:
              http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.24/snakeyaml-1.24.pom
 
-             This occur because the shinkwrap library is set to use an old HTTP maven repo, which is no
-             longer supported. But if we include them here, Maven will cache them if they do not already exist,
-             and shinkwrap will uses the cached versions.
+            This occur because the shinkwrap library is set to use an old HTTP maven repo, which is no
+            longer supported. But if we include them here, Maven will cache them if they do not already exist,
+            and shinkwrap will uses the cached versions.
         -->
         <dependency>
             <groupId>org.yaml</groupId>
@@ -235,7 +235,12 @@
             <version>3.2.7.GA</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.jboss.sasl</groupId>
+            <artifactId>jboss-sasl</artifactId>
+            <version>1.0.0.Final</version>
+            <scope>test</scope>
+        </dependency>
 
 
 
