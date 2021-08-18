@@ -190,7 +190,7 @@
             <scope>test</scope>
         </dependency>
         <!--
-            Works around the error
+            Works around the errors like:
              Unable to collect/resolve dependency tree for a resolution due to: Failed to collect dependencies at
              org.yaml:snakeyaml:jar:1.24, caused by: Server returned HTTP response code: 501 for URL:
              http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.24/snakeyaml-1.24.pom
@@ -201,6 +201,13 @@
             <version>1.24</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-ejb-client</artifactId>
+            <version>1.0.13.Final</version>
+            <scope>test</scope>
+        </dependency>
+
 
 
     </dependencies>
