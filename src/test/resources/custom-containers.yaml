@@ -110,8 +110,8 @@
         jbossHome: ${dist}
         modulePath: ${dist}/modules
   defaultType: managed
-  dist: &WF_DIST
-    coordinates: org.wildfly:wildfly-dist:zip:${version}
+  dist:
+    coordinates: https://repo1.maven.org/maven2/org/wildfly/wildfly-dist/11.0.0.Final/wildfly-dist-11.0.0.Final.zip
   exclude: &WF11_EXCLUDE
     - org.jboss.arquillian.test:*
     - org.jboss.arquillian.testenricher:*
@@ -136,7 +136,8 @@
       coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
-  dist: *WF_DIST
+  dist:
+    coordinates: https://repo1.maven.org/maven2/org/wildfly/wildfly-dist/11.0.0.Final/wildfly-dist-11.0.0.Final.zip
   exclude: &WF11_EXCLUDE
     - org.jboss.arquillian.test:*
     - org.jboss.arquillian.testenricher:*
@@ -168,8 +169,8 @@
         jbossHome: ${dist}
         modulePath: ${dist}/modules
   defaultType: managed
-  dist: &WF_DIST
-    coordinates: org.wildfly:wildfly-dist:zip:${version}
+  dist:
+    coordinates: https://repo1.maven.org/maven2/org/wildfly/wildfly-dist/12.0.0.Final/wildfly-dist-12.0.0.Final.zip
   exclude: &WF12_EXCLUDE
     - org.jboss.arquillian.test:*
     - org.jboss.arquillian.testenricher:*
@@ -194,7 +195,8 @@
       coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
-  dist: *WF_DIST
+  dist:
+    coordinates: https://repo1.maven.org/maven2/org/wildfly/wildfly-dist/12.0.0.Final/wildfly-dist-12.0.0.Final.zip
   exclude: &WF12_EXCLUDE
     - org.jboss.arquillian.test:*
     - org.jboss.arquillian.testenricher:*
@@ -226,8 +228,8 @@
         jbossHome: ${dist}
         modulePath: ${dist}/modules
   defaultType: managed
-  dist: &WF_DIST
-    coordinates: org.wildfly:wildfly-dist:zip:${version}
+  dist:
+    coordinates: https://repo1.maven.org/maven2/org/wildfly/wildfly-dist/12.0.0.Final/wildfly-dist-12.0.0.Final.zip
   exclude: &WF12_EXCLUDE
     - org.jboss.arquillian.test:*
     - org.jboss.arquillian.testenricher:*
@@ -252,7 +254,8 @@
       coordinates: org.wildfly.arquillian:wildfly-arquillian-container-domain-remote:2.2.0.Final
       adapterClass: org.jboss.as.arquillian.container.domain.remote.RemoteDomainDeployableContainer
   defaultType: managed
-  dist: *WF_DIST
+  dist:
+    coordinates: https://repo1.maven.org/maven2/org/wildfly/wildfly-dist/13.0.0.Final/wildfly-dist-13.0.0.Final.zip
   exclude: &WF13_EXCLUDE
     - org.jboss.arquillian.test:*
     - org.jboss.arquillian.testenricher:*
@@ -284,8 +287,8 @@
         jbossHome: ${dist}
         modulePath: ${dist}/modules
   defaultType: managed
-  dist: &WF_DIST
-    coordinates: org.wildfly:wildfly-dist:zip:${version}
+  dist:
+    coordinates: https://repo1.maven.org/maven2/org/wildfly/wildfly-dist/13.0.0.Final/wildfly-dist-13.0.0.Final.zip
   exclude: &WF13_EXCLUDE
     - org.jboss.arquillian.test:*
     - org.jboss.arquillian.testenricher:*
