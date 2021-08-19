@@ -207,8 +207,9 @@
                     longer supported. But if we include them here, Maven will cache them if they do not already exist,
                     and shinkwrap will uses the cached versions.
 
-                    Make sure to run this on a clean VM before the other profiles are used:
+                    Make sure to run these commands on a clean VM before the other profiles are used:
                     mvn compile -Pshrinkwrap
+                    mvn compile -Pshrinkwrap2
                 -->
                 <dependency>
                     <groupId>org.yaml</groupId>
@@ -432,6 +433,17 @@
                     <version>1.4.0.Final</version>
                 </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>eap6</id>
