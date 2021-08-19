@@ -203,7 +203,7 @@
                      org.yaml:snakeyaml:jar:1.24, caused by: Server returned HTTP response code: 501 for URL:
                      http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.24/snakeyaml-1.24.pom
 
-                    This occur because the shinkwrap library is set to use an old HTTP maven repo, which is no
+                    This occurs because the shinkwrap library is set to use an old HTTP maven repo, which is no
                     longer supported. But if we include them here, Maven will cache them if they do not already exist,
                     and shinkwrap will uses the cached versions.
 
@@ -268,6 +268,12 @@
                     <groupId>org.jboss.arquillian.container</groupId>
                     <artifactId>arquillian-tomcat-managed-7</artifactId>
                     <version>1.1.0.Final</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-managed</artifactId>
+                    <version>2.1.1.Final</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
