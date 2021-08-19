@@ -8,7 +8,7 @@ import com.octopus.calamari.options.WildflyDataClass
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.wildfly.ServerType
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.funktionale.tries.Try
 import java.io.File
 import java.util.logging.Logger

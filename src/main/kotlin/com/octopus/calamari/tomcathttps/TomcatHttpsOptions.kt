@@ -10,7 +10,7 @@ import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.Version
 import com.octopus.calamari.utils.impl.*
 import org.apache.commons.io.FileUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.funktionale.option.Option
 import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try

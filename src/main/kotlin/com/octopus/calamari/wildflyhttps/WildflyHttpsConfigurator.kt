@@ -1,9 +1,6 @@
 package com.octopus.calamari.wildflyhttps
 
-import com.octopus.calamari.utils.impl.StringUtilsImpl
 import com.octopus.calamari.utils.impl.WildflyService
-import org.apache.commons.lang.StringUtils
-
 /**
  * Defines a service for configuring Wildfly HTTPS
  */

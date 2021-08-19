@@ -5,8 +5,7 @@ import com.octopus.calamari.options.CERTIFICATE_FILE_NAME
 import com.octopus.calamari.options.CertificateDataClass
 import com.octopus.calamari.utils.Constants
 import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
-import com.octopus.calamari.wildfly.ServerType
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.logging.Logger

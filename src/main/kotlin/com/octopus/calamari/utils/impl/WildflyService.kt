@@ -7,7 +7,7 @@ import com.octopus.calamari.exception.wildfly.LoginFailException
 import com.octopus.calamari.exception.wildfly.LoginTimeoutException
 import com.octopus.calamari.options.WildflyDataClass
 import com.octopus.calamari.wildflyhttps.WildflyHttpsOptions
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.funktionale.tries.Try
 import org.jboss.`as`.cli.scriptsupport.CLI
 import org.springframework.retry.RetryCallback

@@ -1,8 +1,7 @@
 package com.octopus.calamari.options
 
-import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.wildfly.ServerType
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 /**
  * The common settings for operations performed on Wildfly

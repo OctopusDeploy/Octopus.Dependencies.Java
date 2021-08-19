@@ -1,7 +1,7 @@
 package com.octopus.calamari.wildflyhttps
 
 import com.octopus.calamari.utils.impl.*
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.retry.RetryCallback
 
 /**
