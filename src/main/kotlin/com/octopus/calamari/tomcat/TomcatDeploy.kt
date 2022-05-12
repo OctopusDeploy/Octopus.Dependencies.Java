@@ -11,9 +11,11 @@ import com.octopus.calamari.utils.impl.ErrorMessageBuilderImpl
 import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.lang3.StringUtils
-import org.apache.http.HttpResponse
-import org.apache.http.client.fluent.Request
-import org.apache.http.entity.ContentType
+import org.apache.hc.client5.http.fluent.Request
+import org.apache.hc.client5.http.fluent.Response
+import org.apache.hc.core5.http.ContentType
+import org.apache.hc.core5.http.HttpResponse
+import org.apache.hc.core5.util.Timeout
 import org.funktionale.tries.Try
 import org.springframework.retry.RetryCallback
 import java.io.File
@@ -56,23 +58,23 @@ object TomcatDeploy {
         System.exit(0)
     }
 
-    fun validateResponse(response: HttpResponse):HttpResponse {
-        if (response.statusLine.statusCode == 401) {
+    fun validateResponse(response: Response):Response {
+        if (response.returnResponse().code == 401) {
             throw LoginFail401Exception(ErrorMessageBuilderImpl.buildErrorMessage(
                     "TOMCAT-DEPLOY-ERROR-0006",
                     "A HTTP return code indicated that the login failed due to bad credentials. " +
                     "Make sure the username and password are correct."))
         }
 
-        if (response.statusLine.statusCode == 403) {
+        if (response.returnResponse().code == 403) {
             throw LoginFail403Exception(ErrorMessageBuilderImpl.buildErrorMessage(
                     "TOMCAT-DEPLOY-ERROR-0007",
                     "A HTTP return code indicated that the login failed due to invalid group membership. " +
                     "Make sure the user is part of the manager-script group in the tomcat-users.xml file."))
         }
 
-        if (response.statusLine.statusCode !in 100..399) {
-            throw IllegalStateException("Response code ${response.statusLine.statusCode} indicated failure.")
+        if (response.returnResponse().code !in 100..399) {
+            throw IllegalStateException("Response code ${response.returnResponse().code} indicated failure.")
         }
 
         return response
@@ -122,13 +124,12 @@ object TomcatDeploy {
                      */
                     .map { executor ->
                         executor.execute(
-                                Request.Put(options.deployUrl.toExternalForm())
-                                        .connectTimeout(Constants.CONNECTION_TIMEOUT)
-                                        .socketTimeout(Constants.CONNECTION_TIMEOUT)
+                                Request.put(options.deployUrl.toExternalForm())
+                                        .connectTimeout(Timeout.ofMilliseconds(Constants.CONNECTION_TIMEOUT))
+                                        .responseTimeout(Timeout.ofMilliseconds(Constants.CONNECTION_TIMEOUT))
                                         .bodyFile(
                                                 File(options.application),
                                                 ContentType.DEFAULT_BINARY))
-                                .returnResponse()
                     }
                     /*
                         Was the response a success?
@@ -164,10 +165,9 @@ object TomcatDeploy {
                      */
                     .map { executor ->
                         executor.execute(
-                                Request.Get(options.redeployUrl.toExternalForm())
-                                        .connectTimeout(Constants.CONNECTION_TIMEOUT)
-                                        .socketTimeout(Constants.CONNECTION_TIMEOUT))
-                                .returnResponse()
+                                Request.get(options.redeployUrl.toExternalForm())
+                                    .connectTimeout(Timeout.ofMilliseconds(Constants.CONNECTION_TIMEOUT))
+                                    .responseTimeout(Timeout.ofMilliseconds(Constants.CONNECTION_TIMEOUT)))
                     }
                     /*
                         Was the response a success?
@@ -196,10 +196,9 @@ object TomcatDeploy {
                      */
                     .map { executor ->
                         executor.execute(
-                                Request.Get(options.undeployUrl.toExternalForm())
-                                        .connectTimeout(Constants.CONNECTION_TIMEOUT)
-                                        .socketTimeout(Constants.CONNECTION_TIMEOUT))
-                                .returnResponse()
+                                Request.get(options.undeployUrl.toExternalForm())
+                                    .connectTimeout(Timeout.ofMilliseconds(Constants.CONNECTION_TIMEOUT))
+                                    .responseTimeout(Timeout.ofMilliseconds(Constants.CONNECTION_TIMEOUT)))
                     }
                     /*
                         Was the response a success?

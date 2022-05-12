@@ -10,7 +10,7 @@ import com.octopus.calamari.utils.impl.LoggingServiceImpl
 import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
-import org.apache.http.client.fluent.Request
+import org.apache.hc.client5.http.fluent.Request
 import org.funktionale.option.getOrElse
 import org.funktionale.tries.Try
 import org.springframework.retry.RetryCallback
@@ -69,7 +69,7 @@ object TomcatState {
                         manager
                      */
                     .flatMap { executor ->
-                        Try {executor.execute(Request.Get(url.toExternalForm())).returnResponse()}
+                        Try {executor.execute(Request.get(url.toExternalForm()))}
                                 .map {TomcatDeploy.validateResponse(it)}
                                 .map {executor}
                     }
@@ -77,9 +77,9 @@ object TomcatState {
                         Use the executor to list the deployments
                      */
                     .flatMap { executor ->
-                        Try {executor.execute(Request.Get(options.listUrl.toExternalForm())).returnResponse()}
+                        Try {executor.execute(Request.get(options.listUrl.toExternalForm()))}
                                 .map {TomcatDeploy.validateResponse(it)}
-                                .map { IOUtils.toString(it.entity.content, "UTF-8") }
+                                .map { it.returnContent().asString() }
                                 .map { listContent ->
                                     /*
                                         The list url returns a response like:

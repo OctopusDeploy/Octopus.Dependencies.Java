@@ -1,7 +1,7 @@
 package com.octopus.calamari.tomcat
 
-import org.apache.http.HttpHost
-import org.apache.http.client.fluent.Executor
+import org.apache.hc.client5.http.fluent.Executor
+import org.apache.hc.core5.http.HttpHost
 
 object TomcatService {
     /**
@@ -9,11 +9,12 @@ object TomcatService {
      */
     fun generateExecutor(options:TomcatOptions): Executor {
         return Executor.newInstance()
-                .auth(HttpHost(
+                .auth(
+                    HttpHost(
                         options.undeployUrl.host,
                         options.undeployUrl.port),
                         options.user,
-                        options.password)
+                        options.password.toCharArray())
                 .authPreemptive(HttpHost(
                         options.undeployUrl.host,
                         options.undeployUrl.port))

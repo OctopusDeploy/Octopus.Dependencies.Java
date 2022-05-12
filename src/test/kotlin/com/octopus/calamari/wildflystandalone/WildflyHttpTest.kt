@@ -1,24 +1,18 @@
 package com.octopus.calamari.wildflystandalone
 
-import com.octopus.calamari.exception.InvalidOptionsException
 import com.octopus.calamari.utils.HttpUtils
 import com.octopus.calamari.utils.impl.RetryServiceImpl
-import com.octopus.calamari.utils.impl.WildflyService
 import com.octopus.calamari.wildfly.ServerType
-import com.octopus.calamari.wildflyhttps.WildflyHttpsStandaloneConfig
 import com.octopus.calamari.wildflyhttps.WildflyHttpsOptions
+import com.octopus.calamari.wildflyhttps.WildflyHttpsStandaloneConfig
 import com.octopus.common.WildflyTestBase
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.IOUtils
-import org.apache.http.client.fluent.Executor
-import org.apache.http.client.fluent.Request
+import org.apache.hc.client5.http.fluent.Executor
+import org.apache.hc.client5.http.fluent.Request
 import org.funktionale.tries.Try
-import org.jboss.`as`.cli.scriptsupport.CLI
 import org.jboss.arquillian.container.test.api.RunAsClient
 import org.jboss.arquillian.junit.Arquillian
 import org.junit.Assert
-import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.retry.RetryCallback
@@ -32,23 +26,17 @@ class WildflyHttpTest : WildflyTestBase() {
     private fun openHomepage(options: WildflyHttpsOptions) =
             Try.Success(Executor.newInstance(HttpUtils.buildHttpClient())).map { executor ->
                 executor.execute(
-                        Request.Get("https://${options.controller}:8443"))
-                        .returnResponse()
-            }.map {
-                it.entity.content
-            }.map {
-                IOUtils.toString(it, Charsets.UTF_8)
+                        Request.get("https://${options.controller}:8443"))
+                    .returnContent()
+                    .asString()
             }
 
     private fun openHomepageHttp(options: WildflyHttpsOptions) =
             Try.Success(Executor.newInstance(HttpUtils.buildHttpClient())).map { executor ->
                 executor.execute(
-                        Request.Get("http://${options.controller}:8080"))
-                        .returnResponse()
-            }.map {
-                it.entity.content
-            }.map {
-                IOUtils.toString(it, Charsets.UTF_8)
+                        Request.get("http://${options.controller}:8080"))
+                    .returnContent()
+                    .asString()
             }
 
     private fun checkHttp(options: WildflyHttpsOptions) {
