@@ -42,12 +42,13 @@ class WildflyHttpTest : WildflyTestBase() {
     private fun checkHttp(options: WildflyHttpsOptions) {
         Assert.assertTrue(retry.execute(RetryCallback<Boolean, Throwable> { context ->
             println("Attempt ${context.retryCount} to connect to the app server")
-            if (!openHomepageHttp(options).isSuccess()) {
-                throw Exception("Failed to connect")
-            }
-            if (!openHomepage(options).isSuccess()) {
-                throw Exception("Failed to connect")
-            }
+
+            openHomepageHttp(options)
+                .onFailure { ex -> throw Exception("Failed to connect", ex) }
+
+            openHomepage(options)
+                .onFailure { ex -> throw Exception("Failed to connect", ex) }
+
             true
         }))
     }
