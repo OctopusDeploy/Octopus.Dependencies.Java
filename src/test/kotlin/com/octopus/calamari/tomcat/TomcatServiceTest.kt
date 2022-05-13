@@ -1,6 +1,8 @@
 package com.octopus.calamari.tomcat
 
 import com.octopus.calamari.utils.TomcatUtils
+import com.octopus.calamari.utils.impl.KeystoreUtilsImpl
+import com.octopus.calamari.utils.impl.RetryServiceImpl
 import org.apache.commons.io.IOUtils
 import org.apache.hc.client5.http.fluent.Executor
 import org.apache.hc.client5.http.fluent.Request
@@ -11,9 +13,11 @@ import org.jboss.arquillian.junit.Arquillian
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.springframework.retry.RetryCallback
 import java.io.File
 import java.net.URL
 import java.net.URLDecoder
+import java.security.PrivateKey
 
 /**
  * Tests of the tomcat deployment service
@@ -219,8 +223,11 @@ class TomcatServiceTest {
                 tag = "original"
             )
         )
-        val deployments1 = listDeployments(TomcatUtils.commonOptions)
-        Assert.assertTrue(deployments1.contains("/taggedapp:running"))
+
+        RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
+            val deployments1 = listDeployments(TomcatUtils.commonOptions)
+            Assert.assertTrue(deployments1.contains("/taggedapp:running"))
+        })
 
         TomcatDeploy.doDeployment(
             TomcatOptions(
@@ -232,8 +239,10 @@ class TomcatServiceTest {
                 tag = "new"
             )
         )
-        val deployments2 = listDeployments(TomcatUtils.commonOptions)
-        Assert.assertTrue(deployments2.contains("/taggedapp:running"))
+        RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
+            val deployments2 = listDeployments(TomcatUtils.commonOptions)
+            Assert.assertTrue(deployments2.contains("/taggedapp:running"))
+        })
 
         /*
             A tagged app can only overwrite an existing deployment
@@ -247,8 +256,10 @@ class TomcatServiceTest {
                 tag = "original"
             )
         )
-        val deployments3 = listDeployments(TomcatUtils.commonOptions)
-        Assert.assertTrue(deployments3.contains("/taggedapp:running"))
+        RetryServiceImpl.createRetry().execute(RetryCallback<Unit, Throwable> { context ->
+            val deployments3 = listDeployments(TomcatUtils.commonOptions)
+            Assert.assertTrue(deployments3.contains("/taggedapp:running"))
+        })
 
         /*
             Make sure the original war file is now the deployed one
