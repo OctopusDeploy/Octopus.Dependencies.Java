@@ -29,6 +29,8 @@ java -jar calamari.jar
 
 # Testing
 
+All tests require Java 8. Later versions of Java won't work.
+
 Arquillian is used to test the code against multiple versions of application servers.
 Each application server is defined in a Maven profile. The profiles are listed below.
 
