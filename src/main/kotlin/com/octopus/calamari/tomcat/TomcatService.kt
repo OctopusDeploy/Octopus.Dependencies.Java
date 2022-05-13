@@ -9,7 +9,7 @@ object TomcatService {
      * Create an Apache executor that deals with authentication
      */
     fun generateExecutor(options:TomcatOptions): Executor {
-        return Executor.newInstance();
+        return Executor.newInstance()
     }
 
     /**
