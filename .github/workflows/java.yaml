@@ -87,15 +87,15 @@ jobs:
         shell: bash
       - name: Test EAP6 domain
         if: always()
-        run: ./mvnw --batch-mode test --Pdomain-eap6
+        run: ./mvnw --batch-mode test -Pdomain-eap6
         shell: bash
       - name: Test EAP7 domain
         if: always()
-        run: ./mvnw --batch-mode test --Pdomain-eap7
+        run: ./mvnw --batch-mode test -Pdomain-eap7
         shell: bash
       - name: Test WildFly 13 domain
         if: always()
-        run: ./mvnw --batch-mode test --Pdomain-wildfly13
+        run: ./mvnw --batch-mode test -Pdomain-wildfly13
         shell: bash
       - if: always()
         name: Report
