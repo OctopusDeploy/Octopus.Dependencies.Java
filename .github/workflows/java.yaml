@@ -36,9 +36,6 @@ jobs:
         with:
           java-version: '8'
           distribution: adopt
-      - name: Set Version
-        run: ./mvnw --batch-mode versions:set -DnewVersion=${{ steps.determine_version.outputs.semVer }}
-        shell: bash
       - name: List Dependencies
         run: ./mvnw --batch-mode dependency:tree --no-transfer-progress > dependencies.txt
         shell: bash
