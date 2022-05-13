@@ -54,8 +54,8 @@ jobs:
           path: dependencyUpdates.txt
       - name: Instance test dependencies
         run: |
-          ./mvnw compile -Pshrinkwrap
-          ./mvnw compile -Pshrinkwrap2
+          ./mvnw --batch-mode compile -Pshrinkwrap
+          ./mvnw --batch-mode compile -Pshrinkwrap2
         shell: bash
       - name: Test EAP6
         if: always()
