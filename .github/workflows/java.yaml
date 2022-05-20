@@ -11,6 +11,11 @@
 #
 # Get a trial Octopus instance from https://octopus.com/start
 
+name: Java Maven Build
+on:
+  workflow_dispatch: {}
+  push: {}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,6 +23,8 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: '0'
+
+      # Determine the GitVersion for this build
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.7
         with:
@@ -27,6 +34,8 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0.9.7
         with:
           additionalArguments: /overrideconfig mode=Mainline
+
+      # Install dependencies for build and test
       - name: Install Octopus Deploy CLI
         uses: OctopusDeploy/install-octocli@v1.1.1
         with:
@@ -36,6 +45,8 @@ jobs:
         with:
           java-version: '8'
           distribution: adopt
+
+      # Create an artifact listing dependencies used, not sure why?
       - name: List Dependencies
         run: ./mvnw --batch-mode dependency:tree --no-transfer-progress > dependencies.txt
         shell: bash
@@ -44,6 +55,8 @@ jobs:
         with:
           name: Dependencies
           path: dependencies.txt
+
+      # Create an artifact listing dependencies with available updates, not sure why?
       - name: List Dependency Updates
         run: ./mvnw --batch-mode versions:display-dependency-updates > dependencyUpdates.txt
         shell: bash
@@ -52,51 +65,66 @@ jobs:
         with:
           name: Dependencies Updates
           path: dependencyUpdates.txt
+
+      # Hackaround to get the right versions of Maven dependencies installed before tests run and pull the wrong ones down :/
       - name: Instance test dependencies
         run: |
           ./mvnw --batch-mode compile -Pshrinkwrap
           ./mvnw --batch-mode compile -Pshrinkwrap2
         shell: bash
+
+      # Test matrix across a stack of different Java servers
       - name: Test EAP6
         if: always()
         run: ./mvnw --batch-mode test -Peap6
         shell: bash
+
       - name: Test EAP7
         if: always()
         run: ./mvnw --batch-mode test -Peap7
         shell: bash
+
       - name: Test WildFly 13
         if: always()
         run: ./mvnw --batch-mode test -Pwildfly13
         shell: bash
+
       - name: Test Tomcat 7
         if: always()
         run: ./mvnw --batch-mode test -Ptomcat7
         shell: bash
+
       - name: Test Tomcat 8
         if: always()
         run: ./mvnw --batch-mode test -Ptomcat8
         shell: bash
+
       - name: Test Tomcat 8.5
         if: always()
         run: ./mvnw --batch-mode test -Ptomcat85
         shell: bash
+
       - name: Test Tomcat 9
         if: always()
         run: ./mvnw --batch-mode test -Ptomcat9
         shell: bash
+
       - name: Test EAP6 domain
         if: always()
         run: ./mvnw --batch-mode test -Pdomain-eap6
         shell: bash
+
       - name: Test EAP7 domain
         if: always()
         run: ./mvnw --batch-mode test -Pdomain-eap7
         shell: bash
+
       - name: Test WildFly 13 domain
         if: always()
         run: ./mvnw --batch-mode test -Pdomain-wildfly13
         shell: bash
+
+      # Collect Test Results report
       - if: always()
         name: Report
         uses: dorny/test-reporter@v1
@@ -105,6 +133,8 @@ jobs:
           path: target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: 'false'
+
+      # Create a JAR package
       - name: Package
         run: ./mvnw --batch-mode -DskipTests=true package
         shell: bash
@@ -121,11 +151,14 @@ jobs:
           path="${{ steps.get_artifact.outputs.artifact }}"
           echo "::set-output name=artifact::${path##*/}"
         shell: bash
+
+      # Create an associated GitHub Tag and Release for the built version
       - name: Tag Release
         uses: mathieudutour/github-tag-action@v6.0
         with:
           custom_tag: ${{ steps.determine_version.outputs.semVer }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         id: create_release
@@ -136,6 +169,7 @@ jobs:
           release_name: Release ${{ steps.determine_version.outputs.semVer }} Run ${{ github.run_number }} Attempt ${{ github.run_attempt }}
           draft: 'false'
           prerelease: 'false'
+
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         name: Upload Release Asset
@@ -145,6 +179,8 @@ jobs:
           asset_path: ${{ steps.get_artifact.outputs.artifact }}
           asset_name: ${{ steps.get_artifact_name.outputs.artifact }}
           asset_content_type: application/octet-stream
+
+      # Seemingly unused rename of the JAR file
       - id: get_octopus_artifact
         name: Create Octopus Artifact
         run: |-
@@ -159,7 +195,3 @@ jobs:
           echo "::set-output name=octoversion::${octoversion}"
           ls -la
         shell: bash
-name: Java Maven Build
-'on':
-  workflow_dispatch: {}
-  push: {}
