@@ -29,11 +29,16 @@ jobs:
         uses: gittools/actions/gitversion/setup@v0.9.7
         with:
           versionSpec: 5.x
-      - id: determine_version
-        name: Determine Version
+      - name: Determine Version
+        id: determine_version
         uses: gittools/actions/gitversion/execute@v0.9.7
         with:
           additionalArguments: /overrideconfig mode=Mainline
+      - name: Update pom.xml Version
+        run: |- 
+          ./mvnw versions:set -DgenerateBackupPoms=false -DnewVersion=${{ steps.determine_version.outputs.semVer }}
+          cat pom.xml
+        shell: bash
 
       # Install dependencies for build and test
       - name: Install Octopus Deploy CLI
@@ -138,14 +143,14 @@ jobs:
       - name: Package
         run: ./mvnw --batch-mode -DskipTests=true package
         shell: bash
-      - id: get_artifact
-        name: Get Artifact Path
+      - name: Get Artifact Path
+        id: get_artifact
         run: |-
           # Find the largest WAR or JAR, and assume that was what we intended to build.
           echo "::set-output name=artifact::$(find target -type f \( -iname \*.jar -o -iname \*.war \) -printf "%p\n" | sort -n | head -1)"
         shell: bash
-      - id: get_artifact_name
-        name: Get Artifact Name
+      - name: Get Artifact Name
+        id: get_artifact_name
         run: |-
           # Get the filename without a path
           path="${{ steps.get_artifact.outputs.artifact }}"
@@ -154,35 +159,38 @@ jobs:
 
       # Create an associated GitHub Tag and Release for the built version
       - name: Tag Release
+        if: ${{ github.ref_name == 'master' }}
         uses: mathieudutour/github-tag-action@v6.0
         with:
           custom_tag: ${{ steps.determine_version.outputs.semVer }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        if: ${{ github.ref_name == 'master' }}
         id: create_release
-        name: Create Release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ steps.determine_version.outputs.semVer }}+run${{ github.run_number }}-attempt${{ github.run_attempt }}
-          release_name: Release ${{ steps.determine_version.outputs.semVer }} Run ${{ github.run_number }} Attempt ${{ github.run_attempt }}
+          tag_name: ${{ steps.determine_version.outputs.semVer }}
+          release_name: Release ${{ steps.determine_version.outputs.semVer }}
           draft: 'false'
-          prerelease: 'false'
-
-      - env:
+          prerelease: ${{ github.ref_name != 'master' }}
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        name: Upload Release Asset
+
+      - name: Upload Release Asset
+        if: ${{ github.ref_name == 'master' }}
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.get_artifact.outputs.artifact }}
           asset_name: ${{ steps.get_artifact_name.outputs.artifact }}
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Seemingly unused rename of the JAR file
-      - id: get_octopus_artifact
-        name: Create Octopus Artifact
+      - name: Create Octopus Artifact
+        id: get_octopus_artifact
         run: |-
           # Octopus expects artifacts to have a specific file format
           file="${{ steps.get_artifact.outputs.artifact }}"
