@@ -1,10 +1,12 @@
 package com.octopus.calamari.utils
 
+import com.octopus.calamari.tomcat.TomcatDeploy
 import com.octopus.calamari.tomcat.TomcatOptions
 import com.octopus.calamari.tomcat.TomcatService.addAuth
 import org.apache.hc.client5.http.fluent.Executor
 import org.apache.hc.client5.http.fluent.Request
 import org.funktionale.tries.Try
+import java.io.File
 
 
 object TomcatUtils {
@@ -39,4 +41,15 @@ object TomcatUtils {
             .returnContent().asString()
     }
 
+    fun deployPackage(name: String) {
+        TomcatDeploy.doDeployment(
+            TomcatOptions(
+                controller = "https://127.0.0.1:38443/manager",
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                application = File(this.javaClass.getResource(name).file).absolutePath,
+                trustSelfSigned = true
+            )
+        )
+    }
 }

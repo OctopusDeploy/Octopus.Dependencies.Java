@@ -18,5 +18,5 @@ enum class TomcatHttpsImplementation(val className:Option<String>, val lowerBoun
         This was removed in 8.5
         https://tomcat.apache.org/migration-85.html#BIO_connector_removed
      */
-    BIO(Option.Some("org.apache.coyote.http11.Http11Protocol"), Option.None, Option.Some(Version(8))),
+    BIO(Option.Some("org.apache.coyote.http11.Http11Protocol"), Option.None, Option.Some(Version(8, 5))),
 }
