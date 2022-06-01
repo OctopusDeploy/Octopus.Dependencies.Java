@@ -20,3 +20,5 @@ target
 dependency-reduced-pom.xml
 
 *.nupkg
+
+**/.DS_Store
