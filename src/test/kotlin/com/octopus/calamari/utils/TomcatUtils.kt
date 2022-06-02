@@ -1,54 +1,55 @@
 package com.octopus.calamari.utils
 
+import com.octopus.calamari.tomcat.TomcatDeploy
 import com.octopus.calamari.tomcat.TomcatOptions
-import org.apache.commons.io.IOUtils
-import org.apache.http.HttpHost
-import org.apache.http.client.HttpClient
-import org.apache.http.client.fluent.Executor
-import org.apache.http.client.fluent.Request
-import org.apache.http.conn.ssl.NoopHostnameVerifier
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory
-import org.apache.http.conn.ssl.TrustStrategy
-import org.apache.http.impl.client.HttpClients
-import org.apache.http.ssl.SSLContexts
+import com.octopus.calamari.tomcat.TomcatService.addAuth
+import org.apache.hc.client5.http.fluent.Executor
+import org.apache.hc.client5.http.fluent.Request
 import org.funktionale.tries.Try
+import java.io.File
 
 
 object TomcatUtils {
     @JvmStatic
     val commonOptions = TomcatOptions(
-            controller = "http://localhost:38080/manager",
-            user = System.getProperty("username"),
-            password = System.getProperty("password")
+        controller = "http://localhost:38080/manager",
+        user = System.getProperty("username"),
+        password = System.getProperty("password")
     )
 
     @JvmStatic
     val commonHttpsOptions = TomcatOptions(
-            controller = "https://localhost:38443/manager",
-            user = System.getProperty("username"),
-            password = System.getProperty("password")
+        controller = "https://localhost:38443/manager",
+        user = System.getProperty("username"),
+        password = System.getProperty("password")
     )
 
-    fun listDeployments(options: TomcatOptions):String {
-        return IOUtils.toString(Try.Success(Executor.newInstance(HttpUtils.buildHttpClient())
-                .auth(HttpHost(
-                        options.listUrl.host,
-                        options.listUrl.port),
-                        options.user,
-                        options.password)
-                .authPreemptive(HttpHost(
-                        options.listUrl.host,
-                        options.listUrl.port)))
-                /*
-                    Use the executor to execute a GET that lists the apps
-                 */
-                .map { executor ->
-                    executor.execute(
-                            Request.Get(options.listUrl.toExternalForm()))
-                            .returnResponse()
-                }
-                .get()
-                .entity.content)
+    fun listDeployments(options: TomcatOptions): String {
+        return Try.Success(
+            Executor.newInstance(HttpUtils.buildHttpClient())
+        )
+            /*
+                Use the executor to execute a GET that lists the apps
+             */
+            .map { executor ->
+                executor.execute(
+                    Request.get(options.listUrl.toExternalForm())
+                        .addAuth(options)
+                )
+            }
+            .get()
+            .returnContent().asString()
     }
 
+    fun deployPackage(name: String) {
+        TomcatDeploy.doDeployment(
+            TomcatOptions(
+                controller = "https://127.0.0.1:38443/manager",
+                user = System.getProperty("username"),
+                password = System.getProperty("password"),
+                application = File(this.javaClass.getResource(name).file).absolutePath,
+                trustSelfSigned = true
+            )
+        )
+    }
 }

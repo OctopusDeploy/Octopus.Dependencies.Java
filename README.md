@@ -29,17 +29,17 @@ java -jar calamari.jar
 
 # Testing
 
+All tests require Java 8. Later versions of Java won't work.
+
 Arquillian is used to test the code against multiple versions of application servers.
 Each application server is defined in a Maven profile. The profiles are listed below.
 
 * eap6
 * eap7
-* wildfly10
-* wildfly11
+* wildfly13
 * domain-eap6
 * domain-eap7
-* domain-wildfly10
-* domain-wildfly11
+* domain-wildfly13
 * tomcat7
 * tomcat8
 * tomcat85
@@ -60,8 +60,8 @@ For example
 All containers can be tested with the command:
 
 ```
-./mvnw verify -Peap6; ./mvnw verify -Peap7; ./mvnw verify -Pwildfly10; ./mvnw verify -Pwildfly11; ./mvnw verify -Pwildfly12; ./mvnw verify -Pwildfly13; ./mvnw verify -Ptomcat7; ./mvnw verify -Ptomcat8; ./mvnw verify -Ptomcat85; ./mvnw verify -Ptomcat9
-./mvnw verify -Pdomain-eap6; ./mvnw verify -Pdomain-eap7; ./mvnw verify -Pdomain-wildfly10; ./mvnw verify -Pdomain-wildfly11; ./mvnw verify -Pdomain-wildfly12; ./mvnw verify -Pdomain-wildfly13
+./mvnw verify -Peap6; ./mvnw verify -Peap7; ./mvnw verify -Pwildfly13; ./mvnw verify -Ptomcat7; ./mvnw verify -Ptomcat8; ./mvnw verify -Ptomcat85; ./mvnw verify -Ptomcat9
+./mvnw verify -Pdomain-eap6; ./mvnw verify -Pdomain-eap7; ./mvnw verify -Pdomain-wildfly13
 ```
 
 # Java Tools

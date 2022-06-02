@@ -7,7 +7,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>calamari</artifactId>
-    <version>1.0.105</version>
+    <version>0.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <kotlin.version>1.5.21</kotlin.version>
+        <kotlin.version>1.6.21</kotlin.version>
         <junit.version>4.13.2</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <eap.6.version>jboss-eap-6.4</eap.6.version>
@@ -77,6 +77,21 @@
     </dependencyManagement>
 
     <dependencies>
+        <!--
+        Fix the SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder". error
+        See https://stackoverflow.com/questions/7421612/slf4j-failed-to-load-class-org-slf4j-impl-staticloggerbinder
+        -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
             <artifactId>zip4j</artifactId>
@@ -116,9 +131,9 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>fluent-hc</artifactId>
-            <version>4.5.13</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5-fluent</artifactId>
+            <version>5.1.3</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.threads</groupId>
@@ -624,158 +639,7 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>wildfly9</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${surefire.version}</version>
-                        <configuration>
-                            <!-- Fork every test because it will launch a separate AS instance -->
-                            <forkMode>always</forkMode>
-                            <systemPropertyVariables>
-                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <arquillian.launch>${wildfly.9.version}</arquillian.launch>
-                                <port>9990</port>
-                                <protocol>http-remoting</protocol>
-                                <projDir>${project.basedir}</projDir>
-                                <username>admin</username>
-                                <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
-                                </org.apache.maven.user-settings>
-                            </systemPropertyVariables>
-                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
-                            <includes>
-                                <include>**/wildfly/*Test*.*</include>
-                                <include>**/wildflystandalone/*Test*.*</include>
-                            </includes>
-                            <useSystemClassLoader>false</useSystemClassLoader>
-                            <useManifestOnlyJar>false</useManifestOnlyJar>
-                            <failIfNoTests>false</failIfNoTests>
-                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>domain-wildfly9</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${surefire.version}</version>
-                        <configuration>
-                            <!-- Fork every test because it will launch a separate AS instance -->
-                            <forkMode>always</forkMode>
-                            <systemPropertyVariables>
-                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <arquillian.launch>${domain.wildfly.9.version}</arquillian.launch>
-                                <port>9990</port>
-                                <protocol>http-remoting</protocol>
-                                <projDir>${project.basedir}</projDir>
-                                <username>admin</username>
-                                <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
-                                </org.apache.maven.user-settings>
-                            </systemPropertyVariables>
-                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
-                            <includes>
-                                <include>**/wildfly/*Test*.*</include>
-                                <include>**/wildflydomain/*Test*.*</include>
-                            </includes>
-                            <useSystemClassLoader>false</useSystemClassLoader>
-                            <useManifestOnlyJar>false</useManifestOnlyJar>
-                            <failIfNoTests>false</failIfNoTests>
-                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>wildfly10</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${surefire.version}</version>
-                        <configuration>
-                            <!-- Fork every test because it will launch a separate AS instance -->
-                            <forkMode>always</forkMode>
-                            <systemPropertyVariables>
-                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <arquillian.launch>${wildfly.10.version}</arquillian.launch>
-                                <port>9990</port>
-                                <protocol>http-remoting</protocol>
-                                <projDir>${project.basedir}</projDir>
-                                <username>admin</username>
-                                <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
-                                </org.apache.maven.user-settings>
-                            </systemPropertyVariables>
-                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
-                            <includes>
-                                <include>**/wildfly/*Test*.*</include>
-                                <include>**/wildflystandalone/*Test*.*</include>
-                            </includes>
-                            <useSystemClassLoader>false</useSystemClassLoader>
-                            <useManifestOnlyJar>false</useManifestOnlyJar>
-                            <failIfNoTests>false</failIfNoTests>
-                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>domain-wildfly10</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${surefire.version}</version>
-                        <configuration>
-                            <!-- Fork every test because it will launch a separate AS instance -->
-                            <forkMode>always</forkMode>
-                            <systemPropertyVariables>
-                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <arquillian.launch>${domain.wildfly.10.version}</arquillian.launch>
-                                <port>9990</port>
-                                <protocol>http-remoting</protocol>
-                                <projDir>${project.basedir}</projDir>
-                                <username>admin</username>
-                                <password>password1!</password>
-                                <org.apache.maven.user-settings>${project.basedir}/settings.xml
-                                </org.apache.maven.user-settings>
-                            </systemPropertyVariables>
-                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
-                            <includes>
-                                <include>**/wildfly/*Test*.*</include>
-                                <include>**/wildflydomain/*Test*.*</include>
-                            </includes>
-                            <useSystemClassLoader>false</useSystemClassLoader>
-                            <useManifestOnlyJar>false</useManifestOnlyJar>
-                            <failIfNoTests>false</failIfNoTests>
-                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+
         <profile>
             <id>wildfly11</id>
             <build>

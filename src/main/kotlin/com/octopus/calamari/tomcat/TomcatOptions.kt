@@ -3,6 +3,7 @@ package com.octopus.calamari.tomcat
 import com.octopus.calamari.utils.Constants
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang3.StringUtils
+import org.apache.hc.client5.http.ssl.TrustSelfSignedStrategy
 import org.funktionale.option.Option
 import java.lang.IllegalArgumentException
 import java.net.URL
@@ -21,6 +22,7 @@ data class TomcatOptions(val controller:String,
                          val tag:String = "",
                          val version:String = "",
                          val state:Boolean = true,
+                         val trustSelfSigned: Boolean = false,
                          private val alreadyDumped:Boolean = false) {
 
     val logger: Logger = Logger.getLogger("")
