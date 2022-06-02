@@ -212,7 +212,7 @@ data class TomcatHttpsOptions(override val privateKey: String = "",
                         "The ${implementation.name} HTTPS implementation is not supported by the installed version of Tomcat"))
             }
         }.map {
-            if (implementation.upperBoundVersion.isDefined() && version.toSingleInt() > implementation.upperBoundVersion.get().toSingleInt()) {
+            if (implementation.upperBoundVersion.isDefined() && version.toSingleInt() >= implementation.upperBoundVersion.get().toSingleInt()) {
                 throw InvalidOptionsException(ErrorMessageBuilderImpl.buildErrorMessage(
                         "TOMCAT-HTTPS-ERROR-0003",
                         "The ${implementation.name} HTTPS implementation is not supported by the installed version of Tomcat"))
